@@ -10,7 +10,9 @@ export interface User {
   email: string;
   name: string;
   tel: string;
-  imageUrl: string;
+  imageUrl: string | null;
+  signatureUrl?: string | null;
+  position?: string | null;
   lineUserId: string | null;
   roleId: number;
   role: Role;
@@ -21,3 +23,4 @@ export interface LoginResponse {
   access_token: string;
   user: User;
 }
+
