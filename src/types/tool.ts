@@ -58,6 +58,27 @@ export interface MedicalTool {
   backendId?: number;
 }
 
+export interface StandardToolCategory {
+  id: number
+  name: string
+}
+
+export interface BackendStandardTool {
+  id: number
+  name: string
+  asset_code: string | null
+  serial_number: string | null
+  manufacturer: string | null
+  model: string | null
+  path_pdf: string | null
+  path_image: string | null
+  certificate_number: string | null
+  calibration_date_last: string | null
+  unit: string | null
+  category_id: number | null
+  category?: StandardToolCategory | null
+}
+
 export interface BackendEquipment {
   id: number;
   name: string;
