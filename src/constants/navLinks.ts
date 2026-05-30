@@ -111,7 +111,7 @@ export const ALL_NAV_LINKS: NavLinkProps[] = [
     title: "หน่วยงาน", 
     caption: "Departments", 
     icon: Building2, 
-    link: "/departments" 
+    link: "/sections" 
   },
   { 
     title: "จัดการผู้ใช้งาน", 

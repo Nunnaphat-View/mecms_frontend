@@ -12,6 +12,7 @@ import UsersPage from "@/pages/UsersPage"
 import ExternalInspectionPage from "@/pages/ExternalInspectionPage"
 import PmChecklistPage from "@/pages/PmChecklistPage"
 import HospitalsPage from "@/pages/HospitalsPage"
+import SectionsPage from "@/pages/SectionsPage"
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
       { path: "history", element: <HistoryPage /> },
       { path: "users", element: <UsersPage /> },
       { path: "hospitals", element: <HospitalsPage /> },
+      { path: "sections", element: <SectionsPage /> },
     ],
   },
   {
