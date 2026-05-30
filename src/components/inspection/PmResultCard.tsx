@@ -9,7 +9,7 @@ interface Props {
 export default function PmResultCard({ result, pmBy, position }: Props) {
   const badgeClass = {
     ผ่าน: "bg-emerald-400 text-black",
-    ไม่ผ่าน: "bg-red-500 text-black",
+    ไม่ผ่าน: "bg-red-400 text-black",
     "N/A": "bg-slate-300 text-black",
   }[result]
 

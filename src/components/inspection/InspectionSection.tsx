@@ -12,7 +12,7 @@ export default function InspectionSection({ title, items, remarks, onUpdate, onU
   return (
     <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
       {/* Section Header */}
-      <div className="bg-amber-500 px-4 py-2.5">
+      <div className="bg-primary px-4 py-2.5">
         <span className="font-bold text-base text-white">{title}</span>
       </div>
 
@@ -77,7 +77,7 @@ function InspBtn({ label, active, variant, onClick }: InspBtnProps) {
 
   const activeClass = {
     pass: "bg-emerald-400 border-emerald-400 text-black",
-    fail: "bg-red-500 border-red-500 text-black",
+    fail: "bg-red-400 border-red-400 text-black",
     na: "bg-slate-400 border-slate-400 text-black",
   }[variant]
 

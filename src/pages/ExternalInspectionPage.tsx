@@ -184,8 +184,10 @@ export default function ExternalInspectionPage() {
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     กำลังบันทึก...
                   </span>
+                ) : pmResult === "ผ่าน" ? (
+                  "ส่งสอบเทียบ"
                 ) : (
-                  "ส่งสอบเทียบ/ส่งซ่อม"
+                  "ส่งซ่อม"
                 )}
               </button>
             </div>
