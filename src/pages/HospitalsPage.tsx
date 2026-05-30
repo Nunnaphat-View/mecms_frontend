@@ -412,7 +412,7 @@ export default function HospitalsPage() {
         isOpen={isFormOpen}
         hospital={selectedForEdit}
         loading={isSaving}
-        onSave={(data, logoFile) => void handleSave(data, logoFile)}
+        onSave={(data, logoFile) => handleSave(data, logoFile)}
         onClose={() => {
           setIsFormOpen(false);
           setSelectedForEdit(null);
