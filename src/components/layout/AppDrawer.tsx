@@ -2,16 +2,18 @@ import React, { useState, useEffect, useMemo } from "react"
 import { ALL_NAV_LINKS } from "@/constants/navLinks"
 import { EssentialLink } from "./EssentialLink"
 import { useAuthStore } from "@/stores/authStore"
-
 interface AppDrawerProps {
   isOpen: boolean
+  isPinned: boolean
   onClose: () => void
 }
 
-export const AppDrawer: React.FC<AppDrawerProps> = ({ isOpen, onClose }) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+export const AppDrawer: React.FC<AppDrawerProps> = ({ isOpen, isPinned, onClose }) => {
+  const [isHovered, setIsHovered] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { permissions } = useAuthStore()
+
+  const isExpanded = isPinned || isHovered
 
   useEffect(() => {
     const handleResize = () => {
@@ -79,27 +81,37 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ isOpen, onClose }) => {
     )
   }
 
-  // Desktop hover-expandable sidebar
+  // Desktop hover-expandable/pinnable sidebar with overlay positioning
   return (
-    <aside
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
-      className={`sticky top-[50px] h-[calc(100vh-50px)] shrink-0 bg-gradient-to-b from-[#f5f7fb] via-[#ffffff] to-[#f5f7fb] border-r border-slate-200/50 flex flex-col pt-3 pb-2 transition-all duration-300 cubic-bezier(0.25, 0.8, 0.25, 1) z-[990] select-none ${desktopWidthClass} ${
-        isExpanded ? "overflow-y-auto overflow-x-hidden" : "overflow-visible"
-      }`}
-    >
-      <nav className={`flex-1 pr-0.5 custom-scrollbar flex flex-col gap-0.5 ${
-        isExpanded ? "overflow-y-auto overflow-x-hidden" : "overflow-visible"
-      }`}>
-        {linksList.map((link) => (
-          <EssentialLink
-            key={link.title}
-            {...link}
-            compact={!isExpanded}
-          />
-        ))}
-      </nav>
-    </aside>
+    <div className="sticky top-[50px] h-[calc(100vh-50px)] w-14 shrink-0 z-[990]">
+      <aside
+        onMouseEnter={() => {
+          if (window.innerWidth >= 1280) {
+            setIsHovered(true)
+          }
+        }}
+        onMouseLeave={() => {
+          if (window.innerWidth >= 1280) {
+            setIsHovered(false)
+          }
+        }}
+        className={`absolute top-0 left-0 bottom-0 bg-gradient-to-b from-[#f5f7fb] via-[#ffffff] to-[#f5f7fb] border-r border-slate-200/50 flex flex-col pt-3 pb-2 transition-all duration-300 cubic-bezier(0.25, 0.8, 0.25, 1) select-none ${desktopWidthClass} ${
+          isExpanded ? "overflow-y-auto overflow-x-hidden shadow-xl" : "overflow-visible"
+        }`}
+      >
+        <nav className={`flex-1 pr-0.5 custom-scrollbar flex flex-col gap-0.5 ${
+          isExpanded ? "overflow-y-auto overflow-x-hidden" : "overflow-visible"
+        }`}>
+          {linksList.map((link) => (
+            <EssentialLink
+              key={link.title}
+              {...link}
+              compact={!isExpanded}
+            />
+          ))}
+        </nav>
+      </aside>
+    </div>
   )
 }
 

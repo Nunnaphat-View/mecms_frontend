@@ -51,7 +51,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onToggleDrawer }) => {
         <div className="flex items-center">
           <button
             onClick={onToggleDrawer}
-            className="p-1.5 rounded-lg text-white hover:bg-white/10 md:hidden mr-2 cursor-pointer shrink-0 transition-colors"
+            className="p-1.5 rounded-lg text-white hover:bg-white/10 xl:hidden mr-2 cursor-pointer shrink-0 transition-colors"
             aria-label="Toggle Navigation Menu"
           >
             <Menu className="size-6" />
