@@ -14,6 +14,7 @@ export interface User {
   lineUserId: string | null;
   roleId: number;
   role: Role;
+  hospitalId?: number | null;
 }
 
 export interface LoginResponse {
