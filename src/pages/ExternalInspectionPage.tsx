@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Sparkles } from "lucide-react"
+import { Sparkles, CheckCircle2, AlertTriangle, AlertCircle } from "lucide-react"
 import { useInspectionStore } from "../stores/inspectionStore"
 import type { InspectionValue } from "../stores/inspectionStore"
 import EquipmentDetailsCard from "../components/inspection/EquipmentDetailsCard"
@@ -44,7 +44,6 @@ export default function ExternalInspectionPage() {
         type: result === "ไม่ผ่าน" ? "warning" : "success",
         message: `บันทึกผล PM สำเร็จ — ผลลัพธ์: ${result}`,
       })
-      store.resetAll()
       setTimeout(() => {
         if (result === "ไม่ผ่าน") {
           void navigate("/calibration")
@@ -75,15 +74,31 @@ export default function ExternalInspectionPage() {
       {/* Notification Toast */}
       {notify && (
         <div
-          className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-sm font-semibold transition-all ${
+          className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl border bg-white/95 backdrop-blur-md shadow-lg min-w-[320px] max-w-md animate-in fade-in slide-in-from-bottom-5 duration-300 ${
             notify.type === "success"
-              ? "bg-emerald-500 text-white"
+              ? "border-emerald-100 border-l-4 border-l-emerald-500"
               : notify.type === "warning"
-              ? "bg-amber-500 text-white"
-              : "bg-red-500 text-white"
+              ? "border-amber-100 border-l-4 border-l-amber-500"
+              : "border-rose-100 border-l-4 border-l-rose-500"
           }`}
         >
-          {notify.message}
+          {notify.type === "success" && (
+            <CheckCircle2 className="size-5 text-emerald-600 shrink-0" />
+          )}
+          {notify.type === "warning" && (
+            <AlertTriangle className="size-5 text-amber-500 shrink-0" />
+          )}
+          {notify.type === "error" && (
+            <AlertCircle className="size-5 text-rose-500 shrink-0" />
+          )}
+          <div className="flex flex-col gap-1">
+            <span className="text-[13px] font-bold text-slate-800 leading-none">
+              {notify.type === "success" ? "บันทึกผลการตรวจสอบสำเร็จ" : notify.type === "warning" ? "คำเตือน" : "พบข้อผิดพลาด"}
+            </span>
+            <span className="text-xs text-slate-500 font-medium leading-normal">
+              {notify.message}
+            </span>
+          </div>
         </div>
       )}
 

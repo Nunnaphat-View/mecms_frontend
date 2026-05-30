@@ -446,10 +446,10 @@ export default function ToolsManagePage() {
                 <table className="w-full text-sm text-left border-collapse">
                   <thead>
                     <tr className="bg-primary text-white text-xs font-semibold uppercase">
-                      <th className="px-5 py-3.5 w-[50%]">ชื่อเครื่องมือ</th>
-                      <th className="px-5 py-3.5 text-center w-[25%]">ประเภท</th>
-                      <th className="px-5 py-3.5">แผนก/หน่วยงาน</th>
-                      <th className="px-5 py-3.5 text-center w-[150px]"></th>
+                      <th className="px-5 py-3.5 w-[35%]">ชื่อเครื่องมือ</th>
+                      <th className="px-5 py-3.5 text-center w-[20%]">ประเภท</th>
+                      <th className="px-5 py-3.5 w-[30%]">แผนก/หน่วยงาน</th>
+                      <th className="px-5 py-3.5 text-center w-[15%]"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -469,10 +469,10 @@ export default function ToolsManagePage() {
                     ) : (
                       paginatedUniqueTools.map((row) => (
                         <tr key={row.name} className="hover:bg-slate-50/70 transition-colors">
-                          <td className="px-5 py-3.5 font-semibold text-slate-800 w-[50%]">{row.name}</td>
-                          <td className="px-5 py-3.5 text-center w-[25%]">{row.type}</td>
-                          <td className="px-5 py-3.5 text-slate-600">{row.department}</td>
-                          <td className="px-5 py-3.5 text-center w-[150px]">
+                          <td className="px-5 py-3.5 font-semibold text-slate-800 w-[35%]">{row.name}</td>
+                          <td className="px-5 py-3.5 text-center w-[20%]">{row.type}</td>
+                          <td className="px-5 py-3.5 text-slate-600 w-[30%]">{row.department}</td>
+                          <td className="px-5 py-3.5 text-center w-[15%]">
                             <button
                               onClick={() => navigate(`/tools/config/${encodeURIComponent(row.name)}`)}
                               className="px-5 py-1.5 bg-primary hover:bg-primary/95 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer w-24 text-center"

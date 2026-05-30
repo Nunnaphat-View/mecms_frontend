@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { X, Edit, Upload, RefreshCw, Eye, EyeOff, Save, Key, User as UserIcon, Mail, Phone, Shield, MessageCircle } from "lucide-react"
 import type { User } from "../../types/auth"
 import { useUserStore } from "../../stores/userStore"
+import { userService } from "../../services/userService"
 
 interface UserFormDialogProps {
   isOpen: boolean
@@ -17,7 +18,6 @@ const ROLE_OPTIONS = [
   { label: "ผู้อำนวยการ", value: 4 },
 ]
 
-const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
 
 export default function UserFormDialog({ isOpen, user, onClose, onSaved }: UserFormDialogProps) {
   const isEditing = !!user
@@ -63,11 +63,6 @@ export default function UserFormDialog({ isOpen, user, onClose, onSaved }: UserF
 
   if (!isOpen) return null
 
-  const getImageUrl = (path: string | null | undefined) => {
-    if (!path) return ""
-    if (path.startsWith("http")) return path
-    return `${apiBase}${path}`
-  }
 
   // Draw handlers
   const getPos = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
@@ -393,7 +388,7 @@ export default function UserFormDialog({ isOpen, user, onClose, onSaved }: UserF
               {hasExistingSignature && !isResettingSignature ? (
                 <div className="w-full h-full bg-white flex items-center justify-center relative p-4">
                   <img
-                    src={getImageUrl(user?.signatureUrl)}
+                    src={userService.getFileUrl(user?.signatureUrl)}
                     alt="Signature"
                     className="max-w-full max-h-full object-contain"
                   />

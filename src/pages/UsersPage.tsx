@@ -3,6 +3,7 @@ import { Plus, Users as UsersIcon, Edit, Trash2 } from "lucide-react"
 import TablePagination from "../components/common/TablePagination"
 import { useUserStore } from "../stores/userStore"
 import type { User } from "../types/auth"
+import { userService } from "../services/userService"
 import UserFormDialog from "../components/users/UserFormDialog"
 import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
 import SearchBar from "../components/SearchBar"
@@ -14,7 +15,6 @@ interface Toast {
   message: string
 }
 
-const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
 
 export default function UsersPage() {
   const {
@@ -53,12 +53,6 @@ export default function UsersPage() {
     setTimeout(() => setToast(null), 3000)
   }
 
-  // Resolve Image URL
-  const getImageUrl = (path: string | null | undefined) => {
-    if (!path) return "/image/profile.png"
-    if (path.startsWith("http")) return path
-    return `${apiBase}${path}`
-  }
 
   // Available unique roles for selection filter
   const availableRoles = useMemo(() => {
@@ -271,7 +265,7 @@ export default function UsersPage() {
                     <td className="px-5 py-3.5 text-center">
                       <div className="size-[38px] rounded-full overflow-hidden border-2 border-primary/20 mx-auto bg-slate-100 flex items-center justify-center shrink-0">
                         <img
-                          src={getImageUrl(u.imageUrl)}
+                          src={userService.getFileUrl(u.imageUrl) || "/image/profile.png"}
                           alt={u.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
