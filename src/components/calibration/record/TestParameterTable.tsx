@@ -350,7 +350,7 @@ export default function TestParameterTable({
           <button
             type="button"
             onClick={handleAddRow}
-            className="flex items-center gap-1 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-1 px-3 py-2 bg-secondary hover:bg-slate-200 text-white rounded-lg font-bold transition-colors cursor-pointer"
           >
             <Plus className="size-3.5" />
             เพิ่มพารามิเตอร์
