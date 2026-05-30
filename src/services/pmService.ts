@@ -141,6 +141,17 @@ export interface SavePmPayload {
   remarks: { category_id: number; text?: string }[]
 }
 
+export interface SubmitTaskPayload {
+  ambient_temp?: number
+  ambient_humidity?: number
+  standard_tool_ids?: number[]
+  measurements?: unknown[]
+  qualitatives?: unknown[]
+  specific_parameters?: unknown[]
+  overall_result: "Pass" | "Fail" | "NA"
+  status?: "InProgress" | "PendingApproval"
+}
+
 // ── API calls ─────────────────────────────────────────────────────────────────
 
 export const pmService = {
@@ -159,6 +170,12 @@ export const pmService = {
   savePmForm: (payload: SavePmPayload) =>
     apiFetch<{ success: boolean; task_id: number }>("/pm-save", {
       method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  submitCalibrationTask: (taskId: number, payload: SubmitTaskPayload) =>
+    apiFetch<TaskApi>(`/pm-task/${taskId}/submit`, {
+      method: "PATCH",
       body: JSON.stringify(payload),
     }),
 }

@@ -1,15 +1,19 @@
+import { forwardRef } from "react"
 import { useCalibrationRecordStore } from "@/stores/calibrationRecordStore"
 import { useCalibrationSettingStore } from "@/stores/calibrationSettingStore"
 import EnvironmentCard from "./EnvironmentCard"
 import StandardEquipmentSelector from "./StandardEquipmentSelector"
 import TestUnknown from "./TestUnknown"
-import TestDynamic from "./TestDynamic"
+import TestDynamic, { type TestDynamicHandle } from "./TestDynamic"
 
 interface Props {
   onSave: () => void
 }
 
-export default function TabTestResults({ onSave }: Props) {
+// Re-export the handle type so CalibrationRecordPage can use it
+export type { TestDynamicHandle as TabTestResultsHandle }
+
+const TabTestResults = forwardRef<TestDynamicHandle, Props>(function TabTestResults({ onSave }, ref) {
   const store = useCalibrationRecordStore()
   const settingStore = useCalibrationSettingStore()
 
@@ -28,10 +32,12 @@ export default function TabTestResults({ onSave }: Props) {
       </div>
 
       {hasSettings ? (
-        <TestDynamic onSave={onSave} />
+        <TestDynamic ref={ref} onSave={onSave} />
       ) : (
         <TestUnknown equipmentType={store.equipmentDetails.name} />
       )}
     </div>
   )
-}
+})
+
+export default TabTestResults

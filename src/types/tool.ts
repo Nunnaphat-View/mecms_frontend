@@ -139,4 +139,5 @@ export interface CalibrationSetting {
   test_values?: ICalibrationTestValue[];
   standard_tool_id?: number | null;
   standardTool?: BackendStandardTool;
+  categories?: StandardToolCategory[];
 }

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useParams, useNavigate, useSearchParams } from "react-router-dom"
 import { Sparkles, ArrowLeft, CheckCircle2, ChevronRight, Save } from "lucide-react"
 import { useCalibrationRecordStore } from "@/stores/calibrationRecordStore"
 import TabGeneralInfo from "@/components/calibration/record/TabGeneralInfo"
-import TabTestResults from "@/components/calibration/record/TabTestResults"
+import TabTestResults, { type TabTestResultsHandle } from "@/components/calibration/record/TabTestResults"
 import SaveConfirmDialog from "@/components/calibration/record/SaveConfirmDialog"
 
 export default function CalibrationRecordPage() {
@@ -14,6 +14,7 @@ export default function CalibrationRecordPage() {
 
   const [showSaveDialog, setShowSaveDialog] = useState(false)
   const [notify, setNotify] = useState<{ type: "success" | "error" | "warning"; message: string } | null>(null)
+  const testResultsRef = useRef<TabTestResultsHandle>(null)
 
   // Auto-dismiss notification
   useEffect(() => {
@@ -180,7 +181,7 @@ export default function CalibrationRecordPage() {
           ) : (
             <>
               {activeTab === "general" && <TabGeneralInfo />}
-              {activeTab === "test_results" && <TabTestResults onSave={() => setShowSaveDialog(true)} />}
+              {activeTab === "test_results" && <TabTestResults ref={testResultsRef} onSave={() => setShowSaveDialog(true)} />}
             </>
           )}
         </div>
@@ -192,7 +193,7 @@ export default function CalibrationRecordPage() {
         <div className="flex gap-3 w-full sm:w-auto">
           <button
             type="button"
-            onClick={() => store.fillMockData()}
+            onClick={() => testResultsRef.current?.fillMockData()}
             className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-5 py-2.5 bg-white border border-amber-300 text-amber-700 hover:bg-amber-50 rounded-xl text-xs font-bold transition-colors cursor-pointer"
           >
             <Sparkles className="size-3.5" />
