@@ -1,6 +1,5 @@
 import {
   Home,
-  LayoutDashboard,
   Calendar,
   MapPin,
   FileText,
@@ -33,12 +32,6 @@ export const ALL_NAV_LINKS: NavLinkProps[] = [
     caption: "Home Page", 
     icon: Home, 
     link: "/dashboard" 
-  },
-  {
-    title: "แดชบอร์ดผู้บริหาร",
-    caption: "Executive Dashboard",
-    icon: LayoutDashboard,
-    link: "/director-dashboard",
   },
   {
     title: "แผนการสอบเทียบ",
