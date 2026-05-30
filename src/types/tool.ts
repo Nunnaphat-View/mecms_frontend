@@ -103,3 +103,40 @@ export interface BackendEquipment {
     hospital: Hospital;
   } | null;
 }
+
+export interface CalibrationProcess {
+  id: number;
+  parameter_name: string;
+  procedure: string;
+  unit: string;
+  standard_tool_id?: number | null;
+  standardTool?: { name: string; manufacturer?: string; asset_code?: string };
+}
+
+export interface CalibrationCost {
+  id: number;
+  tool_name: string;
+  description: string;
+  price: number;
+}
+
+export interface ICalibrationTestValue {
+  label: string;
+  value: number;
+}
+
+export interface CalibrationSetting {
+  id?: number;
+  equipment_name: string;
+  type: "quantitative" | "qualitative";
+  parameter_name: string;
+  unit?: string;
+  tolerance?: string;
+  std_type?: string;
+  display_type?: string;
+  resolution?: string;
+  uncertainty?: string;
+  test_values?: ICalibrationTestValue[];
+  standard_tool_id?: number | null;
+  standardTool?: BackendStandardTool;
+}

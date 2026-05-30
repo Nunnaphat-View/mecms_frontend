@@ -333,12 +333,12 @@ export default function ToolsManagePage() {
                 <table className="w-full text-sm text-left border-collapse">
                   <thead>
                     <tr className="bg-primary text-white text-xs font-semibold uppercase">
-                      <th className="px-5 py-3.5 text-center w-16">ลำดับ</th>
-                      <th className="px-5 py-3.5">รายการ</th>
+                      <th className="px-5 py-3.5 text-center w-[70px]">ลำดับ</th>
+                      <th className="px-5 py-3.5 w-[20%]">รายการ</th>
                       <th className="px-5 py-3.5">กระบวนการสอบเทียบ</th>
-                      <th className="px-5 py-3.5 text-center w-24">หน่วยวัด</th>
-                      <th className="px-5 py-3.5">เครื่องมือมาตรฐาน</th>
-                      {isAdmin && <th className="px-5 py-3.5 text-center w-24"></th>}
+                      <th className="px-5 py-3.5 text-center w-[100px]">หน่วยวัด</th>
+                      <th className="px-5 py-3.5 w-[25%]">เครื่องมือมาตรฐาน</th>
+                      {isAdmin && <th className="px-5 py-3.5 text-center w-[90px]"></th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -358,21 +358,21 @@ export default function ToolsManagePage() {
                     ) : (
                       paginatedProcesses.map((row, idx) => (
                         <tr key={row.id} className="hover:bg-slate-50/70 transition-colors">
-                          <td className="px-5 py-3.5 text-center font-medium">
+                          <td className="px-5 py-3.5 text-center font-medium w-[70px]">
                             {(processPage - 1) * processPageSize + idx + 1}
                           </td>
-                          <td className="px-5 py-3.5 font-medium">{row.parameter_name}</td>
+                          <td className="px-5 py-3.5 font-medium w-[20%]">{row.parameter_name}</td>
                           <td className="px-5 py-3.5 max-w-[300px] truncate" title={row.procedure}>
                             {row.procedure}
                           </td>
-                          <td className="px-5 py-3.5 text-center font-semibold text-primary">{row.unit}</td>
-                          <td className="px-5 py-3.5">
+                          <td className="px-5 py-3.5 text-center font-semibold text-primary w-[100px]">{row.unit}</td>
+                          <td className="px-5 py-3.5 w-[25%]">
                             {row.standardTool
                               ? `${row.standardTool.name}-${row.standardTool.manufacturer || ""}`
                               : ""}
                           </td>
                           {isAdmin && (
-                            <td className="px-5 py-3.5 text-center whitespace-nowrap">
+                            <td className="px-5 py-3.5 text-center whitespace-nowrap w-[90px]">
                               <div className="flex justify-center gap-1.5">
                                 <button
                                   onClick={() => openEditProcess(row)}
@@ -446,10 +446,10 @@ export default function ToolsManagePage() {
                 <table className="w-full text-sm text-left border-collapse">
                   <thead>
                     <tr className="bg-primary text-white text-xs font-semibold uppercase">
-                      <th className="px-5 py-3.5">ชื่อเครื่องมือ</th>
-                      <th className="px-5 py-3.5 text-center w-64">ประเภท</th>
+                      <th className="px-5 py-3.5 w-[50%]">ชื่อเครื่องมือ</th>
+                      <th className="px-5 py-3.5 text-center w-[25%]">ประเภท</th>
                       <th className="px-5 py-3.5">แผนก/หน่วยงาน</th>
-                      <th className="px-5 py-3.5 text-center w-36"></th>
+                      <th className="px-5 py-3.5 text-center w-[150px]"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -469,10 +469,10 @@ export default function ToolsManagePage() {
                     ) : (
                       paginatedUniqueTools.map((row) => (
                         <tr key={row.name} className="hover:bg-slate-50/70 transition-colors">
-                          <td className="px-5 py-3.5 font-semibold text-slate-800">{row.name}</td>
-                          <td className="px-5 py-3.5 text-center">{row.type}</td>
+                          <td className="px-5 py-3.5 font-semibold text-slate-800 w-[50%]">{row.name}</td>
+                          <td className="px-5 py-3.5 text-center w-[25%]">{row.type}</td>
                           <td className="px-5 py-3.5 text-slate-600">{row.department}</td>
-                          <td className="px-5 py-3.5 text-center">
+                          <td className="px-5 py-3.5 text-center w-[150px]">
                             <button
                               onClick={() => navigate(`/tools/config/${encodeURIComponent(row.name)}`)}
                               className="px-5 py-1.5 bg-primary hover:bg-primary/95 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer w-24 text-center"
@@ -531,11 +531,11 @@ export default function ToolsManagePage() {
                 <table className="w-full text-sm text-left border-collapse">
                   <thead>
                     <tr className="bg-primary text-white text-xs font-semibold uppercase">
-                      <th className="px-5 py-3.5 text-center w-16">ลำดับ</th>
-                      <th className="px-5 py-3.5">ชื่อเครื่องมือ</th>
+                      <th className="px-5 py-3.5 text-center w-[70px]">ลำดับ</th>
+                      <th className="px-5 py-3.5 w-[35%]">ชื่อเครื่องมือ</th>
                       <th className="px-5 py-3.5">รายการ</th>
-                      <th className="px-5 py-3.5 text-center w-40">ราคา</th>
-                      {isAdmin && <th className="px-5 py-3.5 text-center w-24"></th>}
+                      <th className="px-5 py-3.5 text-center w-[150px]">ราคา</th>
+                      {isAdmin && <th className="px-5 py-3.5 text-center w-[90px]"></th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -555,16 +555,16 @@ export default function ToolsManagePage() {
                     ) : (
                       paginatedCosts.map((row, idx) => (
                         <tr key={row.id} className="hover:bg-slate-50/70 transition-colors">
-                          <td className="px-5 py-3.5 text-center font-medium">
+                          <td className="px-5 py-3.5 text-center font-medium w-[70px]">
                             {(costPage - 1) * costPageSize + idx + 1}
                           </td>
-                          <td className="px-5 py-3.5 font-medium">{row.tool_name}</td>
+                          <td className="px-5 py-3.5 font-medium w-[35%]">{row.tool_name}</td>
                           <td className="px-5 py-3.5 text-slate-600">{row.description}</td>
-                          <td className="px-5 py-3.5 text-center font-semibold text-emerald-600">
+                          <td className="px-5 py-3.5 text-center font-semibold text-emerald-600 w-[150px]">
                             {row.price.toLocaleString()} บาท
                           </td>
                           {isAdmin && (
-                            <td className="px-5 py-3.5 text-center whitespace-nowrap">
+                            <td className="px-5 py-3.5 text-center whitespace-nowrap w-[90px]">
                               <div className="flex justify-center gap-1.5">
                                 <button
                                   onClick={() => openEditCost(row)}
