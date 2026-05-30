@@ -117,14 +117,14 @@ export default function HospitalsPage() {
   }
 
   // Save (add or edit)
-  async function handleSave(data: Omit<HospitalType, "id">) {
+  async function handleSave(data: Omit<HospitalType, "id">, logoFile?: File | null) {
     setIsSaving(true);
     try {
       if (selectedForEdit) {
-        await updateHospital(selectedForEdit.id, data);
+        await updateHospital(selectedForEdit.id, data, logoFile);
         showToast("success", "แก้ไขข้อมูลโรงพยาบาลสำเร็จ");
       } else {
-        await addHospital(data);
+        await addHospital(data, logoFile);
         showToast("success", "เพิ่มโรงพยาบาลสำเร็จ");
       }
       setIsFormOpen(false);
@@ -322,19 +322,19 @@ export default function HospitalsPage() {
                     </td>
                     {/* ตรา */}
                     <td className="px-5 py-3.5 text-center">
-                      {hospital.logoUrl ? (
-                        <img
-                          src={hospital.logoUrl}
-                          alt={`โลโก้ ${hospital.name}`}
-                          className="w-14 h-14 rounded-full object-contain mx-auto border border-slate-100 bg-white p-0.5"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none"
-                            e.currentTarget.nextElementSibling?.classList.remove("hidden")
-                          }}
-                        />
-                      ) : null}
-                      <div className={`w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto ${hospital.logoUrl ? "hidden" : ""}`}>
-                        <ImageOff className="size-4 text-slate-400" />
+                      <div className="w-14 h-14 rounded-full overflow-hidden bg-slate-100 mx-auto border border-slate-200 flex items-center justify-center">
+                        {hospital.logoUrl ? (
+                          <img
+                            src={hospital.logoUrl}
+                            alt={`โลโก้ ${hospital.name}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none"
+                              e.currentTarget.nextElementSibling?.classList.remove("hidden")
+                            }}
+                          />
+                        ) : null}
+                        <ImageOff className={`size-5 text-slate-400 ${hospital.logoUrl ? "hidden" : ""}`} />
                       </div>
                     </td>
                     {/* ชื่อโรงพยาบาล */}
@@ -412,7 +412,7 @@ export default function HospitalsPage() {
         isOpen={isFormOpen}
         hospital={selectedForEdit}
         loading={isSaving}
-        onSave={(data) => void handleSave(data)}
+        onSave={(data, logoFile) => void handleSave(data, logoFile)}
         onClose={() => {
           setIsFormOpen(false);
           setSelectedForEdit(null);

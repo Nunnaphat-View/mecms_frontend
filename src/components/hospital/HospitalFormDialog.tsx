@@ -1,12 +1,12 @@
-import { useState } from "react"
-import { X, Hospital, Save } from "lucide-react"
+import { useState, useRef } from "react"
+import { X, Hospital, Save, ImagePlus, Trash2 } from "lucide-react"
 import type { Hospital as HospitalType } from "../../types/tool"
 
 interface HospitalFormDialogProps {
   isOpen: boolean
   hospital: HospitalType | null
   loading?: boolean
-  onSave: (data: Omit<HospitalType, "id">) => Promise<void>
+  onSave: (data: Omit<HospitalType, "id">, logoFile?: File | null) => Promise<void>
   onClose: () => void
 }
 
@@ -18,7 +18,6 @@ const EMPTY_FORM = {
   province: "",
   zipCode: "",
   description: "",
-  logoUrl: "",
 }
 
 function buildInitialForm(hospital: HospitalType | null) {
@@ -31,11 +30,10 @@ function buildInitialForm(hospital: HospitalType | null) {
     province: hospital.province ?? "",
     zipCode: hospital.zipCode ?? "",
     description: hospital.description ?? "",
-    logoUrl: hospital.logoUrl ?? "",
   }
 }
 
-// Inner form component — remounted via `key` so state always resets cleanly
+// Inner form — remounted via `key` so state resets cleanly on each open
 function HospitalForm({
   hospital,
   loading,
@@ -45,6 +43,29 @@ function HospitalForm({
   const isEdit = hospital !== null
   const [form, setForm] = useState(() => buildInitialForm(hospital))
   const [errors, setErrors] = useState<Partial<typeof EMPTY_FORM>>({})
+
+  // Logo state
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [logoPreview, setLogoPreview] = useState<string | null>(hospital?.logoUrl ?? null)
+  const [removeLogo, setRemoveLogo] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLogoFile(file)
+    setRemoveLogo(false)
+    const reader = new FileReader()
+    reader.onload = (ev) => setLogoPreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
+  }
+
+  function handleRemoveLogo() {
+    setLogoFile(null)
+    setLogoPreview(null)
+    setRemoveLogo(true)
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
 
   function validate(): boolean {
     const newErrors: Partial<typeof EMPTY_FORM> = {}
@@ -56,16 +77,19 @@ function HospitalForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!validate()) return
-    await onSave({
-      name: form.name.trim(),
-      code: form.code.trim() || undefined,
-      address: form.address.trim() || undefined,
-      district: form.district.trim() || undefined,
-      province: form.province.trim() || undefined,
-      zipCode: form.zipCode.trim() || undefined,
-      description: form.description.trim() || undefined,
-      logoUrl: form.logoUrl.trim() || undefined,
-    })
+    await onSave(
+      {
+        name: form.name.trim(),
+        code: form.code.trim() || undefined,
+        address: form.address.trim() || undefined,
+        district: form.district.trim() || undefined,
+        province: form.province.trim() || undefined,
+        zipCode: form.zipCode.trim() || undefined,
+        description: form.description.trim() || undefined,
+        logoUrl: removeLogo ? "" : undefined,
+      },
+      logoFile,
+    )
   }
 
   function handleChange(field: keyof typeof EMPTY_FORM, value: string) {
@@ -102,6 +126,58 @@ function HospitalForm({
       {/* Form */}
       <form onSubmit={(e) => void handleSubmit(e)}>
         <div className="p-5 flex flex-col gap-4 max-h-[65vh] overflow-y-auto">
+
+          {/* Logo Upload */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-700">ตราโรงพยาบาล</label>
+            <div className="flex items-center gap-4">
+              {/* Preview */}
+              <div className="w-20 h-20 rounded-full border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                {logoPreview ? (
+                  <img
+                    src={logoPreview}
+                    alt="ตัวอย่างตรา"
+                    className="w-full h-full object-contain rounded-full"
+                  />
+                ) : (
+                  <Hospital className="size-8 text-slate-300" />
+                )}
+              </div>
+
+              {/* Buttons */}
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 hover:border-primary/40 transition-all cursor-pointer"
+                >
+                  <ImagePlus className="size-3.5 text-primary" />
+                  {logoPreview ? "เปลี่ยนรูป" : "เลือกรูป"}
+                </button>
+                {logoPreview && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveLogo}
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-rose-100 rounded-lg text-xs font-medium text-rose-500 hover:bg-rose-50 transition-all cursor-pointer"
+                  >
+                    <Trash2 className="size-3.5" />
+                    ลบรูป
+                  </button>
+                )}
+                <p className="text-[11px] text-slate-400">PNG, JPG ขนาดไม่เกิน 2MB</p>
+              </div>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={handleLogoChange}
+              className="hidden"
+            />
+          </div>
+
+          <hr className="border-slate-100" />
+
           {/* Name */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-slate-700">
@@ -228,7 +304,7 @@ export default function HospitalFormDialog(props: HospitalFormDialogProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-sans">
       <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
-        {/* key forces full remount on each open → state resets cleanly, no useEffect needed */}
+        {/* key forces full remount on each open → state resets cleanly */}
         <HospitalForm
           key={props.hospital?.id ?? "new"}
           hospital={props.hospital}

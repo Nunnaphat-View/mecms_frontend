@@ -9,6 +9,7 @@ async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
   if (token) {
     headers.set("Authorization", `Bearer ${token}`)
   }
+  // Don't set Content-Type for FormData — browser sets it with boundary automatically
   if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json")
   }
@@ -30,6 +31,19 @@ async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
   return response.json() as Promise<T>
 }
 
+function buildFormData(data: Partial<Omit<Hospital, "id">>, logoFile?: File | null): FormData {
+  const fd = new FormData()
+  if (data.name !== undefined) fd.append("name", data.name)
+  if (data.code !== undefined) fd.append("code", data.code)
+  if (data.address !== undefined) fd.append("address", data.address)
+  if (data.district !== undefined) fd.append("district", data.district)
+  if (data.province !== undefined) fd.append("province", data.province)
+  if (data.zipCode !== undefined) fd.append("zipCode", data.zipCode)
+  if (data.description !== undefined) fd.append("description", data.description)
+  if (logoFile) fd.append("logo", logoFile)
+  return fd
+}
+
 export const hospitalService = {
   async getAll(): Promise<Hospital[]> {
     return apiFetch<Hospital[]>("/hospital")
@@ -39,17 +53,19 @@ export const hospitalService = {
     return apiFetch<Hospital>(`/hospital/${id}`)
   },
 
-  async create(data: Omit<Hospital, "id">): Promise<Hospital> {
+  async create(data: Omit<Hospital, "id">, logoFile?: File | null): Promise<Hospital> {
+    const fd = buildFormData(data, logoFile)
     return apiFetch<Hospital>("/hospital", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: fd,
     })
   },
 
-  async update(id: number, data: Partial<Omit<Hospital, "id">>): Promise<Hospital> {
+  async update(id: number, data: Partial<Omit<Hospital, "id">>, logoFile?: File | null): Promise<Hospital> {
+    const fd = buildFormData(data, logoFile)
     return apiFetch<Hospital>(`/hospital/${id}`, {
       method: "PATCH",
-      body: JSON.stringify(data),
+      body: fd,
     })
   },
 

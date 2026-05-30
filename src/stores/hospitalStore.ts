@@ -9,8 +9,8 @@ interface HospitalState {
 
   setSearchQuery: (query: string) => void
   fetchHospitals: () => Promise<void>
-  addHospital: (data: Omit<Hospital, "id">) => Promise<void>
-  updateHospital: (id: number, data: Partial<Omit<Hospital, "id">>) => Promise<void>
+  addHospital: (data: Omit<Hospital, "id">, logoFile?: File | null) => Promise<void>
+  updateHospital: (id: number, data: Partial<Omit<Hospital, "id">>, logoFile?: File | null) => Promise<void>
   deleteHospital: (id: number) => Promise<void>
 }
 
@@ -33,13 +33,13 @@ export const useHospitalStore = create<HospitalState>((set, get) => ({
     }
   },
 
-  addHospital: async (data) => {
-    await hospitalService.create(data)
+  addHospital: async (data, logoFile) => {
+    await hospitalService.create(data, logoFile)
     await get().fetchHospitals()
   },
 
-  updateHospital: async (id, data) => {
-    await hospitalService.update(id, data)
+  updateHospital: async (id, data, logoFile) => {
+    await hospitalService.update(id, data, logoFile)
     await get().fetchHospitals()
   },
 
