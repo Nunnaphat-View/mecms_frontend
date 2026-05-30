@@ -44,6 +44,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     if (currentPath.startsWith("/approval/")) {
       return allowedMenus.includes("/approval")
     }
+    if (currentPath.startsWith("/tools/config/")) {
+      return allowedMenus.includes("/tools/manage") || allowedMenus.includes("/tools")
+    }
 
     return false
   })()

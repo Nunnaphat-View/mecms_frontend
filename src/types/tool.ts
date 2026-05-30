@@ -140,4 +140,5 @@ export interface CalibrationSetting {
   standard_tool_id?: number | null;
   standardTool?: BackendStandardTool;
   categories?: StandardToolCategory[];
+  category_ids?: number[];
 }
