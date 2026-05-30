@@ -116,3 +116,49 @@
     @apply font-sans;
   }
 }
+
+@keyframes float-y-1 {
+  0%, 100% { transform: translateY(0px) rotate(-12deg); }
+  50% { transform: translateY(-12px) rotate(-10deg); }
+}
+
+@keyframes float-y-2 {
+  0%, 100% { transform: translateY(0px) rotate(12deg); }
+  50% { transform: translateY(12px) rotate(14deg); }
+}
+
+@keyframes float-y-3 {
+  0%, 100% { transform: translateY(0px) rotate(6deg); }
+  50% { transform: translateY(-10px) rotate(8deg); }
+}
+
+@keyframes float-y-4 {
+  0%, 100% { transform: translateY(0px) rotate(-12deg); }
+  50% { transform: translateY(12px) rotate(-14deg); }
+}
+
+@keyframes shake-x {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.animate-float-pill {
+  animation: float-y-1 6s ease-in-out infinite;
+}
+
+.animate-float-microscope {
+  animation: float-y-2 7s ease-in-out infinite;
+}
+
+.animate-float-flask {
+  animation: float-y-3 8s ease-in-out infinite;
+}
+
+.animate-float-pulse {
+  animation: float-y-4 9s ease-in-out infinite;
+}
+
+.animate-shake-input {
+  animation: shake-x 0.25s ease-in-out 2;
+}
