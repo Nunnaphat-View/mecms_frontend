@@ -102,7 +102,7 @@ export default function ToolFormDialog({ isOpen, tool, onClose, onSaved }: ToolF
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-sans overflow-y-auto">
-      <div className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-xl border border-slate-200 flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-xl flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
         
         {/* Header */}
         <div className="bg-cyan-900 text-white flex justify-between items-center px-6 py-4 flex-shrink-0">

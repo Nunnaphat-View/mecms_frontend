@@ -303,7 +303,7 @@ export default function HospitalFormDialog(props: HospitalFormDialogProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-sans">
-      <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-150">
         {/* key forces full remount on each open → state resets cleanly */}
         <HospitalForm
           key={props.hospital?.id ?? "new"}

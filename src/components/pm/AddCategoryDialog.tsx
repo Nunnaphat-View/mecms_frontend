@@ -122,7 +122,7 @@ export default function AddCategoryDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-sans">
-      <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-xl border border-slate-200">
+      <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-xl">
         {/* Header */}
         <div className="bg-primary text-white flex justify-between items-center px-5 py-3.5">
           <div className="flex items-center gap-3">

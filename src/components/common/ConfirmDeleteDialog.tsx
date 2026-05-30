@@ -23,7 +23,7 @@ export default function ConfirmDeleteDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-sans">
-      <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="bg-rose-600 text-white flex justify-between items-center px-5 py-3.5">
           <div className="flex items-center gap-3">
