@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Plus, Edit2, Trash2, Check, X, ClipboardList } from "lucide-react"
+import { Plus, Edit2, Trash2, Check, X, ClipboardList, FileText, Settings2 } from "lucide-react"
 import { checklistService } from "../services/checklistService"
 import type { ChecklistCategoryApi, ChecklistItemApi } from "../services/pmService"
 import { useChecklistStore } from "../stores/checklistStore"
@@ -58,10 +58,6 @@ export default function PmChecklistPage() {
     setEditingCategoryId(cat.id)
     setEditCategoryName(cat.name)
     setEditCategoryOrder(cat.display_order)
-  }
-
-  function cancelCategoryEdit() {
-    setEditingCategoryId(null)
   }
 
   async function saveCategoryEdit(id: number) {
@@ -126,10 +122,6 @@ export default function PmChecklistPage() {
     setEditingItemId(item.id)
     setEditItemDescription(item.description)
     setEditItemOrder(item.display_order)
-  }
-
-  function cancelItemEdit() {
-    setEditingItemId(null)
   }
 
   async function saveItemEdit(id: number) {
@@ -235,7 +227,7 @@ export default function PmChecklistPage() {
 
       {/* Loading */}
       {loading && (
-        <div className="flex items-center justify-center py-16 text-slate-500 text-sm gap-3">
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-xs flex items-center justify-center py-20 text-slate-500 text-sm gap-3">
           <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           กำลังโหลดข้อมูล...
         </div>
@@ -243,201 +235,235 @@ export default function PmChecklistPage() {
 
       {/* Empty */}
       {!loading && categories.length === 0 && (
-        <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
-          ไม่มีข้อมูลหมวดหมู่
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-xs flex flex-col items-center justify-center py-20 gap-3">
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
+            <ClipboardList className="size-7 text-slate-400" />
+          </div>
+          <div className="text-slate-500 text-sm font-medium">ยังไม่มีหมวดหมู่รายการตรวจ</div>
+          <button
+            onClick={() => setShowAddDialog(true)}
+            className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold cursor-pointer hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="size-3.5" /> เพิ่มหมวดหมู่แรก
+          </button>
+        </div>
+      )}
+
+      {/* Stats bar */}
+      {!loading && categories.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-6 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Settings2 className="size-4.5 text-primary" />
+            </div>
+            <div>
+              <div className="text-lg font-bold text-slate-800 leading-none">{categories.length}</div>
+              <div className="text-xs text-slate-500 mt-0.5">หมวดหมู่</div>
+            </div>
+          </div>
+          <div className="w-px h-8 bg-slate-200" />
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
+              <FileText className="size-4.5 text-amber-600" />
+            </div>
+            <div>
+              <div className="text-lg font-bold text-slate-800 leading-none">
+                {categories.reduce((sum, c) => sum + c.items.length, 0)}
+              </div>
+              <div className="text-xs text-slate-500 mt-0.5">รายการตรวจทั้งหมด</div>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Category Cards */}
       {!loading && categories.length > 0 && (
-        <div className="flex flex-col gap-4">
-          {categories.map((cat) => (
-            <div
-              key={cat.id}
-              className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden"
-            >
-              {/* Category Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50">
-                <div className="flex items-center gap-2 flex-1 min-w-0">
+        <div className="flex flex-col gap-5">
+          {categories.map((cat, catIdx) => (
+            <div key={cat.id} className="flex flex-col gap-3">
+
+              {/* Category title row — outside the table card */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                  {/* Index badge */}
+                  <span className="w-6 h-6 rounded-md bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                    {catIdx + 1}
+                  </span>
+
                   {editingCategoryId === cat.id ? (
-                    <>
+                    <div className="flex items-center gap-2 flex-wrap">
                       <input
                         type="text"
                         value={editCategoryName}
                         onChange={(e) => setEditCategoryName(e.target.value)}
-                        className="h-9 px-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary min-w-[220px]"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") void saveCategoryEdit(cat.id)
+                          if (e.key === "Escape") setEditingCategoryId(null)
+                        }}
+                        autoFocus
+                        className="h-8 px-3 border border-primary/50 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 min-w-[200px] bg-white"
                         placeholder="ชื่อหมวดหมู่"
                       />
                       <input
                         type="number"
                         value={editCategoryOrder}
                         onChange={(e) => setEditCategoryOrder(Number(e.target.value))}
-                        className="h-9 w-20 px-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                        placeholder="ลำดับ"
+                        className="h-8 w-16 px-2 border border-slate-300 rounded-lg text-sm text-center focus:outline-none focus:border-primary bg-white"
                       />
-                      <button
-                        onClick={() => void saveCategoryEdit(cat.id)}
-                        className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
-                        title="บันทึก"
-                      >
-                        <Check className="size-4" />
+                      <button onClick={() => void saveCategoryEdit(cat.id)} className="p-1.5 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors cursor-pointer" title="บันทึก">
+                        <Check className="size-3.5" />
                       </button>
-                      <button
-                        onClick={cancelCategoryEdit}
-                        className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                        title="ยกเลิก"
-                      >
-                        <X className="size-4" />
+                      <button onClick={() => setEditingCategoryId(null)} className="p-1.5 bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300 transition-colors cursor-pointer" title="ยกเลิก">
+                        <X className="size-3.5" />
                       </button>
-                    </>
+                    </div>
                   ) : (
-                    <>
+                    <div className="flex items-center gap-2 min-w-0">
                       <span className="font-bold text-slate-800 text-sm">{cat.name}</span>
-                      <span className="text-xs text-slate-400">(ลำดับ: {cat.display_order})</span>
+                      <span className="text-[11px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full flex-shrink-0">
+                        {cat.items.length} รายการ
+                      </span>
                       <button
                         onClick={() => startCategoryEdit(cat)}
-                        className="p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors cursor-pointer"
                         title="แก้ไขหมวดหมู่"
                       >
                         <Edit2 className="size-3.5" />
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
-                <button
-                  onClick={() => confirmDeleteCategory(cat)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-rose-500 hover:bg-rose-50 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-                >
-                  <Trash2 className="size-3.5" />
-                  ลบหมวดหมู่
-                </button>
+
+                {editingCategoryId !== cat.id && (
+                  <button
+                    onClick={() => confirmDeleteCategory(cat)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-rose-500 hover:bg-rose-50 border border-rose-100 hover:border-rose-200 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex-shrink-0"
+                  >
+                    <Trash2 className="size-3.5" />
+                    ลบหมวดหมู่
+                  </button>
+                )}
               </div>
 
-              {/* Items Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-primary text-white text-xs font-semibold">
-                      <th className="px-5 py-3 w-24 text-center">ลำดับแสดงผล</th>
-                      <th className="px-5 py-3">รายละเอียดรายการตรวจ</th>
-                      <th className="px-5 py-3 w-36 text-center">การจัดการ</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
-                    {cat.items.length === 0 && (
-                      <tr>
-                        <td colSpan={3} className="px-5 py-6 text-center text-slate-400 text-xs">
-                          ไม่มีรายการตรวจเช็คในหมวดหมู่นี้
-                        </td>
+              {/* Table card — same pattern as ToolsPage */}
+              <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden flex flex-col">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-primary text-white text-xs font-semibold uppercase tracking-wider">
+                        <th className="px-5 py-3.5 w-24 text-center">ลำดับ</th>
+                        <th className="px-5 py-3.5">รายละเอียดรายการตรวจ</th>
+                        <th className="px-5 py-3.5 w-32 text-center">จัดการ</th>
                       </tr>
-                    )}
-                    {cat.items.map((item) => (
-                      <tr
-                        key={item.id}
-                        className={`transition-colors ${
-                          editingItemId === item.id ? "bg-blue-50" : "hover:bg-slate-50/80"
-                        }`}
-                      >
-                        {/* Display Order */}
-                        <td className="px-5 py-3 text-center">
-                          {editingItemId === item.id ? (
-                            <input
-                              type="number"
-                              value={editItemOrder}
-                              onChange={(e) => setEditItemOrder(Number(e.target.value))}
-                              className="w-16 h-8 px-2 border border-slate-300 rounded-lg text-sm text-center focus:outline-none focus:border-primary mx-auto block"
-                            />
-                          ) : (
-                            <span className="font-medium">{item.display_order}</span>
-                          )}
-                        </td>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
 
-                        {/* Description */}
-                        <td className="px-5 py-3">
-                          {editingItemId === item.id ? (
+                      {cat.items.length === 0 && (
+                        <tr>
+                          <td colSpan={3} className="px-6 py-10 text-center text-slate-400 text-xs font-medium">
+                            ยังไม่มีรายการตรวจในหมวดหมู่นี้
+                          </td>
+                        </tr>
+                      )}
+
+                      {cat.items.map((item) => (
+                        <tr
+                          key={item.id}
+                          className={`transition-colors group ${
+                            editingItemId === item.id ? "bg-blue-50/60" : "hover:bg-slate-50/80"
+                          }`}
+                        >
+                          <td className="px-5 py-3.5 text-center">
+                            {editingItemId === item.id ? (
+                              <input
+                                type="number"
+                                value={editItemOrder}
+                                onChange={(e) => setEditItemOrder(Number(e.target.value))}
+                                className="w-14 h-8 px-2 border border-slate-300 rounded-lg text-sm text-center focus:outline-none focus:border-primary mx-auto block bg-white"
+                              />
+                            ) : (
+                              <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-slate-100 text-slate-600 text-xs font-bold">
+                                {item.display_order}
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="px-5 py-3.5">
+                            {editingItemId === item.id ? (
+                              <input
+                                type="text"
+                                value={editItemDescription}
+                                onChange={(e) => setEditItemDescription(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") void saveItemEdit(item.id)
+                                  if (e.key === "Escape") setEditingItemId(null)
+                                }}
+                                autoFocus
+                                className="w-full h-8 px-3 border border-primary/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                                placeholder="ข้อความรายละเอียด"
+                              />
+                            ) : (
+                              <span className="text-slate-700">{item.description}</span>
+                            )}
+                          </td>
+
+                          <td className="px-5 py-3.5 text-center">
+                            {editingItemId === item.id ? (
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button onClick={() => void saveItemEdit(item.id)} className="p-1.5 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors cursor-pointer" title="บันทึก">
+                                  <Check className="size-3.5" />
+                                </button>
+                                <button onClick={() => setEditingItemId(null)} className="p-1.5 bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300 transition-colors cursor-pointer" title="ยกเลิก">
+                                  <X className="size-3.5" />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => startItemEdit(item)} className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" title="แก้ไข">
+                                  <Edit2 className="size-4" />
+                                </button>
+                                <button onClick={() => confirmDeleteItem(item)} className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50/80 rounded-lg transition-colors cursor-pointer" title="ลบ">
+                                  <Trash2 className="size-4" />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+
+                      {/* Add New Item Row */}
+                      <tr className="bg-slate-50/60 border-t border-dashed border-slate-200">
+                        <td className="px-5 py-3 text-center">
+                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 text-primary text-xs font-bold">
+                            {cat.items.reduce((max, i) => Math.max(max, i.display_order), 0) + 1}
+                          </span>
+                        </td>
+                        <td colSpan={2} className="px-5 py-3">
+                          <div className="flex items-center gap-2">
                             <input
                               type="text"
-                              value={editItemDescription}
-                              onChange={(e) => setEditItemDescription(e.target.value)}
-                              className="w-full h-8 px-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-primary"
-                              placeholder="ข้อความรายละเอียด"
+                              value={cat.newItemDescription}
+                              onChange={(e) => updateNewItemDescription(cat.id, e.target.value)}
+                              onKeyDown={(e) => { if (e.key === "Enter") void handleAddItem(cat.id) }}
+                              placeholder="พิมพ์รายการตรวจใหม่..."
+                              className="flex-1 min-w-0 h-8 px-3 border border-dashed border-slate-300 rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 bg-white placeholder:text-slate-400 transition-all"
                             />
-                          ) : (
-                            item.description
-                          )}
-                        </td>
-
-                        {/* Actions */}
-                        <td className="px-5 py-3 text-center">
-                          {editingItemId === item.id ? (
-                            <div className="flex items-center justify-center gap-1">
-                              <button
-                                onClick={() => void saveItemEdit(item.id)}
-                                className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
-                                title="บันทึก"
-                              >
-                                <Check className="size-4" />
-                              </button>
-                              <button
-                                onClick={cancelItemEdit}
-                                className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                title="ยกเลิก"
-                              >
-                                <X className="size-4" />
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-center gap-1">
-                              <button
-                                onClick={() => startItemEdit(item)}
-                                className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                                title="แก้ไข"
-                              >
-                                <Edit2 className="size-4" />
-                              </button>
-                              <button
-                                onClick={() => confirmDeleteItem(item)}
-                                className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                title="ลบ"
-                              >
-                                <Trash2 className="size-4" />
-                              </button>
-                            </div>
-                          )}
+                            <button
+                              onClick={() => void handleAddItem(cat.id)}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-sm flex-shrink-0"
+                            >
+                              <Plus className="size-3.5" />
+                              เพิ่มรายการ
+                            </button>
+                          </div>
                         </td>
                       </tr>
-                    ))}
 
-                    {/* Add New Item Row */}
-                    <tr className="bg-slate-50">
-                      <td className="px-5 py-3 text-center text-xs font-bold text-slate-500">
-                        {cat.items.reduce((max, i) => Math.max(max, i.display_order), 0) + 1}
-                      </td>
-                      <td className="px-5 py-3">
-                        <input
-                          type="text"
-                          value={cat.newItemDescription}
-                          onChange={(e) => updateNewItemDescription(cat.id, e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") void handleAddItem(cat.id)
-                          }}
-                          placeholder="เพิ่มรายการตรวจใหม่..."
-                          className="w-full h-8 px-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-white"
-                        />
-                      </td>
-                      <td className="px-5 py-3 text-center">
-                        <button
-                          onClick={() => void handleAddItem(cat.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer mx-auto"
-                        >
-                          <Plus className="size-3.5" />
-                          เพิ่มรายการ
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
               </div>
+
             </div>
           ))}
         </div>
