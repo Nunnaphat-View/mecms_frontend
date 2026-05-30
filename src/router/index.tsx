@@ -17,6 +17,7 @@ import SectionsPage from "@/pages/SectionsPage"
 import ToolsManagePage from "@/pages/ToolsManagePage"
 import CalibrationRecordPage from "@/pages/CalibrationRecordPage"
 import ToolConfigPage from "@/pages/ToolConfigPage"
+import SettingsPage from "@/pages/SettingsPage"
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,8 @@ export const router = createBrowserRouter([
       { path: "users", element: <UsersPage /> },
       { path: "hospitals", element: <HospitalsPage /> },
       { path: "sections", element: <SectionsPage /> },
+      { path: "settings", element: <SettingsPage /> },
+      { path: "profile", element: <SettingsPage /> },
     ],
   },
   {

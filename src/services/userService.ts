@@ -31,6 +31,12 @@ async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const userService = {
+  getFileUrl(path: string | null | undefined): string {
+    if (!path) return ""
+    if (path.startsWith("http://") || path.startsWith("https://")) return path
+    return `${API_BASE_URL}${path}`
+  },
+
   async getAll(): Promise<User[]> {
     return apiFetch<User[]>("/users")
   },

@@ -19,13 +19,13 @@ export const RolePermissionsMap: Record<AppRole, RolePermissions> = {
     canManageTools: false,
     canManageDepartments: false,
     canApproveCalibration: false,
-    allowedMenus: ["/dashboard", "/schedule", "/calibration", "/tools", "/history"],
+    allowedMenus: ["/dashboard", "/schedule", "/calibration", "/tools", "/history", "/settings"],
   },
   [AppRole.HEAD_OF_DEPT]: {
     canManageTools: false,
     canManageDepartments: false,
     canApproveCalibration: true,
-    allowedMenus: ["/dashboard", "/schedule", "/approval", "/tools", "/history"],
+    allowedMenus: ["/dashboard", "/schedule", "/approval", "/tools", "/history", "/settings"],
   },
   [AppRole.ADMIN]: {
     canManageTools: true,
@@ -47,13 +47,14 @@ export const RolePermissionsMap: Record<AppRole, RolePermissions> = {
       "/tools/manage",
       "/tools/standard",
       "/tools/pm-checklist",
+      "/settings",
     ],
   },
   [AppRole.DIRECTOR]: {
     canManageTools: false,
     canManageDepartments: false,
     canApproveCalibration: true,
-    allowedMenus: ["/director-dashboard", "/schedule", "/approval", "/history"],
+    allowedMenus: ["/director-dashboard", "/schedule", "/approval", "/history", "/settings"],
   },
 }
 
