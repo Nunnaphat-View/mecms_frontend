@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/stores/authStore"
+import { AppRole } from "@/constants/roles"
 import { 
   AlertCircle, 
   Eye, 
@@ -12,7 +13,7 @@ import {
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const login = useAuthStore((state) => state.login)
+  const { login, isAuthenticated, appRole, isLoading } = useAuthStore()
   
   // Form states
   const [username, setUsername] = useState("")
@@ -30,6 +31,16 @@ export default function LoginPage() {
   
   const [showPassword, setShowPassword] = useState(false)
   const [rememberDevice, setRememberDevice] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && appRole) {
+      if (appRole === AppRole.DIRECTOR) {
+        navigate("/director-dashboard", { replace: true })
+      } else {
+        navigate("/dashboard", { replace: true })
+      }
+    }
+  }, [isAuthenticated, appRole, isLoading, navigate])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,7 +60,6 @@ export default function LoginPage() {
 
     try {
       await login(username, password)
-      navigate("/dashboard")
     } catch (err: unknown) {
       setShake(true)
       setTimeout(() => setShake(false), 500)
@@ -57,6 +67,7 @@ export default function LoginPage() {
       setLoginError(errorMessage)
     }
   }
+
 
   return (
     <div className="relative min-h-screen w-screen flex items-center justify-center bg-gradient-to-br from-[#cbecea] via-[#d7f2f0] to-[#e4f7f6] overflow-hidden font-sans select-none">

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { ALL_NAV_LINKS } from "@/constants/navLinks"
 import { EssentialLink } from "./EssentialLink"
+import { useAuthStore } from "@/stores/authStore"
 
 interface AppDrawerProps {
   isOpen: boolean
@@ -10,6 +11,7 @@ interface AppDrawerProps {
 export const AppDrawer: React.FC<AppDrawerProps> = ({ isOpen, onClose }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const { permissions } = useAuthStore()
 
   useEffect(() => {
     const handleResize = () => {
@@ -19,6 +21,24 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ isOpen, onClose }) => {
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
+
+  const allowedMenus = useMemo(() => permissions?.allowedMenus || [], [permissions])
+
+  const linksList = useMemo(() => {
+    return ALL_NAV_LINKS.map((link) => {
+      if (link.children) {
+        const filteredChildren = link.children.filter((child) => {
+          const basePath = child.link?.split("?")[0]
+          return allowedMenus.includes(basePath || "")
+        })
+        if (filteredChildren.length > 0 || (link.link && allowedMenus.includes(link.link))) {
+          return { ...link, children: filteredChildren }
+        }
+        return null
+      }
+      return link.link && allowedMenus.includes(link.link) ? link : null
+    }).filter(Boolean) as typeof ALL_NAV_LINKS
+  }, [allowedMenus])
 
   // Desktop sidebar wrapper classes
   const desktopWidthClass = isExpanded ? "w-60" : "w-14"
@@ -46,7 +66,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ isOpen, onClose }) => {
           </div>
 
           <nav className="flex-1 overflow-y-auto pr-0.5 custom-scrollbar flex flex-col gap-0.5">
-            {ALL_NAV_LINKS.map((link) => (
+            {linksList.map((link) => (
               <EssentialLink
                 key={link.title}
                 {...link}
@@ -71,7 +91,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ isOpen, onClose }) => {
       <nav className={`flex-1 pr-0.5 custom-scrollbar flex flex-col gap-0.5 ${
         isExpanded ? "overflow-y-auto overflow-x-hidden" : "overflow-visible"
       }`}>
-        {ALL_NAV_LINKS.map((link) => (
+        {linksList.map((link) => (
           <EssentialLink
             key={link.title}
             {...link}
@@ -82,3 +102,4 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ isOpen, onClose }) => {
     </aside>
   )
 }
+

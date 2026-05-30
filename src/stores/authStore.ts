@@ -1,10 +1,13 @@
 import { create } from "zustand"
 import type { User } from "../types/auth"
 import { authService } from "../services/authService"
+import { AppRole, type RolePermissions, RolePermissionsMap, mapRoleToAppRole } from "@/constants/roles"
 
 interface AuthState {
   user: User | null
   token: string | null
+  appRole: AppRole | null
+  permissions: RolePermissions | null
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
@@ -16,6 +19,8 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,
+  appRole: null,
+  permissions: null,
   isAuthenticated: false,
   isLoading: true,
   error: null,
@@ -24,9 +29,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ error: null })
     try {
       const response = await authService.login(username, password)
+      const appRole = mapRoleToAppRole(response.user.role)
+      const permissions = RolePermissionsMap[appRole]
       set({
         token: response.access_token,
         user: response.user,
+        appRole,
+        permissions,
         isAuthenticated: true,
       })
       authService.setSession(response.access_token, response.user)
@@ -38,7 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
-    set({ token: null, user: null, isAuthenticated: false, error: null })
+    set({ token: null, user: null, appRole: null, permissions: null, isAuthenticated: false, error: null })
     authService.clearSession()
   },
 
@@ -47,18 +56,30 @@ export const useAuthStore = create<AuthState>((set) => ({
     const user = authService.getUser()
     
     if (token && user) {
-      set({ token, user, isAuthenticated: true, isLoading: false })
+      const initialAppRole = mapRoleToAppRole(user.role)
+      const initialPermissions = RolePermissionsMap[initialAppRole]
+      set({ 
+        token, 
+        user, 
+        appRole: initialAppRole, 
+        permissions: initialPermissions, 
+        isAuthenticated: true, 
+        isLoading: false 
+      })
       try {
         const freshUser = await authService.fetchProfile(token)
-        set({ user: freshUser })
+        const appRole = mapRoleToAppRole(freshUser.role)
+        const permissions = RolePermissionsMap[appRole]
+        set({ user: freshUser, appRole, permissions })
         authService.setSession(token, freshUser)
       } catch (err: unknown) {
         console.warn("Session validation failed, logging out:", err)
         authService.clearSession()
-        set({ token: null, user: null, isAuthenticated: false })
+        set({ token: null, user: null, appRole: null, permissions: null, isAuthenticated: false })
       }
     } else {
       set({ isLoading: false })
     }
   },
 }))
+

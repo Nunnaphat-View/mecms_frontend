@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom"
 import MainLayout from "@/layouts/MainLayout"
 import FullScreenLayout from "@/layouts/FullScreenLayout"
+import { ProtectedRoute } from "@/components/common/ProtectedRoute"
 
 import LoginPage from "@/pages/LoginPage"
 import HomePage from "@/pages/HomePage"
@@ -24,9 +25,10 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <MainLayout />,
+    element: <ProtectedRoute><MainLayout /></ProtectedRoute>,
     children: [
       { path: "dashboard", element: <HomePage /> },
+      { path: "director-dashboard", element: <HomePage /> },
       { path: "tools", element: <ToolsPage /> },
       { path: "tools/standard", element: <StandardToolsPage /> },
       { path: "tools/pm-checklist", element: <PmChecklistPage /> },
@@ -43,4 +45,5 @@ export const router = createBrowserRouter([
     element: <Navigate to="/" replace />,
   },
 ])
+
 
