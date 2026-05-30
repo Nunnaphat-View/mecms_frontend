@@ -1,5 +1,6 @@
-import { Link, Outlet, useLocation } from "react-router-dom"
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { useAuthStore } from "@/stores/authStore"
 import { 
   Activity, 
   Wrench, 
@@ -12,6 +13,8 @@ import {
 
 export default function MainLayout() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, logout } = useAuthStore()
   const currentPath = location.pathname
 
   const navItems = [
@@ -38,13 +41,20 @@ export default function MainLayout() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs font-medium bg-white/10 px-3 py-1 rounded-full text-white">
-              Hospital Admin
+              {user?.role?.description || user?.role?.name || "Hospital Admin"}
             </span>
-            <Link to="/">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" title="Log Out">
-                <LogOut className="size-4" />
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10 cursor-pointer"
+              title="Log Out"
+              onClick={() => {
+                logout()
+                navigate("/")
+              }}
+            >
+              <LogOut className="size-4" />
+            </Button>
           </div>
         </div>
       </header>

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { useAuthStore } from "@/stores/authStore"
 import { 
   AlertCircle, 
   Eye, 
@@ -11,6 +12,7 @@ import {
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const login = useAuthStore((state) => state.login)
   
   // Form states
   const [username, setUsername] = useState("")
@@ -20,14 +22,18 @@ export default function LoginPage() {
   const [usernameError, setUsernameError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
   
+  // Login submission error state
+  const [loginError, setLoginError] = useState("")
+  
   // Animation state for validation failure shake
   const [shake, setShake] = useState(false)
   
   const [showPassword, setShowPassword] = useState(false)
   const [rememberDevice, setRememberDevice] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoginError("")
     
     const isUserEmpty = !username.trim()
     const isPassEmpty = !password.trim()
@@ -36,11 +42,19 @@ export default function LoginPage() {
     setPasswordError(isPassEmpty)
     
     if (isUserEmpty || isPassEmpty) {
-      // Trigger shake animation
       setShake(true)
-      setTimeout(() => setShake(false), 500) // Clear shake after animation completes
-    } else {
+      setTimeout(() => setShake(false), 500)
+      return
+    }
+
+    try {
+      await login(username, password)
       navigate("/dashboard")
+    } catch (err: unknown) {
+      setShake(true)
+      setTimeout(() => setShake(false), 500)
+      const errorMessage = err instanceof Error ? err.message : "ไม่สามารถเชื่อมต่อระบบหลังบ้านได้ กรุณาลองใหม่อีกครั้ง"
+      setLoginError(errorMessage)
     }
   }
 
@@ -119,6 +133,12 @@ export default function LoginPage() {
 
         {/* Credentials Form */}
         <form onSubmit={handleLogin} className="flex flex-col gap-5">
+          {loginError && (
+            <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 flex items-start gap-2 text-rose-800 text-xs font-semibold animate-pulse">
+              <AlertCircle className="size-4 shrink-0 text-red-500 mt-0.5" />
+              <span>{loginError}</span>
+            </div>
+          )}
           
           {/* User ID Field */}
           <div className="flex flex-col gap-1.5">
