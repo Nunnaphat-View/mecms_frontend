@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { X, Building2, Save } from "lucide-react"
-import type { Section, Hospital } from "../../types/tool"
+import { X, Building2, Save, Hospital } from "lucide-react"
+import type { Section } from "../../types/tool"
 
 interface SectionFormDialogProps {
   isOpen: boolean
   section: Section | null
-  hospitals: Hospital[]
+  hospitalId: number
+  hospitalName?: string
   loading?: boolean
   onSave: (data: Omit<Section, "id">) => Promise<void>
   onClose: () => void
@@ -15,7 +16,6 @@ const EMPTY_FORM = {
   name: "",
   code: "",
   description: "",
-  hospitalId: 0,
 }
 
 function buildInitialForm(section: Section | null) {
@@ -24,14 +24,14 @@ function buildInitialForm(section: Section | null) {
     name: section.name ?? "",
     code: section.code ?? "",
     description: section.description ?? "",
-    hospitalId: section.hospitalId ?? 0,
   }
 }
 
 // Inner form — remounted via `key` so state resets cleanly on each open
 function SectionForm({
   section,
-  hospitals,
+  hospitalId,
+  hospitalName,
   loading,
   onSave,
   onClose,
@@ -43,7 +43,6 @@ function SectionForm({
   function validate(): boolean {
     const newErrors: Partial<Record<keyof typeof EMPTY_FORM, string>> = {}
     if (!form.name.trim()) newErrors.name = "กรุณากรอกชื่อหน่วยงาน"
-    if (!form.hospitalId || form.hospitalId === 0) newErrors.hospitalId = "กรุณาเลือกโรงพยาบาล"
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -55,11 +54,11 @@ function SectionForm({
       name: form.name.trim(),
       code: form.code.trim() || undefined,
       description: form.description.trim() || undefined,
-      hospitalId: form.hospitalId,
+      hospitalId,
     })
   }
 
-  function handleChange(field: keyof typeof EMPTY_FORM, value: string | number) {
+  function handleChange(field: keyof typeof EMPTY_FORM, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }))
   }
@@ -94,27 +93,16 @@ function SectionForm({
       <form onSubmit={(e) => void handleSubmit(e)}>
         <div className="p-5 flex flex-col gap-4 max-h-[65vh] overflow-y-auto">
 
-          {/* Hospital */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-700">
-              โรงพยาบาล <span className="text-rose-500">*</span>
-            </label>
-            <select
-              value={form.hospitalId}
-              onChange={(e) => handleChange("hospitalId", Number(e.target.value))}
-              className={`h-9 px-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all bg-white ${
-                errors.hospitalId ? "border-rose-400 bg-rose-50" : "border-slate-200 focus:border-primary"
-              }`}
-            >
-              <option value={0}>-- เลือกโรงพยาบาล --</option>
-              {hospitals.map((h) => (
-                <option key={h.id} value={h.id}>
-                  {h.name}
-                </option>
-              ))}
-            </select>
-            {errors.hospitalId && <p className="text-xs text-rose-500">{errors.hospitalId}</p>}
-          </div>
+          {/* Hospital (read-only display) */}
+          {hospitalName && (
+            <div className="flex items-center gap-2.5 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <Hospital className="size-4 text-primary flex-shrink-0" />
+              <div>
+                <div className="text-[10px] text-slate-400 font-medium leading-none mb-0.5">โรงพยาบาล</div>
+                <div className="text-sm font-semibold text-slate-700">{hospitalName}</div>
+              </div>
+            </div>
+          )}
 
           {/* Name */}
           <div className="flex flex-col gap-1.5">
@@ -197,7 +185,8 @@ export default function SectionFormDialog(props: SectionFormDialogProps) {
         <SectionForm
           key={props.section?.id ?? "new"}
           section={props.section}
-          hospitals={props.hospitals}
+          hospitalId={props.hospitalId}
+          hospitalName={props.hospitalName}
           loading={props.loading}
           onSave={props.onSave}
           onClose={props.onClose}

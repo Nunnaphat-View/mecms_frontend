@@ -1,11 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import {
-  Plus,
-  Building2,
-  Edit,
-  Trash2,
-  Hospital,
-} from "lucide-react";
+import { Plus, Building2, Edit, Trash2 } from "lucide-react";
 import TablePagination from "../components/common/TablePagination";
 import { useSectionStore } from "../stores/sectionStore";
 import { useHospitalStore } from "../stores/hospitalStore";
@@ -36,6 +30,13 @@ export default function SectionsPage() {
 
   const { hospitals, fetchHospitals } = useHospitalStore();
   const { user } = useAuthStore();
+
+  // Hospital from logged-in user
+  const userHospitalId = user?.hospitalId ?? 0;
+  const userHospitalName = useMemo(() => {
+    if (!userHospitalId) return undefined;
+    return hospitals.find((h) => h.id === userHospitalId)?.name;
+  }, [hospitals, userHospitalId]);
 
   // Toast
   const [toast, setToast] = useState<Toast | null>(null);
@@ -74,26 +75,16 @@ export default function SectionsPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  // Hospital lookup map
-  const hospitalMap = useMemo(() => {
-    return new Map(hospitals.map((h) => [h.id, h]));
-  }, [hospitals]);
-
   // Filter
   const filteredSections = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return sections;
-
-    return sections.filter((s) => {
-      const hospitalName = hospitalMap.get(s.hospitalId)?.name ?? "";
-      return (
-        s.name.toLowerCase().includes(q) ||
-        (s.code ?? "").toLowerCase().includes(q) ||
-        (s.description ?? "").toLowerCase().includes(q) ||
-        hospitalName.toLowerCase().includes(q)
-      );
-    });
-  }, [sections, searchQuery, hospitalMap]);
+    return sections.filter((s) =>
+      s.name.toLowerCase().includes(q) ||
+      (s.code ?? "").toLowerCase().includes(q) ||
+      (s.description ?? "").toLowerCase().includes(q)
+    );
+  }, [sections, searchQuery]);
 
   // Paginated
   const paginatedSections = useMemo(() => {
@@ -108,19 +99,16 @@ export default function SectionsPage() {
     setCurrentPage(1);
   }
 
-  // Add
   function openAdd() {
     setSelectedForEdit(null);
     setIsFormOpen(true);
   }
 
-  // Edit
   function openEdit(section: Section) {
     setSelectedForEdit(section);
     setIsFormOpen(true);
   }
 
-  // Save (add or edit)
   async function handleSave(data: Omit<Section, "id">) {
     setIsSaving(true);
     try {
@@ -135,16 +123,12 @@ export default function SectionsPage() {
       setSelectedForEdit(null);
     } catch (err) {
       console.error(err);
-      showToast(
-        "error",
-        selectedForEdit ? "แก้ไขข้อมูลล้มเหลว" : "เพิ่มหน่วยงานล้มเหลว",
-      );
+      showToast("error", selectedForEdit ? "แก้ไขข้อมูลล้มเหลว" : "เพิ่มหน่วยงานล้มเหลว");
     } finally {
       setIsSaving(false);
     }
   }
 
-  // Delete
   function confirmDelete(section: Section) {
     setSelectedForDelete(section);
     setIsDeleteOpen(true);
@@ -165,6 +149,9 @@ export default function SectionsPage() {
       setIsDeleting(false);
     }
   }
+
+  // colSpan count
+  const colCount = isAdmin ? 4 : 3;
 
   return (
     <div className="flex flex-col gap-6 font-sans">
@@ -207,21 +194,7 @@ export default function SectionsPage() {
               <div className="text-lg font-bold text-slate-800 leading-none">
                 {sections.length}
               </div>
-              <div className="text-xs text-slate-500 mt-0.5">
-                หน่วยงานทั้งหมด
-              </div>
-            </div>
-          </div>
-          <div className="w-px h-8 bg-slate-200" />
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-              <Hospital className="size-4.5 text-blue-600" />
-            </div>
-            <div>
-              <div className="text-lg font-bold text-slate-800 leading-none">
-                {new Set(sections.map((s) => s.hospitalId)).size}
-              </div>
-              <div className="text-xs text-slate-500 mt-0.5">โรงพยาบาล</div>
+              <div className="text-xs text-slate-500 mt-0.5">หน่วยงานทั้งหมด</div>
             </div>
           </div>
         </div>
@@ -233,7 +206,7 @@ export default function SectionsPage() {
           <SearchBar
             value={searchQuery}
             onChange={handleSearchChange}
-            placeholder="ค้นหาหน่วยงาน ชื่อ รหัส โรงพยาบาล..."
+            placeholder="ค้นหาหน่วยงาน ชื่อ รหัส..."
           />
         </div>
         {isAdmin && (
@@ -249,55 +222,47 @@ export default function SectionsPage() {
       {/* Table */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden flex flex-col">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse table-fixed">
+            <colgroup>
+              <col className={isAdmin ? "w-1/4" : "w-1/3"} />
+              <col className={isAdmin ? "w-1/4" : "w-1/3"} />
+              <col className={isAdmin ? "w-1/4" : "w-1/3"} />
+              {isAdmin && <col className="w-1/4" />}
+            </colgroup>
             <thead>
               <tr className="bg-primary text-white text-xs font-semibold uppercase tracking-wider">
-                <th className="px-5 py-3.5 w-28">
-                  <span className="flex items-center gap-1.5">รหัส</span>
+                <th className="px-5 py-3.5">
+                  <span className="flex items-center gap-1.5">รหัสหน่วยงาน</span>
                 </th>
                 <th className="px-5 py-3.5">
                   <span className="flex items-center gap-1.5">
                     <Building2 className="size-3.5" />
-                    ชื่อหน่วยงาน
+                    ชื่อย่อหน่วยงาน
                   </span>
                 </th>
-                <th className="px-5 py-3.5">
-                  <span className="flex items-center gap-1.5">
-                    <Hospital className="size-3.5" />
-                    โรงพยาบาล
-                  </span>
-                </th>
-                <th className="px-5 py-3.5">หมายเหตุ</th>
+                <th className="px-5 py-3.5">ชื่อหน่่วยงาน</th>
                 {isAdmin && (
-                  <th className="px-5 py-3.5 text-center w-24">จัดการ</th>
+                  <th className="px-5 py-3.5 text-center">จัดการ</th>
                 )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
               {loading ? (
                 <tr>
-                  <td
-                    colSpan={isAdmin ? 5 : 4}
-                    className="px-6 py-12 text-center text-slate-500 font-medium"
-                  >
+                  <td colSpan={colCount} className="px-6 py-12 text-center text-slate-500 font-medium">
                     <div className="inline-block w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-2" />
                     <div>กำลังโหลดข้อมูล...</div>
                   </td>
                 </tr>
               ) : paginatedSections.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={isAdmin ? 5 : 4}
-                    className="px-6 py-16 text-center"
-                  >
+                  <td colSpan={colCount} className="px-6 py-16 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
                         <Building2 className="size-7 text-slate-400" />
                       </div>
                       <div className="text-slate-400 text-sm font-medium">
-                        {searchQuery
-                          ? "ไม่พบหน่วยงานที่ค้นหา"
-                          : "ยังไม่มีข้อมูลหน่วยงาน"}
+                        {searchQuery ? "ไม่พบหน่วยงานที่ค้นหา" : "ยังไม่มีข้อมูลหน่วยงาน"}
                       </div>
                       {isAdmin && !searchQuery && (
                         <button
@@ -311,65 +276,42 @@ export default function SectionsPage() {
                   </td>
                 </tr>
               ) : (
-                paginatedSections.map((section) => {
-                  const hospital = hospitalMap.get(section.hospitalId);
-                  return (
-                    <tr
-                      key={section.id}
-                      className="hover:bg-slate-50/80 transition-colors"
-                    >
-                      {/* รหัส */}
-                      <td className="px-5 py-3.5 whitespace-nowrap">
-                        {section.code ? (
-                          <span className="inline-block px-2.5 py-0.5 bg-primary/10 text-primary rounded-md text-xs font-bold font-mono">
-                            {section.code}
-                          </span>
-                        ) : (
-                          <span className="text-slate-400">-</span>
-                        )}
+                paginatedSections.map((section) => (
+                  <tr key={section.id} className="hover:bg-slate-50/80 transition-colors">
+                    {/* รหัส */}
+                    <td className="px-5 py-3.5 whitespace-nowrap font-medium text-slate-700 font-mono">
+                      {section.code || <span className="text-slate-400">-</span>}
+                    </td>
+                    {/* ชื่อหน่วยงาน */}
+                    <td className="px-5 py-3.5 font-semibold text-slate-800 truncate" title={section.name}>
+                      {section.name}
+                    </td>
+                    {/* หมายเหตุ */}
+                    <td className="px-5 py-3.5 truncate text-slate-600" title={section.description}>
+                      {section.description || <span className="text-slate-400">-</span>}
+                    </td>
+                    {isAdmin && (
+                      <td className="px-5 py-3.5 text-center whitespace-nowrap">
+                        <div className="flex justify-center gap-1">
+                          <button
+                            onClick={() => openEdit(section)}
+                            className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                            title="แก้ไข"
+                          >
+                            <Edit className="size-4" />
+                          </button>
+                          <button
+                            onClick={() => confirmDelete(section)}
+                            className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50/80 rounded-lg transition-colors cursor-pointer"
+                            title="ลบ"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
                       </td>
-                      {/* ชื่อหน่วยงาน */}
-                      <td className="px-5 py-3.5 font-semibold text-slate-800 whitespace-nowrap">
-                        {section.name}
-                      </td>
-                      {/* โรงพยาบาล */}
-                      <td className="px-5 py-3.5 whitespace-nowrap">
-                        {hospital ? (
-                          <span className="inline-flex items-center gap-1.5 text-slate-700">
-                            <Hospital className="size-3.5 text-slate-400 flex-shrink-0" />
-                            {hospital.name}
-                          </span>
-                        ) : (
-                          <span className="text-slate-400">-</span>
-                        )}
-                      </td>
-                      {/* หมายเหตุ */}
-                      <td className="px-5 py-3.5 max-w-[240px] truncate text-slate-600" title={section.description}>
-                        {section.description || <span className="text-slate-400">-</span>}
-                      </td>
-                      {isAdmin && (
-                        <td className="px-5 py-3.5 text-center whitespace-nowrap">
-                          <div className="flex justify-center gap-1">
-                            <button
-                              onClick={() => openEdit(section)}
-                              className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                              title="แก้ไข"
-                            >
-                              <Edit className="size-4" />
-                            </button>
-                            <button
-                              onClick={() => confirmDelete(section)}
-                              className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50/80 rounded-lg transition-colors cursor-pointer"
-                              title="ลบ"
-                            >
-                              <Trash2 className="size-4" />
-                            </button>
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  );
-                })
+                    )}
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
@@ -395,7 +337,8 @@ export default function SectionsPage() {
       <SectionFormDialog
         isOpen={isFormOpen}
         section={selectedForEdit}
-        hospitals={hospitals}
+        hospitalId={userHospitalId}
+        hospitalName={userHospitalName}
         loading={isSaving}
         onSave={(data) => handleSave(data)}
         onClose={() => {

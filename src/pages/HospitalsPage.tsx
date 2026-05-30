@@ -311,14 +311,8 @@ export default function HospitalsPage() {
                     className="hover:bg-slate-50/80 transition-colors"
                   >
                     {/* รหัส */}
-                    <td className="px-5 py-3.5 whitespace-nowrap">
-                      {hospital.code ? (
-                        <span className="inline-block px-2.5 py-0.5 bg-primary/10 text-primary rounded-md text-xs font-bold font-mono">
-                          {hospital.code}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">-</span>
-                      )}
+                    <td className="px-5 py-3.5 whitespace-nowrap font-medium text-slate-700 font-mono">
+                      {hospital.code || <span className="text-slate-400">-</span>}
                     </td>
                     {/* ตรา */}
                     <td className="px-5 py-3.5 text-center">
