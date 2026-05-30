@@ -11,6 +11,7 @@ import HistoryPage from "@/pages/HistoryPage"
 import UsersPage from "@/pages/UsersPage"
 import ExternalInspectionPage from "@/pages/ExternalInspectionPage"
 import PmChecklistPage from "@/pages/PmChecklistPage"
+import HospitalsPage from "@/pages/HospitalsPage"
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
       { path: "calibration/inspection/:id", element: <ExternalInspectionPage /> },
       { path: "history", element: <HistoryPage /> },
       { path: "users", element: <UsersPage /> },
+      { path: "hospitals", element: <HospitalsPage /> },
     ],
   },
   {
