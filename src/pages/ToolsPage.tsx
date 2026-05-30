@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react"
-import { Plus, Wrench, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react"
+import { Plus, Wrench, Edit, Trash2 } from "lucide-react"
+import TablePagination from "../components/common/TablePagination"
 import { useToolStore } from "../stores/toolStore"
 import { useAuthStore } from "../stores/authStore"
 import type { MedicalTool, ToolStatus } from "../types/tool"
@@ -296,45 +297,17 @@ export default function ToolsPage() {
 
         {/* Pagination Footer */}
         {filteredTools.length > 0 && (
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 py-4 bg-slate-50 border-t border-slate-200 text-xs font-medium text-slate-500">
-            <div className="flex items-center gap-4">
-              <span>แสดง {(currentPage - 1) * pageSize + 1} - {Math.min(currentPage * pageSize, filteredTools.length)} จากทั้งหมด {filteredTools.length} รายการ</span>
-              <div className="flex items-center gap-1.5">
-                <span>แถวต่อหน้า:</span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value))
-                    setCurrentPage(1)
-                  }}
-                  className="bg-white border border-slate-200 px-2 py-1 rounded-md text-slate-700 outline-none"
-                >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                </select>
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((c) => Math.max(1, c - 1))}
-                className="p-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-white transition-colors cursor-pointer"
-              >
-                <ChevronLeft className="size-4" />
-              </button>
-              <span className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-slate-700 font-semibold">
-                {currentPage} / {totalPages}
-              </span>
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((c) => Math.min(totalPages, c + 1))}
-                className="p-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-white transition-colors cursor-pointer"
-              >
-                <ChevronRight className="size-4" />
-              </button>
-            </div>
-          </div>
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredTools.length}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(size) => {
+              setPageSize(size)
+              setCurrentPage(1)
+            }}
+          />
         )}
       </div>
 

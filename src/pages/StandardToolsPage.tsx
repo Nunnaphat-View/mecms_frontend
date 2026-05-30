@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { Settings2, Plus, FileText, Edit, Trash2 } from "lucide-react"
+import TablePagination from "../components/common/TablePagination"
 import type { BackendStandardTool } from "../types/tool"
 import { useStandardToolStore } from "../stores/standardToolStore"
 import { useAuthStore } from "../stores/authStore"
@@ -30,12 +31,13 @@ export default function StandardToolsPage() {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedTool, setSelectedTool] = useState<BackendStandardTool | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<BackendStandardTool | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const ROWS_PER_PAGE = 10
+  const ROWS_PER_PAGE = pageSize
 
   const isAdmin = useMemo(() => {
     if (!user) return false
@@ -88,7 +90,7 @@ export default function StandardToolsPage() {
   const paginatedTools = useMemo(() => {
     const start = (currentPage - 1) * ROWS_PER_PAGE
     return filteredTools.slice(start, start + ROWS_PER_PAGE)
-  }, [filteredTools, currentPage])
+  }, [filteredTools, currentPage, pageSize])
 
   // Reset to page 1 when search changes
   const handleSearchChange = useCallback((val: string) => {
@@ -280,46 +282,17 @@ export default function StandardToolsPage() {
 
         {/* Pagination */}
         {!loading && filteredTools.length > 0 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
-            <span className="text-xs text-slate-500">
-              แสดง {(currentPage - 1) * ROWS_PER_PAGE + 1}–
-              {Math.min(currentPage * ROWS_PER_PAGE, filteredTools.length)} จาก{" "}
-              {filteredTools.length} รายการ
-            </span>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center text-xs font-medium transition-colors"
-              >
-                ‹
-              </button>
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const start = Math.max(1, Math.min(currentPage - 2, totalPages - 4))
-                const page = start + i
-                return (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`w-8 h-8 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
-                      currentPage === page
-                        ? "bg-primary text-white border-primary"
-                        : "border-slate-200 text-slate-600 hover:bg-white"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              })}
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center text-xs font-medium transition-colors"
-              >
-                ›
-              </button>
-            </div>
-          </div>
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredTools.length}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(size) => {
+              setPageSize(size)
+              setCurrentPage(1)
+            }}
+          />
         )}
       </div>
 
