@@ -153,6 +153,9 @@ export const pmService = {
   getTask: (taskId: number) =>
     apiFetch<TaskApi>(`/pm-task/${taskId}`),
 
+  getTasks: () =>
+    apiFetch<TaskApi[]>("/pm-task"),
+
   savePmForm: (payload: SavePmPayload) =>
     apiFetch<{ success: boolean; task_id: number }>("/pm-save", {
       method: "POST",
