@@ -1,13 +1,10 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { Plus, Edit2, Trash2, Check, X, ClipboardList } from "lucide-react"
 import { checklistService } from "../services/checklistService"
 import type { ChecklistCategoryApi, ChecklistItemApi } from "../services/pmService"
+import { useChecklistStore } from "../stores/checklistStore"
 import AddCategoryDialog from "../components/pm/AddCategoryDialog"
 import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
-
-interface ExtendedCategory extends ChecklistCategoryApi {
-  newItemDescription: string
-}
 
 // ── Toast notification ────────────────────────────────────────────────────────
 type ToastType = "success" | "error" | "warning"
@@ -17,8 +14,8 @@ interface Toast {
 }
 
 export default function PmChecklistPage() {
-  const [categories, setCategories] = useState<ExtendedCategory[]>([])
-  const [loading, setLoading] = useState(false)
+  const { categories, loading, fetchCategories, updateNewItemDescription } = useChecklistStore()
+
   const [toast, setToast] = useState<Toast | null>(null)
 
   // Edit Category state
@@ -45,32 +42,16 @@ export default function PmChecklistPage() {
   const [deletingItem, setDeletingItem] = useState<ChecklistItemApi | null>(null)
   const [deletingItemLoading, setDeletingItemLoading] = useState(false)
 
+  // Load on mount — fetchCategories is a Zustand action (no React setState in effect)
+  useEffect(() => {
+    void fetchCategories()
+  }, [fetchCategories])
+
   function showToast(type: ToastType, message: string) {
     setToast({ type, message })
     setTimeout(() => setToast(null), 3000)
   }
 
-  const loadData = useCallback(async () => {
-    setLoading(true)
-    try {
-      const data = await checklistService.getCategories()
-      setCategories(
-        data.map((cat) => ({
-          ...cat,
-          newItemDescription: "",
-        })),
-      )
-    } catch (err) {
-      console.error(err)
-      showToast("error", "ไม่สามารถโหลดข้อมูล PM Checklist ได้")
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    void loadData()
-  }, [loadData])
   // ── Category CRUD ─────────────────────────────────────────────────────────
 
   function startCategoryEdit(cat: ChecklistCategoryApi) {
@@ -95,7 +76,7 @@ export default function PmChecklistPage() {
       })
       showToast("success", "แก้ไขหมวดหมู่สำเร็จ")
       setEditingCategoryId(null)
-      await loadData()
+      await fetchCategories()
     } catch (err) {
       console.error(err)
       showToast("error", "แก้ไขหมวดหมู่ล้มเหลว")
@@ -108,7 +89,7 @@ export default function PmChecklistPage() {
       await checklistService.createCategory(payload)
       showToast("success", "เพิ่มหมวดหมู่สำเร็จ")
       setShowAddDialog(false)
-      await loadData()
+      await fetchCategories()
     } catch (err) {
       console.error(err)
       showToast("error", "เพิ่มหมวดหมู่ล้มเหลว")
@@ -128,7 +109,7 @@ export default function PmChecklistPage() {
     try {
       await checklistService.deleteCategory(deletingCategory.id)
       showToast("success", "ลบหมวดหมู่เรียบร้อยแล้ว")
-      await loadData()
+      await fetchCategories()
     } catch (err) {
       console.error(err)
       showToast("error", "ไม่สามารถลบหมวดหมู่ได้")
@@ -163,7 +144,7 @@ export default function PmChecklistPage() {
       })
       showToast("success", "แก้ไขรายการตรวจสำเร็จ")
       setEditingItemId(null)
-      await loadData()
+      await fetchCategories()
     } catch (err) {
       console.error(err)
       showToast("error", "แก้ไขรายการตรวจล้มเหลว")
@@ -184,7 +165,7 @@ export default function PmChecklistPage() {
         display_order: maxOrder + 1,
       })
       showToast("success", "เพิ่มรายการตรวจสำเร็จ")
-      await loadData()
+      await fetchCategories()
     } catch (err) {
       console.error(err)
       showToast("error", "เพิ่มรายการตรวจล้มเหลว")
@@ -202,7 +183,7 @@ export default function PmChecklistPage() {
     try {
       await checklistService.deleteItem(deletingItem.id)
       showToast("success", "ลบรายการตรวจเรียบร้อยแล้ว")
-      await loadData()
+      await fetchCategories()
     } catch (err) {
       console.error(err)
       showToast("error", "ไม่สามารถลบรายการตรวจได้")
@@ -211,12 +192,6 @@ export default function PmChecklistPage() {
       setDeleteItemOpen(false)
       setDeletingItem(null)
     }
-  }
-
-  function updateNewItemDescription(categoryId: number, value: string) {
-    setCategories((prev) =>
-      prev.map((c) => (c.id === categoryId ? { ...c, newItemDescription: value } : c)),
-    )
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
