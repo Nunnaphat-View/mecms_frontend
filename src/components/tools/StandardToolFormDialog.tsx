@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react"
-import { X, Tag, FileText, Settings, Award, Calendar, FileCheck2, Image, CheckCircle2 } from "lucide-react"
+import { X, Tag, FileText, Settings, Award, FileCheck2, Image, CheckCircle2 } from "lucide-react"
 import type { BackendStandardTool } from "../../types/tool"
 import { useStandardToolStore } from "../../stores/standardToolStore"
 import { getFileUrl } from "../../services/standardToolService"
+import DatePicker from "../common/DatePicker"
 
 interface StandardToolFormDialogProps {
   isOpen: boolean
@@ -254,18 +255,12 @@ export default function StandardToolFormDialog({
           <div className="p-6 space-y-4">
             <SectionLabel color="bg-emerald-600" label="ข้อมูลการสอบเทียบ" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
-                  <Calendar className="size-3.5 text-slate-400" />
-                  วันที่สอบเทียบล่าสุด
-                </label>
-                <input
-                  type="date"
-                  value={calibrationDateLast}
-                  onChange={(e) => setCalibrationDateLast(e.target.value)}
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"
-                />
-              </div>
+              <DatePicker
+                label="วันที่สอบเทียบล่าสุด"
+                value={calibrationDateLast}
+                onChange={setCalibrationDateLast}
+                placeholder="เลือกวันที่..."
+              />
               <FormInput
                 label="เลขที่ใบรับรอง"
                 icon={FileCheck2}

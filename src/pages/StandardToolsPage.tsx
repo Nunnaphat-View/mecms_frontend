@@ -8,20 +8,7 @@ import SearchBar from "../components/SearchBar"
 import StandardToolFormDialog from "../components/tools/StandardToolFormDialog"
 import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
 import { getFileUrl } from "../services/standardToolService"
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-
-function formatDateBE(dateStr: string | null | undefined): string {
-  if (!dateStr) return "-"
-  const date = new Date(dateStr)
-  if (isNaN(date.getTime())) return dateStr
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, "0")
-  const d = String(date.getDate()).padStart(2, "0")
-  const beYear = y < 2400 ? y + 543 : y
-  return `${beYear}-${m}-${d}`
-}
+import { formatDateBE } from "../utils"
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 

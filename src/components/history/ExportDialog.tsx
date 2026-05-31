@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { X, Download, FileText, FileSpreadsheet, Archive, Layers, CheckSquare, Calendar, Wrench } from "lucide-react"
+import { X, Download, FileText, FileSpreadsheet, Archive, Layers, CheckSquare,Wrench } from "lucide-react"
+import DatePicker from "../common/DatePicker"
 
 type ExportFormat = "csv" | "pdf"
 type PdfOption = "individual" | "zip"
@@ -212,28 +213,20 @@ export default function ExportDialog({
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-500">เริ่มจากวันที่</label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400 pointer-events-none" />
-                  <input
-                    type="date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                    className="w-full h-10 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-white transition-all text-slate-700"
-                  />
-                </div>
+                <DatePicker
+                  value={dateFrom}
+                  onChange={setDateFrom}
+                  placeholder="เลือกวันเริ่มต้น..."
+                />
               </div>
 
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-500">ถึงวันที่</label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400 pointer-events-none" />
-                  <input
-                    type="date"
-                    value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
-                    className="w-full h-10 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-white transition-all text-slate-700"
-                  />
-                </div>
+                <DatePicker
+                  value={dateTo}
+                  onChange={setDateTo}
+                  placeholder="เลือกวันสิ้นสุด..."
+                />
               </div>
             </div>
           </div>
