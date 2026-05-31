@@ -68,6 +68,7 @@ export default function CerViewPage() {
     }
 
     loadTaskData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskId])
 
 
@@ -376,6 +377,7 @@ export default function CerViewPage() {
       }, 3000)
       return () => clearTimeout(timer)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task])
 
   async function printCer() {

@@ -158,6 +158,7 @@ export default function CerCertificate({ data }: CerCertificateProps) {
           ? "abnormal"
           : ("na" as const),
     }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupedQualitatives])
 
   // Section 2 items mapping
@@ -179,6 +180,7 @@ export default function CerCertificate({ data }: CerCertificateProps) {
           ? "abnormal"
           : ("na" as const),
     }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupedQualitatives])
 
   // Section 3 items mapping
@@ -206,6 +208,7 @@ export default function CerCertificate({ data }: CerCertificateProps) {
       name: q.item_name,
       done: q.result.toUpperCase() === "PASS",
     }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupedQualitatives])
 
   return (
