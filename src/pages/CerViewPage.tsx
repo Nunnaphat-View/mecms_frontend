@@ -480,38 +480,44 @@ export default function CerViewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-6 font-sans print:p-0 print:bg-white">
+    <div className=" p-4 md:p-6 font-sans print:p-0 print:bg-white">
       {/* Premium Header */}
-      <div className="max-w-[210mm] mx-auto bg-white border border-slate-200 rounded-2xl p-4 mb-6 shadow-xs flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 print:hidden">
+      {/* Premium Header */}
+      <div className="relative overflow-hidden max-w-6xl mx-auto bg-white border border-slate-200 rounded-3xl p-5 mb-6 shadow-sm grid grid-cols-1 lg:grid-cols-3 items-center gap-5 print:hidden transition-all duration-300">
         
         {/* Left Side: Info */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5 min-w-0 lg:justify-self-start">
           <button
             onClick={() => navigate("/history")}
-            className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-500 cursor-pointer"
+            className="group p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 hover:border-slate-300 text-slate-500 hover:text-slate-800 transition-all duration-200 active:scale-95 cursor-pointer flex-shrink-0 shadow-2xs"
           >
-            <ArrowLeft className="size-4" />
+            <ArrowLeft className="size-4 group-hover:-translate-x-0.5 transition-transform" />
           </button>
-          <div className="text-left">
-            <h1 className="font-bold text-sm text-slate-800 leading-tight">
+          <div className="text-left min-w-0 flex flex-col gap-1.5">
+            <h1 className="font-bold text-sm sm:text-base text-slate-900 tracking-tight leading-tight">
               {selectedCert === 1
-                ? "ใบรับรองผลการตรวจสภาพ (Maintenance)"
-                : "ใบรับรองผลการสอบเทียบเครื่องมือ (Calibration)"}
+                ? "ใบรับรองผลการตรวจสภาพภายนอก"
+                : "ใบรับรองผลการสอบเทียบเครื่องมือ"}
             </h1>
-            <p className="text-[10px] text-slate-400 mt-0.5">
-              ID: {activeCerData.pmNo} | อัปเดตล่าสุด: {activeCerData.pmDate}
-            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-[10px] font-mono font-bold text-slate-600">
+                ID: {activeCerData.pmNo}
+              </span>
+              <span className="text-[11px] text-slate-400 flex items-center gap-1 font-sans">
+                • อัปเดตล่าสุด: {activeCerData.pmDate}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Center: Toggle */}
-        <div className="flex bg-slate-100 p-1 rounded-xl self-center gap-1">
+        {/* Center: Tab Selector */}
+        <div className="flex bg-slate-100/80 border border-slate-200/50 p-1 rounded-xl gap-1 justify-self-center w-full sm:w-auto">
           <button
             onClick={() => setSelectedCert(1)}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
               selectedCert === 1
-                ? "bg-white text-primary shadow-xs"
-                : "text-slate-500 hover:text-slate-800"
+                ? "bg-white text-primary border border-slate-200/50 shadow-2xs font-bold scale-100"
+                : "text-slate-500 hover:text-slate-800 hover:bg-white/40"
             }`}
           >
             {selectedCert === 1 ? <Check className="size-3.5" /> : <Clipboard className="size-3.5" />}
@@ -519,10 +525,10 @@ export default function CerViewPage() {
           </button>
           <button
             onClick={() => setSelectedCert(2)}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
               selectedCert === 2
-                ? "bg-white text-primary shadow-xs"
-                : "text-slate-500 hover:text-slate-800"
+                ? "bg-white text-primary border border-slate-200/50 shadow-2xs font-bold scale-100"
+                : "text-slate-500 hover:text-slate-800 hover:bg-white/40"
             }`}
           >
             {selectedCert === 2 ? <Check className="size-3.5" /> : <Clipboard className="size-3.5" />}
@@ -530,12 +536,12 @@ export default function CerViewPage() {
           </button>
         </div>
 
-        {/* Right Side: Actions */}
-        <div className="flex items-center gap-2">
+        {/* Right Side: Action Buttons */}
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-self-center lg:justify-self-end">
           <button
             onClick={printCer}
             disabled={isPrinting}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 h-9 border border-slate-200 rounded-lg hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 h-10 border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-all duration-200 active:scale-95 hover:shadow-2xs cursor-pointer rounded-xl"
           >
             <Printer className="size-4" />
             พิมพ์
@@ -543,7 +549,7 @@ export default function CerViewPage() {
           <button
             onClick={downloadPdf}
             disabled={isPrinting}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 h-9 bg-primary hover:bg-[#07536a] text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 h-10 bg-primary hover:bg-[#07536a] text-white rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer"
           >
             <Download className="size-4" />
             ดาวน์โหลด PDF
