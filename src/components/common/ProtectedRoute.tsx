@@ -47,6 +47,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     if (currentPath.startsWith("/tools/config/")) {
       return allowedMenus.includes("/tools/manage") || allowedMenus.includes("/tools")
     }
+    if (currentPath === "/cer-view") {
+      return allowedMenus.includes("/history")
+    }
 
     return false
   })()

@@ -20,6 +20,8 @@ import ToolConfigPage from "@/pages/ToolConfigPage"
 import SettingsPage from "@/pages/SettingsPage"
 import ApprovalsPage from "@/pages/ApprovalsPage"
 import ApprovalDetailPage from "@/pages/ApprovalDetailPage"
+import CerViewPlaceholderPage from "@/pages/CerViewPlaceholderPage"
+import PublicStatusPlaceholderPage from "@/pages/PublicStatusPlaceholderPage"
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +29,7 @@ export const router = createBrowserRouter([
     element: <FullScreenLayout />,
     children: [
       { path: "", element: <LoginPage /> },
+      { path: "status/:id", element: <PublicStatusPlaceholderPage /> },
     ],
   },
   {
@@ -46,6 +49,7 @@ export const router = createBrowserRouter([
       { path: "approval", element: <ApprovalsPage /> },
       { path: "approval/:id", element: <ApprovalDetailPage /> },
       { path: "history", element: <HistoryPage /> },
+      { path: "cer-view", element: <CerViewPlaceholderPage /> },
       { path: "users", element: <UsersPage /> },
       { path: "hospitals", element: <HospitalsPage /> },
       { path: "sections", element: <SectionsPage /> },

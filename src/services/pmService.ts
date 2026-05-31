@@ -125,6 +125,28 @@ export interface TaskApi {
   task_user: number
   createdAt: string
   approvedAt?: string
+  path_pdf_cer?: string | null
+  certificate_data?: {
+    hospital?: {
+      name?: string
+      logoUrl?: string
+      address?: string
+      district?: string
+      province?: string
+      zipCode?: string
+    }
+    department?: {
+      name?: string
+    }
+    technician?: {
+      name?: string
+      signatureUrl?: string
+    }
+    approver?: {
+      name?: string
+      signatureUrl?: string
+    }
+  }
   technician: TechnicianApi
   approver?: TechnicianApi
   equipment?: EquipmentApi
@@ -203,4 +225,13 @@ export const pmService = {
         remarks,
       }),
     }),
+
+  uploadCerPdf: (taskId: number, blob: Blob) => {
+    const formData = new FormData()
+    formData.append("file", blob, `cer-${taskId}.pdf`)
+    return apiFetch<void>(`/pm-task/${taskId}/upload-cer`, {
+      method: "POST",
+      body: formData,
+    })
+  },
 }
