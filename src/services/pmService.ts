@@ -131,6 +131,11 @@ export interface TaskApi {
   checklistResults?: PmChecklistResultApi[]
   checklistRemarks?: PmCategoryRemarkApi[]
   remarks?: string
+  environments?: { id: number; ambient_temp?: number; ambient_humidity?: number }[]
+  standardTools?: { id: number; name: string; asset_code?: string; serial_number?: string; manufacturer?: string; model?: string; unit?: string }[]
+  measurements?: { id: number; parameter_name: string; range?: string; standard_value?: number; reading_1?: number; reading_2?: number; reading_3?: number; std_reading_1?: number; std_reading_2?: number; std_reading_3?: number; average_value?: number; average_standard?: number; error_value?: number; result: string; display_type?: string; resolution?: string; std_type?: string; data?: Record<string, unknown> }[]
+  qualitatives?: { id: number; parameter_name: string; item_name: string; result: string }[]
+  specificParameters?: { id: string; name: string; value?: string; unit?: string }[]
 }
 
 export interface SavePmPayload {
@@ -177,5 +182,25 @@ export const pmService = {
     apiFetch<TaskApi>(`/pm-task/${taskId}/submit`, {
       method: "PATCH",
       body: JSON.stringify(payload),
+    }),
+
+  approveTask: (taskId: number, approverId: number) =>
+    apiFetch<void>(`/pm-task/${taskId}/approve`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        approver_id: approverId,
+        decision: "Approve",
+        remarks: "Approved via frontend",
+      }),
+    }),
+
+  rejectTask: (taskId: number, remarks: string, approverId: number) =>
+    apiFetch<void>(`/pm-task/${taskId}/approve`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        approver_id: approverId,
+        decision: "Reject",
+        remarks,
+      }),
     }),
 }

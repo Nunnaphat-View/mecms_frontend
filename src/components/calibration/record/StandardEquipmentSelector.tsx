@@ -100,12 +100,12 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
   const isLoading = standardToolStore.loading || settingStore.loading
 
   return (
-    <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-xs">
+    <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-xs h-full flex flex-col">
       <div className="bg-primary text-white font-bold text-sm text-center py-2.5 uppercase tracking-wide">
         เครื่องมือมาตรฐาน
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex-1">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-8 text-slate-500 gap-2">
             <Loader2 className="size-8 animate-spin text-primary" />

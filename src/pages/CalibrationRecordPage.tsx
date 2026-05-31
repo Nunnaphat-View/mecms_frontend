@@ -124,7 +124,7 @@ export default function CalibrationRecordPage() {
       {/* Main Container Card */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
         {/* Top Header info + Tabs */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center p-6 border-b border-slate-200 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end p-6 border-b border-slate-200 gap-6 bg-slate-50/50">
           <div>
             <h2 className="text-lg font-bold text-slate-800">
               {store.equipmentDetails.name || "Patient Monitor"}
@@ -145,14 +145,14 @@ export default function CalibrationRecordPage() {
           </div>
 
           {/* Custom Styled Tabs */}
-          <div className="flex border border-slate-100 rounded-xl p-1 bg-slate-50">
+          <div className="flex gap-1 items-end border-b border-transparent">
             <button
               type="button"
               onClick={() => switchTab("general")}
-              className={`px-6 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`min-w-[140px] py-2.5 px-4 font-bold text-xs rounded-t-xl transition-all cursor-pointer select-none text-center ${
                 activeTab === "general"
-                  ? "bg-primary text-white shadow-xs"
-                  : "text-slate-500 hover:text-slate-700"
+                  ? "bg-primary text-white"
+                  : "bg-slate-100 text-primary hover:bg-slate-200"
               }`}
             >
               ข้อมูลทั่วไป
@@ -160,10 +160,10 @@ export default function CalibrationRecordPage() {
             <button
               type="button"
               onClick={() => switchTab("test_results")}
-              className={`px-6 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`min-w-[140px] py-2.5 px-4 font-bold text-xs rounded-t-xl transition-all cursor-pointer select-none text-center ${
                 activeTab === "test_results"
-                  ? "bg-primary text-white shadow-xs"
-                  : "text-slate-500 hover:text-slate-700"
+                  ? "bg-primary text-white"
+                  : "bg-slate-100 text-primary hover:bg-slate-200"
               }`}
             >
               บันทึกผลทดสอบ

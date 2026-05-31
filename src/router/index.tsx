@@ -18,6 +18,8 @@ import ToolsManagePage from "@/pages/ToolsManagePage"
 import CalibrationRecordPage from "@/pages/CalibrationRecordPage"
 import ToolConfigPage from "@/pages/ToolConfigPage"
 import SettingsPage from "@/pages/SettingsPage"
+import ApprovalsPage from "@/pages/ApprovalsPage"
+import ApprovalDetailPage from "@/pages/ApprovalDetailPage"
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +43,8 @@ export const router = createBrowserRouter([
       { path: "calibration", element: <CalibrationPage /> },
       { path: "calibration/inspection/:id", element: <ExternalInspectionPage /> },
       { path: "calibration/record/:id", element: <CalibrationRecordPage /> },
+      { path: "approval", element: <ApprovalsPage /> },
+      { path: "approval/:id", element: <ApprovalDetailPage /> },
       { path: "history", element: <HistoryPage /> },
       { path: "users", element: <UsersPage /> },
       { path: "hospitals", element: <HospitalsPage /> },

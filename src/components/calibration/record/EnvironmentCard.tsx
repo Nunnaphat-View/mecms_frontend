@@ -45,34 +45,45 @@ export default function EnvironmentCard({ readonly = false, envData }: Props) {
       : Number(humVal).toFixed(1)
 
   return (
-    <div className="border border-slate-200 rounded-2xl overflow-hidden flex flex-col bg-white shadow-xs">
+    <div className="border border-slate-200 rounded-2xl overflow-hidden flex flex-col bg-white shadow-xs h-full">
       {/* Header */}
       <div className="bg-primary text-white font-bold text-sm text-center py-2.5 uppercase tracking-wide">
         ข้อมูลสภาวะแวดล้อม
       </div>
 
-      <div className="flex flex-col p-5 gap-5">
+      <div className="flex flex-col p-5 gap-5 flex-1">
         {readonly ? (
-          /* ── Readonly: two metric tiles ── */
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5 border border-slate-100 rounded-xl p-3 bg-slate-50">
-              <div className="flex items-center gap-1.5">
-                <Thermometer className="size-3.5 text-blue-500" />
-                <span className="text-[11px] font-semibold text-slate-500">อุณหภูมิ</span>
+          /* ── Readonly: premium list rows with balanced layout ── */
+          <div className="flex flex-col gap-4 py-2">
+            <div className="flex items-center justify-between border border-slate-100 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100/50">
+                  <Thermometer className="size-5 text-blue-600" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-slate-700">อุณหภูมิ</span>
+                  <span className="text-[10px] text-slate-400">Ambient Temperature</span>
+                </div>
               </div>
-              <div className="text-xl font-bold text-slate-800">
+              <div className="text-xl font-extrabold text-slate-800 flex items-baseline gap-0.5">
                 {displayTemp}
-                <span className="text-sm font-medium text-slate-400 ml-1">°C</span>
+                <span className="text-xs font-semibold text-slate-400 ml-0.5">°C</span>
               </div>
             </div>
-            <div className="flex flex-col gap-1.5 border border-slate-100 rounded-xl p-3 bg-slate-50">
-              <div className="flex items-center gap-1.5">
-                <Droplets className="size-3.5 text-sky-500" />
-                <span className="text-[11px] font-semibold text-slate-500">ความชื้น</span>
+
+            <div className="flex items-center justify-between border border-slate-100 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center border border-sky-100/50">
+                  <Droplets className="size-5 text-sky-600" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-slate-700">ความชื้น</span>
+                  <span className="text-[10px] text-slate-400">Ambient Humidity</span>
+                </div>
               </div>
-              <div className="text-xl font-bold text-slate-800">
+              <div className="text-xl font-extrabold text-slate-800 flex items-baseline gap-0.5">
                 {displayHumidity}
-                <span className="text-sm font-medium text-slate-400 ml-1">%Rh</span>
+                <span className="text-xs font-semibold text-slate-400 ml-0.5">%Rh</span>
               </div>
             </div>
           </div>
