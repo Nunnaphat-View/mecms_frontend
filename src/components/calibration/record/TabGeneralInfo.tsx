@@ -1,23 +1,21 @@
-import { useInspectionStore } from "@/stores/inspectionStore"
 import { useCalibrationRecordStore } from "@/stores/calibrationRecordStore"
 import EquipmentDetailsCard from "@/components/inspection/EquipmentDetailsCard"
 import LocationDetailsCard from "./LocationDetailsCard"
 
 export default function TabGeneralInfo() {
-  const inspection = useInspectionStore()
   const calRecord = useCalibrationRecordStore()
 
   const equipmentInfo = {
-    deviceName: inspection.deviceInfo.deviceName,
-    company: inspection.deviceInfo.company,
-    model: inspection.deviceInfo.model,
-    serialNumber: inspection.deviceInfo.serialNumber,
-    assetCode: inspection.deviceInfo.assetCode,
+    deviceName: calRecord.equipmentDetails.name,
+    company: calRecord.equipmentDetails.company,
+    model: calRecord.equipmentDetails.model,
+    serialNumber: calRecord.equipmentDetails.serialNumber,
+    assetCode: calRecord.equipmentDetails.code,
     riskLevel: calRecord.equipmentDetails.riskLevel,
     type: calRecord.equipmentDetails.type,
-    calibrationInterval: inspection.deviceInfo.calibrationInterval,
-    lastCalibrationDate: inspection.deviceInfo.lastCalibrationDate,
-    dueDate: inspection.deviceInfo.dueDate,
+    calibrationInterval: calRecord.equipmentDetails.calibrationCycle,
+    lastCalibrationDate: calRecord.equipmentDetails.lastCalibrationDate,
+    dueDate: calRecord.equipmentDetails.nextCalibrationDate,
   }
 
   return (
