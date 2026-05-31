@@ -121,46 +121,49 @@ export default function HistoryPage() {
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white p-4 border border-slate-200 rounded-xl shadow-xs">
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="ค้นหา..."
-        />
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white p-4 border border-slate-200 rounded-xl shadow-xs">
+        {/* Left: Searchbar + Dropdowns */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1">
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="ค้นหา..."
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={selectedDevice}
+              onChange={(e) => setSelectedDevice(e.target.value)}
+              className="h-10 px-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-primary transition-all outline-none min-w-[160px] cursor-pointer"
+            >
+              {deviceOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
 
-        <div className="flex flex-wrap items-center gap-2.5 flex-1 sm:justify-end">
-          <select
-            value={selectedDevice}
-            onChange={(e) => setSelectedDevice(e.target.value)}
-            className="h-10 px-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-primary transition-all outline-none min-w-[160px]"
-          >
-            {deviceOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedResult}
-            onChange={(e) => setSelectedResult(e.target.value)}
-            className="h-10 px-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-primary transition-all outline-none min-w-[140px]"
-          >
-            {resultOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-
-          <button
-            onClick={() => setShowExport(true)}
-            className="flex items-center justify-center gap-1.5 h-10 px-4 bg-primary hover:bg-[#07536a] text-white rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
-          >
-            <Download className="size-4" />
-            ส่งออกข้อมูล
-          </button>
+            <select
+              value={selectedResult}
+              onChange={(e) => setSelectedResult(e.target.value)}
+              className="h-10 px-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-primary transition-all outline-none min-w-[140px] cursor-pointer"
+            >
+              {resultOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
+        {/* Right: Export Button */}
+        <button
+          onClick={() => setShowExport(true)}
+          className="flex items-center justify-center gap-1.5 h-10 px-4 bg-primary hover:bg-[#07536a] text-white rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
+        >
+          <Download className="size-4" />
+          ส่งออกข้อมูล
+        </button>
       </div>
 
       {/* History Table */}
