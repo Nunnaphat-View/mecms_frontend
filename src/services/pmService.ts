@@ -90,6 +90,15 @@ export interface TechnicianApi {
     name: string
     description: string
   }
+  hospital?: {
+    id: number
+    name: string
+    address?: string
+    district?: string
+    province?: string
+    logoUrl?: string
+    zipCode?: string
+  }
 }
 
 export interface PmChecklistResultApi {
@@ -154,7 +163,16 @@ export interface TaskApi {
   checklistRemarks?: PmCategoryRemarkApi[]
   remarks?: string
   environments?: { id: number; ambient_temp?: number; ambient_humidity?: number }[]
-  standardTools?: { id: number; name: string; asset_code?: string; serial_number?: string; manufacturer?: string; model?: string; unit?: string }[]
+  standardTools?: {
+    id: number
+    name: string
+    model?: string
+    manufacturer?: string
+    serial_number?: string
+    unit?: string
+    calibration_date_last?: string
+    certificate_number?: string
+  }[]
   measurements?: { id: number; parameter_name: string; range?: string; standard_value?: number; reading_1?: number; reading_2?: number; reading_3?: number; std_reading_1?: number; std_reading_2?: number; std_reading_3?: number; average_value?: number; average_standard?: number; error_value?: number; result: string; display_type?: string; resolution?: string; std_type?: string; data?: Record<string, unknown> }[]
   qualitatives?: { id: number; parameter_name: string; item_name: string; result: string }[]
   specificParameters?: { id: string; name: string; value?: string; unit?: string }[]
