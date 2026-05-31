@@ -6,6 +6,7 @@ import ConfigStandardToolCard from "../components/tools/config/ConfigStandardToo
 import ConfigQualitativeBlock from "../components/tools/config/ConfigQualitativeBlock"
 import ConfigQuantitativeBlock from "../components/tools/config/ConfigQuantitativeBlock"
 import type { QuantData } from "../components/tools/config/ConfigQuantitativeBlock"
+import { useToast } from "@/hooks/useToast"
 
 import { standardToolService } from "../services/standardToolService"
 import { calibrationSettingService } from "../services/calibrationMgmtService"
@@ -85,6 +86,7 @@ export default function ToolConfigPage() {
   const { name: rawName } = useParams<{ name: string }>()
   const navigate = useNavigate()
   const toolName = decodeURIComponent(rawName || "")
+  const toast = useToast()
 
   const [allCategories, setAllCategories] = useState<StandardToolCategory[]>([])
   const [selectedCategories, setSelectedCategories] = useState<StandardToolCategory[]>([])
@@ -344,11 +346,11 @@ export default function ToolConfigPage() {
       })
 
       await calibrationSettingService.saveBatch(toolName, payload)
-      alert("บันทึกการตั้งค่าสำเร็จ")
+      toast.success("บันทึกการตั้งค่าสำเร็จ")
       navigate("/tools/manage?tab=settings")
     } catch (error) {
       console.error("Save error:", error)
-      alert("ไม่สามารถบันทึกการตั้งค่าได้")
+      toast.error("ไม่สามารถบันทึกการตั้งค่าได้")
     } finally {
       setIsSaving(false)
     }

@@ -11,6 +11,7 @@ import { CalibrationProcessDialog } from "../components/tools/CalibrationProcess
 import { useToolStore } from "../stores/toolStore"
 import { useAuthStore } from "../stores/authStore"
 import type { CalibrationProcess, CalibrationCost } from "../types/tool"
+import { useToast } from "@/hooks/useToast"
 import {
   calibrationProcessService,
   calibrationCostService,
@@ -41,6 +42,7 @@ export default function ToolsManagePage() {
   const navigate = useNavigate()
   const { tools, fetchTools } = useToolStore()
   const { user } = useAuthStore()
+  const toast = useToast()
 
   const activeTab = (searchParams.get("tab") as "calibration" | "settings" | "cost") || "calibration"
 
@@ -227,9 +229,10 @@ export default function ToolsManagePage() {
       await loadProcesses()
       setShowAddProcess(false)
       setEditingProcess(null)
+      toast.success("บันทึกข้อมูลกระบวนการสอบเทียบสำเร็จ")
     } catch (err) {
       console.error(err)
-      alert("ไม่สามารถบันทึกข้อมูลได้")
+      toast.error("ไม่สามารถบันทึกข้อมูลได้")
     } finally {
       setActionLoading(false)
     }
@@ -242,9 +245,10 @@ export default function ToolsManagePage() {
       await calibrationProcessService.remove(deleteProcessTarget.id)
       await loadProcesses()
       setDeleteProcessTarget(null)
+      toast.success("ลบข้อมูลกระบวนการสอบเทียบสำเร็จ")
     } catch (err) {
       console.error(err)
-      alert("ลบข้อมูลล้มเหลว")
+      toast.error("ลบข้อมูลล้มเหลว")
     } finally {
       setActionLoading(false)
     }
@@ -267,9 +271,10 @@ export default function ToolsManagePage() {
       await loadCosts()
       setShowAddCost(false)
       setEditingCost(null)
+      toast.success("บันทึกข้อมูลค่าใช้จ่ายสำเร็จ")
     } catch (err) {
       console.error(err)
-      alert("ไม่สามารถบันทึกข้อมูลได้")
+      toast.error("ไม่สามารถบันทึกข้อมูลได้")
     } finally {
       setActionLoading(false)
     }
@@ -282,9 +287,10 @@ export default function ToolsManagePage() {
       await calibrationCostService.remove(deleteCostTarget.id)
       await loadCosts()
       setDeleteCostTarget(null)
+      toast.success("ลบข้อมูลค่าใช้จ่ายสำเร็จ")
     } catch (err) {
       console.error(err)
-      alert("ลบข้อมูลล้มเหลว")
+      toast.error("ลบข้อมูลล้มเหลว")
     } finally {
       setActionLoading(false)
     }

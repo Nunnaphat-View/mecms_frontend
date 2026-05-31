@@ -9,12 +9,14 @@ import StandardToolFormDialog from "../components/tools/StandardToolFormDialog"
 import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
 import { getFileUrl } from "../services/standardToolService"
 import { formatDateBE } from "../utils"
+import { useToast } from "@/hooks/useToast"
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function StandardToolsPage() {
   const { tools, loading, fetchTools, deleteTool } = useStandardToolStore()
   const { user } = useAuthStore()
+  const toast = useToast()
 
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
@@ -104,9 +106,10 @@ export default function StandardToolsPage() {
     setIsDeleting(true)
     try {
       await deleteTool(deleteTarget.id)
+      toast.success("ลบข้อมูลเครื่องมือมาตรฐานสำเร็จ")
     } catch (err) {
       console.error(err)
-      alert("ลบข้อมูลล้มเหลว กรุณาลองใหม่อีกครั้ง")
+      toast.error("ลบข้อมูลล้มเหลว กรุณาลองใหม่อีกครั้ง")
     } finally {
       setIsDeleting(false)
       setDeleteTarget(null)

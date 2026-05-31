@@ -3,6 +3,7 @@ import { Edit3, X, Tag, FileText, Settings, Award, ShieldAlert, Calendar, Layout
 import type { MedicalTool, ToolStatus } from "../../types/tool"
 import { useToolStore } from "../../stores/toolStore"
 import { useAuthStore } from "../../stores/authStore"
+import { useToast } from "@/hooks/useToast"
 
 interface ToolFormDialogProps {
   isOpen: boolean
@@ -31,6 +32,7 @@ export default function ToolFormDialog({ isOpen, tool, onClose, onSaved }: ToolF
   const isEditing = !!tool
   const { equipmentTypes, sections, fetchReferenceData, addTool, updateTool, getNextId } = useToolStore()
   const { user } = useAuthStore()
+  const toast = useToast()
 
   const [id, setId] = useState(() => (tool ? tool.id : getNextId()))
   const [name, setName] = useState(() => (tool ? tool.name : ""))
@@ -59,7 +61,7 @@ export default function ToolFormDialog({ isOpen, tool, onClose, onSaved }: ToolF
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
     if (!id || !name || !equipmentTypeId || !sectionId || !status) {
-      alert("กรุณากรอกข้อมูลที่จำเป็น (*) ให้ครบถ้วน")
+      toast.warn("กรุณากรอกข้อมูลที่จำเป็น (*) ให้ครบถ้วน")
       return
     }
 
@@ -87,14 +89,16 @@ export default function ToolFormDialog({ isOpen, tool, onClose, onSaved }: ToolF
     try {
       if (isEditing && tool) {
         await updateTool(tool.id, payload)
+        toast.success("แก้ไขข้อมูลเครื่องมือสำเร็จ")
       } else {
         await addTool(payload)
+        toast.success("เพิ่มข้อมูลเครื่องมือสำเร็จ")
       }
       onSaved()
       onClose()
     } catch (err) {
       console.error(err)
-      alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง")
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง")
     } finally {
       setIsSaving(false)
     }

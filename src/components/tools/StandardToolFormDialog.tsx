@@ -4,6 +4,7 @@ import type { BackendStandardTool } from "../../types/tool"
 import { useStandardToolStore } from "../../stores/standardToolStore"
 import { getFileUrl } from "../../services/standardToolService"
 import DatePicker from "../common/DatePicker"
+import { useToast } from "@/hooks/useToast"
 
 interface StandardToolFormDialogProps {
   isOpen: boolean
@@ -55,6 +56,7 @@ export default function StandardToolFormDialog({
   const isEditing = !!tool
   const { categories, fetchCategories, addTool, updateTool, uploadPdf, uploadImage } =
     useStandardToolStore()
+  const toast = useToast()
 
   // Lazy initializers — safe because the parent conditionally mounts this component,
   // so `tool` already has the correct value at mount time. No useEffect needed.
@@ -118,11 +120,12 @@ export default function StandardToolFormDialog({
       if (pdfFile) await uploadPdf(savedTool.id, pdfFile)
       if (imageFile) await uploadImage(savedTool.id, imageFile)
 
+      toast.success(isEditing ? "แก้ไขเครื่องมือมาตรฐานสำเร็จ" : "เพิ่มเครื่องมือมาตรฐานสำเร็จ")
       onSaved()
       onClose()
     } catch (err) {
       console.error(err)
-      alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง")
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง")
     } finally {
       setIsSaving(false)
     }

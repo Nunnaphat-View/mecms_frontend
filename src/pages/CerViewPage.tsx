@@ -7,6 +7,7 @@ import { pmService, type TaskApi } from "../services/pmService"
 import CerCertificate, { type CerData } from "../components/history/CerCertificate"
 import CerCalibration, { type CerCalibrationData } from "../components/history/CerCalibration"
 import { useCalibrationSettingStore } from "../stores/calibrationSettingStore"
+import { useToast } from "@/hooks/useToast"
 
 interface Html2PdfWorker {
   set: (options: unknown) => Html2PdfWorker
@@ -38,6 +39,7 @@ const html2pdfCall = (...args: unknown[]) => {
 export default function CerViewPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const toast = useToast()
   const taskIdParam = searchParams.get("taskId")
   const taskId = taskIdParam ? parseInt(taskIdParam) : null
 
@@ -416,7 +418,7 @@ export default function CerViewPage() {
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : String(err)
       console.error("Printing PDF Error:", err)
-      alert("เกิดข้อผิดพลาดในการพิมพ์: " + errorMsg)
+      toast.error("เกิดข้อผิดพลาดในการพิมพ์: " + errorMsg)
     } finally {
       setIsPrinting(false)
     }
@@ -443,13 +445,13 @@ export default function CerViewPage() {
       // Upload to backend
       if (task?.id) {
         await pmService.uploadCerPdf(task.id, blob)
-        alert("บันทึกใบ CER ลงระบบเรียบร้อยแล้ว")
+        toast.success("บันทึกใบ CER ลงระบบเรียบร้อยแล้ว")
         setTask(prev => prev ? { ...prev, path_pdf_cer: "uploaded" } : null)
       }
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : String(error)
       console.error("PDF Generation/Upload Error:", error)
-      alert("เกิดข้อผิดพลาดในการบันทึก PDF: " + errorMsg)
+      toast.error("เกิดข้อผิดพลาดในการบันทึก PDF: " + errorMsg)
     } finally {
       setIsPrinting(false)
     }

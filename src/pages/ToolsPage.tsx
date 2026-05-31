@@ -7,6 +7,7 @@ import type { MedicalTool, ToolStatus } from "../types/tool"
 import ToolFormDialog from "../components/tools/ToolFormDialog"
 import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
 import SearchBar from "../components/SearchBar"
+import { useToast } from "@/hooks/useToast"
 
 export default function ToolsPage() {
   const {
@@ -22,6 +23,7 @@ export default function ToolsPage() {
   } = useToolStore()
 
   const { user } = useAuthStore()
+  const toast = useToast()
 
   // Modal Dialog States
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -128,9 +130,10 @@ export default function ToolsPage() {
       await deleteTool(selectedToolForDelete.id)
       setIsDeleteOpen(false)
       setSelectedToolForDelete(null)
+      toast.success("ลบเครื่องมือแพทย์สำเร็จ")
     } catch (err) {
       console.error(err)
-      alert("เกิดข้อผิดพลาดในการลบเครื่องมือแพทย์")
+      toast.error("เกิดข้อผิดพลาดในการลบเครื่องมือแพทย์")
     } finally {
       setIsDeleting(false)
     }

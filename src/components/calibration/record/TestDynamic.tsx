@@ -39,10 +39,10 @@ const TestDynamic = forwardRef<TestDynamicHandle, Props>(function TestDynamic({ 
   const [probe2Freq, setProbe2Freq] = useState("7.5")
   const [probe2Sn, setProbe2Sn] = useState("")
 
-  const [ivSet, setIvSet] = useState("Covex")
-  const [dropRate, setDropRate] = useState("20")
-  const [air, setAir] = useState("Pass")
-  const [occlusionPressure, setOcclusionPressure] = useState("750")
+  const [ivSet, setIvSet] = useState("")
+  const [dropRate, setDropRate] = useState("")
+  const [air, setAir] = useState("")
+  const [occlusionPressure, setOcclusionPressure] = useState("")
 
   // Prevent multiple initializations
   const isInitialized = useRef(false)
@@ -577,6 +577,7 @@ const TestDynamic = forwardRef<TestDynamicHandle, Props>(function TestDynamic({ 
                     onChange={(e) => setAir(e.target.value)}
                     className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:bg-white text-slate-800"
                   >
+                    <option value="">-- เลือกสถานะ --</option>
                     <option value="Pass">Pass</option>
                     <option value="Fail">Fail</option>
                   </select>

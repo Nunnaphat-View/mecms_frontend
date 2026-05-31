@@ -3,6 +3,7 @@ import { X, Edit, Upload, RefreshCw, Eye, EyeOff, Save, Key, User as UserIcon, M
 import type { User } from "../../types/auth"
 import { useUserStore } from "../../stores/userStore"
 import { userService } from "../../services/userService"
+import { useToast } from "@/hooks/useToast"
 
 interface UserFormDialogProps {
   isOpen: boolean
@@ -22,6 +23,7 @@ const ROLE_OPTIONS = [
 export default function UserFormDialog({ isOpen, user, onClose, onSaved }: UserFormDialogProps) {
   const isEditing = !!user
   const { addUser, updateUser } = useUserStore()
+  const toast = useToast()
 
   const [username, setUsername] = useState(() => (user ? user.username || "" : ""))
   const [name, setName] = useState(() => (user ? user.name || "" : ""))
@@ -138,17 +140,17 @@ export default function UserFormDialog({ isOpen, user, onClose, onSaved }: UserF
     e.preventDefault()
 
     if (!username || !name || !email || !tel || !roleId) {
-      alert("กรุณากรอกข้อมูลที่จำเป็น (*) ให้ครบถ้วน")
+      toast.warn("กรุณากรอกข้อมูลที่จำเป็น (*) ให้ครบถ้วน")
       return
     }
 
     if (!isEditing && !password) {
-      alert("กรุณาระบุรหัสผ่านสำหรับการเพิ่มผู้ใช้งาน")
+      toast.warn("กรุณาระบุรหัสผ่านสำหรับการเพิ่มผู้ใช้งาน")
       return
     }
 
     if (!hasExistingSignature && !hasDrawn) {
-      alert("กรุณาเซ็นชื่อก่อนบันทึก")
+      toast.warn("กรุณาเซ็นชื่อก่อนบันทึก")
       return
     }
 
@@ -174,14 +176,16 @@ export default function UserFormDialog({ isOpen, user, onClose, onSaved }: UserF
 
       if (isEditing && user) {
         await updateUser(user.id, fd)
+        toast.success("แก้ไขข้อมูลผู้ใช้งานสำเร็จ")
       } else {
         await addUser(fd)
+        toast.success("เพิ่มข้อมูลผู้ใช้งานสำเร็จ")
       }
       onSaved()
       onClose()
     } catch (err) {
       console.error(err)
-      alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง")
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง")
     } finally {
       setIsSaving(false)
     }
