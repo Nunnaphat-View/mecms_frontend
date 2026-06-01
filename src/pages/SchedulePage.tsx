@@ -80,12 +80,12 @@ export default function SchedulePage() {
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Calendar */}
-        <div className="lg:col-span-7 xl:col-span-8 flex flex-col h-[500px] lg:h-[calc(100vh-170px)]">
+        <div className="lg:col-span-7 xl:col-span-8">
           <ScheduleCalendar />
         </div>
 
-        {/* Right Column: Events List */}
-        <div className="lg:col-span-5 xl:col-span-4 flex flex-col h-[500px] lg:h-[calc(100vh-170px)] relative">
+        {/* Right Column: Events List (Sticky on desktop) */}
+        <div className="lg:col-span-5 xl:col-span-4 flex flex-col lg:sticky lg:top-6 relative">
           {/* Header Card Box */}
           <div className="bg-[#088395] text-white p-5 rounded-2xl shadow-xs mb-4 select-none">
             <h3 className="font-bold text-sm">รายการสอบเทียบ</h3>
@@ -96,7 +96,7 @@ export default function SchedulePage() {
           </div>
 
           {/* Events Scroll Area */}
-          <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 custom-scrollbar">
+          <div className="overflow-y-auto max-h-[500px] lg:max-h-[calc(100vh-300px)] pr-1 flex flex-col gap-3 custom-scrollbar">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-3 bg-white border border-slate-200 rounded-2xl">
                 <RefreshCw className="size-8 text-[#088395] animate-spin" />
