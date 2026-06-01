@@ -22,6 +22,7 @@ import ApprovalsPage from "@/pages/ApprovalsPage"
 import ApprovalDetailPage from "@/pages/ApprovalDetailPage"
 import CerViewPage from "@/pages/CerViewPage"
 import PublicStatusPlaceholderPage from "@/pages/PublicStatusPlaceholderPage"
+import SchedulePage from "@/pages/SchedulePage"
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <HomePage /> },
       { path: "director-dashboard", element: <HomePage /> },
+      { path: "schedule", element: <SchedulePage /> },
       { path: "tools", element: <ToolsPage /> },
       { path: "tools/standard", element: <StandardToolsPage /> },
       { path: "tools/pm-checklist", element: <PmChecklistPage /> },
