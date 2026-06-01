@@ -23,6 +23,7 @@ import ApprovalDetailPage from "@/pages/ApprovalDetailPage"
 import CerViewPage from "@/pages/CerViewPage"
 import PublicStatusPlaceholderPage from "@/pages/PublicStatusPlaceholderPage"
 import SchedulePage from "@/pages/SchedulePage"
+import WardPage from "@/pages/WardPage"
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
       { path: "dashboard", element: <HomePage /> },
       { path: "director-dashboard", element: <HomePage /> },
       { path: "schedule", element: <SchedulePage /> },
+      { path: "ward", element: <WardPage /> },
       { path: "tools", element: <ToolsPage /> },
       { path: "tools/standard", element: <StandardToolsPage /> },
       { path: "tools/pm-checklist", element: <PmChecklistPage /> },
