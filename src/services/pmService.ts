@@ -131,7 +131,7 @@ export interface TaskApi {
   equipment_id: number
   status: string
   overall_result: string
-  task_user: number
+  technician_id: number
   createdAt: string
   approvedAt?: string
   path_pdf_cer?: string | null
