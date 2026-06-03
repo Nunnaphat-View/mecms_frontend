@@ -1,6 +1,7 @@
-import React, { useState } from "react"
-import { ReceiptText, Wrench, FileSpreadsheet, DollarSign, X, Save } from "lucide-react"
+import React, { useState, useEffect, useMemo, useRef } from "react"
+import { ReceiptText, Wrench, FileSpreadsheet, DollarSign, X, Save, ChevronDown } from "lucide-react"
 import type { CalibrationCost } from "../../types/tool"
+import { useToolStore } from "../../stores/toolStore"
 
 interface CalibrationCostDialogProps {
   isOpen: boolean
@@ -16,6 +17,17 @@ export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
   onClose,
 }) => {
   const isEdit = !!cost
+  const { tools, fetchTools } = useToolStore()
+
+  useEffect(() => {
+    if (isOpen) {
+      void fetchTools()
+    }
+  }, [isOpen, fetchTools])
+
+  const uniqueToolNames = useMemo(() => {
+    return Array.from(new Set(tools.map((t) => t.tool_name))).filter(Boolean).sort()
+  }, [tools])
 
   const [form, setForm] = useState(() => ({
     tool_name: cost?.tool_name ?? "",
@@ -23,8 +35,52 @@ export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
     price: cost?.price ?? 0,
   }))
 
+  const [searchQuery, setSearchQuery] = useState(() => cost?.tool_name ?? "")
+  const [isOpenDropdown, setIsOpenDropdown] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
+
+  const [prevCost, setPrevCost] = useState(cost)
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen)
+
+  if (cost !== prevCost || isOpen !== prevIsOpen) {
+    setPrevCost(cost)
+    setPrevIsOpen(isOpen)
+    setForm({
+      tool_name: cost?.tool_name ?? "",
+      description: cost?.description ?? "",
+      price: cost?.price ?? 0,
+    })
+    setSearchQuery(cost?.tool_name ?? "")
+    setIsOpenDropdown(false)
+    setErrors({})
+  }
+
+  const filteredOptions = useMemo(() => {
+    const list = [...uniqueToolNames]
+    if (cost?.tool_name && !list.includes(cost.tool_name)) {
+      list.push(cost.tool_name)
+    }
+    const sorted = list.sort()
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return sorted
+    return sorted.filter((name) => name.toLowerCase().includes(query))
+  }, [uniqueToolNames, cost, searchQuery])
+
+  // Handle click outside dropdown to close it
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpenDropdown(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
 
   if (!isOpen) return null
 
@@ -98,25 +154,71 @@ export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
               </div>
             )}
 
-            {/* Tool Name Input */}
-            <div className="space-y-1">
+            {/* Searchable Tool Name Input */}
+            <div className="space-y-1 relative" ref={dropdownRef}>
               <label className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
                 ชื่อเครื่องมือ <span className="text-red-500">*</span>
               </label>
-              <div className="relative flex items-center">
-                <Wrench className="absolute left-3.5 size-4 text-slate-400" />
+              <div className="relative flex items-center w-full">
+                <Wrench className="absolute left-3.5 size-4 text-slate-400 z-10 pointer-events-none" />
                 <input
                   type="text"
-                  value={form.tool_name}
-                  onChange={(e) => setForm({ ...form, tool_name: e.target.value })}
-                  placeholder="ระบุชื่อเครื่องมือ"
-                  className={`w-full h-11 pl-10 pr-4 bg-slate-50 border ${
+                  value={searchQuery}
+                  onFocus={() => setIsOpenDropdown(true)}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setSearchQuery(val)
+                    setForm((prev) => ({ ...prev, tool_name: val }))
+                    setIsOpenDropdown(true)
+                  }}
+                  placeholder="พิมพ์ค้นหาหรือเลือกชื่อเครื่องมือ..."
+                  className={`w-full h-11 pl-10 pr-10 bg-slate-50 border ${
                     errors.tool_name ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
                   } rounded-xl text-sm focus:bg-white outline-none transition-all`}
                 />
+                <button
+                  type="button"
+                  onClick={() => setIsOpenDropdown((prev) => !prev)}
+                  className="absolute right-3 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+                >
+                  <ChevronDown className="size-4" />
+                </button>
               </div>
               {errors.tool_name && (
                 <p className="text-[11px] text-red-500 font-medium px-1 mt-0.5">{errors.tool_name}</p>
+              )}
+
+              {/* Floating Dropdown List */}
+              {isOpenDropdown && (
+                <div className="absolute top-[calc(100%+4px)] left-0 right-0 z-50 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg p-1 animate-in fade-in duration-100">
+                  {filteredOptions.length === 0 ? (
+                    <div className="px-4 py-3 text-xs text-slate-400 text-center font-medium">
+                      ไม่พบชื่อเครื่องมือที่ตรงกัน
+                    </div>
+                  ) : (
+                    filteredOptions.map((name: string) => (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={() => {
+                          setForm((prev) => ({ ...prev, tool_name: name }))
+                          setSearchQuery(name)
+                          setIsOpenDropdown(false)
+                        }}
+                        className={`w-full px-4 py-2.5 text-left text-xs font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-between ${
+                          form.tool_name === name
+                            ? "bg-primary/10 text-primary"
+                            : "text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+                        }`}
+                      >
+                        <span>{name}</span>
+                        {form.tool_name === name && (
+                          <span className="text-primary text-[10px]">✔</span>
+                        )}
+                      </button>
+                    ))
+                  )}
+                </div>
               )}
             </div>
 
