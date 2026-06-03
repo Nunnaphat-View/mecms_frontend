@@ -58,11 +58,6 @@ export interface MedicalTool {
   backendId?: number;
 }
 
-export interface StandardToolCategory {
-  id: number
-  name: string
-}
-
 export interface BackendStandardTool {
   id: number
   tool_name: string
@@ -75,8 +70,6 @@ export interface BackendStandardTool {
   certificate_number: string | null
   calibration_date_last: string | null
   unit: string | null
-  category_id: number | null
-  category?: StandardToolCategory | null
 }
 
 export interface BackendEquipment {
@@ -137,8 +130,6 @@ export interface CalibrationSetting {
   resolution?: string;
   uncertainty?: string;
   test_values?: ICalibrationTestValue[];
-  standard_tool_id?: number | null;
-  standardTool?: BackendStandardTool;
-  categories?: StandardToolCategory[];
-  category_ids?: number[];
+  standardTools?: BackendStandardTool[];
+  standard_tool_ids?: number[];
 }

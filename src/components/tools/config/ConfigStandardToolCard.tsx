@@ -2,10 +2,17 @@ import { X, Cpu } from "lucide-react"
 
 interface ConfigStandardToolCardProps {
   name: string
+  subtitle?: string
+  assetCode?: string
   onRemove: () => void
 }
 
-export default function ConfigStandardToolCard({ name, onRemove }: ConfigStandardToolCardProps) {
+export default function ConfigStandardToolCard({
+  name,
+  subtitle,
+  assetCode,
+  onRemove,
+}: ConfigStandardToolCardProps) {
   return (
     <div className="relative bg-white border border-slate-200 rounded-xl p-6 shadow-xs flex flex-col items-center justify-center min-h-[200px] min-w-[220px] h-full animate-in fade-in zoom-in-95 duration-150">
       {/* X button top-right */}
@@ -25,9 +32,19 @@ export default function ConfigStandardToolCard({ name, onRemove }: ConfigStandar
         <div className="font-bold text-sm text-slate-800 leading-snug">
           {name}
         </div>
-        <div className="text-[11px] text-slate-500 mt-1">
-          Standard Tool Type
-        </div>
+        {subtitle && (
+          <div className="text-[11px] text-slate-500 mt-1 leading-snug">
+            {subtitle}
+          </div>
+        )}
+        {assetCode && (
+          <div className="text-[10px] font-mono text-slate-400 mt-1 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+            {assetCode}
+          </div>
+        )}
+        {!subtitle && !assetCode && (
+          <div className="text-[11px] text-slate-500 mt-1">Standard Tool</div>
+        )}
       </div>
     </div>
   )

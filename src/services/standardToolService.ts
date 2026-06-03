@@ -1,4 +1,4 @@
-import type { BackendStandardTool, StandardToolCategory } from "../types/tool"
+import type { BackendStandardTool } from "../types/tool"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
 
@@ -37,7 +37,6 @@ export type CreateStandardToolPayload = {
   manufacturer?: string | null
   model?: string | null
   unit?: string | null
-  category_id?: number | null
   calibration_date_last?: string | null
   certificate_number?: string | null
 }
@@ -45,10 +44,6 @@ export type CreateStandardToolPayload = {
 export const standardToolService = {
   getAll(): Promise<BackendStandardTool[]> {
     return apiFetch<BackendStandardTool[]>("/standard-tool")
-  },
-
-  getCategories(): Promise<StandardToolCategory[]> {
-    return apiFetch<StandardToolCategory[]>("/standard-tool/categories")
   },
 
   create(payload: CreateStandardToolPayload): Promise<BackendStandardTool> {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
 import { X, Tag, FileText, Settings, Award, FileCheck2, Image, CheckCircle2 } from "lucide-react"
 import type { BackendStandardTool } from "../../types/tool"
 import { useStandardToolStore } from "../../stores/standardToolStore"
@@ -54,7 +54,7 @@ export default function StandardToolFormDialog({
   onSaved,
 }: StandardToolFormDialogProps) {
   const isEditing = !!tool
-  const { categories, fetchCategories, addTool, updateTool, uploadPdf, uploadImage } =
+  const { addTool, updateTool, uploadPdf, uploadImage } =
     useStandardToolStore()
   const toast = useToast()
 
@@ -66,7 +66,6 @@ export default function StandardToolFormDialog({
   const [model, setModel] = useState(() => tool?.model ?? "")
   const [serialNumber, setSerialNumber] = useState(() => tool?.serial_number ?? "")
   const [unit, setUnit] = useState(() => tool?.unit ?? "")
-  const [categoryId, setCategoryId] = useState<number | "">(() => tool?.category_id ?? "")
   const [calibrationDateLast, setCalibrationDateLast] = useState(() => tool?.calibration_date_last ?? "")
   const [certificateNumber, setCertificateNumber] = useState(() => tool?.certificate_number ?? "")
 
@@ -78,15 +77,8 @@ export default function StandardToolFormDialog({
   const [isSaving, setIsSaving] = useState(false)
   const [nameError, setNameError] = useState("")
 
-  // Fetch categories on first open (genuine external sync — this is the right use for an effect)
-  useEffect(() => {
-    if (categories.length === 0) {
-      void fetchCategories()
-    }
-  }, [categories.length, fetchCategories])
-
-
   if (!isOpen) return null
+
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -105,7 +97,6 @@ export default function StandardToolFormDialog({
         model: model.trim() || null,
         serial_number: serialNumber.trim() || null,
         unit: unit.trim() || null,
-        category_id: categoryId !== "" ? Number(categoryId) : null,
         calibration_date_last: calibrationDateLast || null,
         certificate_number: certificateNumber.trim() || null,
       }
@@ -231,26 +222,9 @@ export default function StandardToolFormDialog({
                 onChange={(e) => setUnit(e.target.value)}
                 placeholder="เช่น mmHg"
               />
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
-                  <Settings className="size-3.5 text-slate-400" />
-                  หมวดหมู่
-                </label>
-                <select
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value !== "" ? Number(e.target.value) : "")}
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"
-                >
-                  <option value="">กรุณาเลือกหมวดหมู่</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
           </div>
+
 
           <hr className="border-slate-100" />
 

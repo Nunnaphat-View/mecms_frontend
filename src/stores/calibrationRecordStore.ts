@@ -261,22 +261,16 @@ export const useCalibrationRecordStore = create<CalibrationRecordState>((set, ge
       humidity: Math.round((45 + Math.random() * 10) * 10) / 10,
     }
 
-    // 2. Standard Tools
-    const settingCategoryIds = settingStore.settings
-      .flatMap((s) => {
-        // Let's map if settings have category ids or standard tool ids
-        return s.standard_tool_id ? [s.standard_tool_id] : []
-      })
-    
-    let standardToolIds: number[] = []
-    if (settingCategoryIds.length > 0) {
-      const matchingTools = toolStore.tools.filter(
-        (t) => t.category_id && settingCategoryIds.includes(t.category_id)
-      )
-      standardToolIds = matchingTools.map((t) => t.id).slice(0, 2)
-    }
+    // 2. Standard Tools — derive from standard_tool_ids stored in each setting
+    const settingToolIds = settingStore.settings
+      .flatMap((s) => s.standard_tool_ids ?? [])
+      .filter((id) => id !== null && id !== undefined)
+      .map((id) => Number(id))
+    const uniqueToolIds = Array.from(new Set(settingToolIds))
+
+    let standardToolIds: number[] = uniqueToolIds.slice(0, 2)
     if (standardToolIds.length === 0) {
-      // Fallback
+      // Fallback: use first available tool
       standardToolIds = toolStore.tools.length > 0 ? [toolStore.tools[0].id] : [1]
     }
 

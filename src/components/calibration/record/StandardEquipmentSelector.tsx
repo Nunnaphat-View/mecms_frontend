@@ -15,44 +15,39 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
   const standardToolStore = useStandardToolStore()
   const settingStore = useCalibrationSettingStore()
 
-  // Fetch tools and categories on mount — this is a legitimate effect (external system call)
+  // Fetch tools on mount
   useEffect(() => {
     void standardToolStore.fetchTools()
-    void standardToolStore.fetchCategories()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Helper to get category name
-  function getCategoryName(catId: number | undefined): string {
-    if (!catId) return "เครื่องมือทั่วไป"
-    const cat = standardToolStore.categories.find((c) => Number(c.id) === Number(catId))
-    return cat ? cat.name : "เลือกเครื่องมือ"
-  }
-
-  // Compute allowed category IDs from calibration settings (derived, no state needed)
-  const allowedCategoryIds = useMemo(() => {
+  // Compute allowed standard tool IDs from calibration settings.
+  // Backend returns `standardTools` (relation objects). We also handle
+  // `standard_tool_ids` for locally constructed settings.
+  const allowedStandardToolIds = useMemo(() => {
     const ids = settingStore.settings
       .flatMap((s) => {
-        const fromCats = s.categories?.map((c) => c.id) ?? []
-        const fromStdId = s.standard_tool_id ? [s.standard_tool_id] : []
-        return [...fromCats, ...fromStdId]
+        const fromRelation = s.standardTools?.map((t) => t.id) ?? []
+        const fromIds = s.standard_tool_ids ?? []
+        return [...fromRelation, ...fromIds]
       })
       .filter((id) => id !== null && id !== undefined && String(id) !== "")
       .map((id) => Number(id))
     return Array.from(new Set(ids))
   }, [settingStore.settings])
 
-  // Total slots: at least 2, or as many as the categories/selected require
+
+  // Total slots: at least 2, or as many as the settings require
   const totalSlots = useMemo(() => {
     const selectedCount = selectedIds?.length ?? 0
-    return Math.max(2, allowedCategoryIds.length, selectedCount)
-  }, [allowedCategoryIds, selectedIds])
+    return Math.max(2, allowedStandardToolIds.length, selectedCount)
+  }, [allowedStandardToolIds, selectedIds])
 
-  // Manual overrides by the user (index → tool). Starts empty; user picks via dropdown.
+  // Manual overrides by the user (index → tool)
   const [manualSelections, setManualSelections] = useState<Record<number, BackendStandardTool | null>>({})
 
-  // Derive the final selectedTools array — no setState in an effect needed.
-  // Priority: manualSelections > selectedIds (readonly pre-fill) > auto-first in category
+  // Derive the final selectedTools array
+  // Priority: manualSelections > selectedIds (readonly pre-fill) > allowedStandardToolIds auto-select
   const selectedTools = useMemo<(BackendStandardTool | null)[]>(() => {
     return Array.from({ length: totalSlots }, (_, index) => {
       // 1. User has explicitly chosen something for this slot
@@ -64,18 +59,18 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
         if (found) return found
       }
 
-      // 3. Auto-select first tool in the allowed category (editable mode only)
-      const catId = allowedCategoryIds[index]
-      if (!readonly && catId && standardToolStore.tools.length > 0) {
-        const first = standardToolStore.tools.find((t) => Number(t.category_id) === Number(catId))
-        return first ?? null
+      // 3. Auto-select the allowed standard tool for this slot (editable mode only)
+      const toolId = allowedStandardToolIds[index]
+      if (!readonly && toolId && standardToolStore.tools.length > 0) {
+        const found = standardToolStore.tools.find((t) => Number(t.id) === Number(toolId))
+        return found ?? null
       }
 
       return null
     })
-  }, [totalSlots, manualSelections, selectedIds, allowedCategoryIds, readonly, standardToolStore.tools])
+  }, [totalSlots, manualSelections, selectedIds, allowedStandardToolIds, readonly, standardToolStore.tools])
 
-  // Sync the resolved IDs to the calibration record store — legitimate side-effect
+  // Sync the resolved IDs to the calibration record store
   useEffect(() => {
     const ids = selectedTools
       .filter((t): t is BackendStandardTool => t !== null)
@@ -84,11 +79,22 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTools])
 
-  // Filter available tools for a dropdown slot by its allowed category
+  // Filter available tools for a dropdown slot
+  // If a specific tool is allowed for this slot, show only that tool + all others for flexibility
   function getFilteredToolsForSlot(index: number): BackendStandardTool[] {
-    const catId = allowedCategoryIds[index]
-    if (!catId) return standardToolStore.tools
-    return standardToolStore.tools.filter((t) => Number(t.category_id) === Number(catId))
+    const allowedId = allowedStandardToolIds[index]
+    if (!allowedId) return standardToolStore.tools
+    // Show the allowed tool first, then all others
+    const allowed = standardToolStore.tools.filter((t) => Number(t.id) === Number(allowedId))
+    const others = standardToolStore.tools.filter((t) => Number(t.id) !== Number(allowedId))
+    return [...allowed, ...others]
+  }
+
+  function getSlotLabel(index: number): string {
+    const allowedId = allowedStandardToolIds[index]
+    if (!allowedId) return "เครื่องมือทั่วไป"
+    const tool = standardToolStore.tools.find((t) => Number(t.id) === Number(allowedId))
+    return tool ? tool.tool_name : "เลือกเครื่องมือ"
   }
 
   function handleSelectTool(index: number, toolIdStr: string) {
@@ -120,7 +126,6 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {Array.from({ length: totalSlots }).map((_, index) => {
               const currentTool = selectedTools[index]
-              const catId = allowedCategoryIds[index]
               const filteredTools = getFilteredToolsForSlot(index)
 
               return (
@@ -129,7 +134,7 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
                   {!readonly && (
                     <div className="flex justify-between items-center h-10">
                       <span className="text-xs font-bold text-slate-500">
-                        {getCategoryName(catId)}
+                        {getSlotLabel(index)}
                       </span>
                       <select
                         value={currentTool?.id ?? ""}
@@ -153,7 +158,7 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
                         <Cpu className="size-6 text-primary" />
                       </div>
                       <div className="font-bold text-sm text-slate-800 text-center">
-                        {currentTool ? currentTool.tool_name : getCategoryName(catId)}
+                        {currentTool ? currentTool.tool_name : getSlotLabel(index)}
                       </div>
                       {currentTool ? (
                         <div className="text-xs text-slate-400 mt-0.5">

@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/useToast"
 
 import { standardToolService } from "../services/standardToolService"
 import { calibrationSettingService } from "../services/calibrationMgmtService"
-import type { StandardToolCategory, CalibrationSetting } from "../types/tool"
+import type { BackendStandardTool, CalibrationSetting } from "../types/tool"
 
 interface TestItem {
   name: string
@@ -88,13 +88,13 @@ export default function ToolConfigPage() {
   const toolName = decodeURIComponent(rawName || "")
   const toast = useToast()
 
-  const [allCategories, setAllCategories] = useState<StandardToolCategory[]>([])
-  const [selectedCategories, setSelectedCategories] = useState<StandardToolCategory[]>([])
+  const [allStandardTools, setAllStandardTools] = useState<BackendStandardTool[]>([])
+  const [selectedStandardTools, setSelectedStandardTools] = useState<BackendStandardTool[]>([])
   const [qualitativeParams, setQualitativeParams] = useState<QualData[]>([])
   const [quantitativeParams, setQuantitativeParams] = useState<QuantData[]>([])
 
-  const [showAddCategoryDialog, setShowAddCategoryDialog] = useState(false)
-  const [selectedCategoryToAdd, setSelectedCategoryToAdd] = useState<StandardToolCategory | null>(null)
+  const [showAddToolDialog, setShowAddToolDialog] = useState(false)
+  const [selectedToolToAdd, setSelectedToolToAdd] = useState<BackendStandardTool | null>(null)
   const [loading, setLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -102,9 +102,9 @@ export default function ToolConfigPage() {
     const init = async () => {
       setLoading(true)
       try {
-        // 1. Fetch categories
-        const cats = await standardToolService.getCategories()
-        setAllCategories(cats)
+        // 1. Fetch all standard tools
+        const tools = await standardToolService.getAll()
+        setAllStandardTools(tools)
 
         // 2. Fetch settings
         if (toolName) {
@@ -138,16 +138,16 @@ export default function ToolConfigPage() {
               }))
             setQuantitativeParams(quant)
 
-            // Map unique categories
-            const allCats = new Map<number, StandardToolCategory>()
+            // Map unique selected standard tools
+            const allToolsMap = new Map<number, BackendStandardTool>()
             existing.forEach((s) => {
-              if (s.categories) {
-                s.categories.forEach((c) => {
-                  if (c.id) allCats.set(c.id, c)
+              if (s.standardTools) {
+                s.standardTools.forEach((t) => {
+                  if (t.id) allToolsMap.set(t.id, t)
                 })
               }
             })
-            setSelectedCategories(Array.from(allCats.values()))
+            setSelectedStandardTools(Array.from(allToolsMap.values()))
           } else if (toolName.toLowerCase().includes("ultrasound")) {
             // Pre-populate with Ultrasound template
             setQuantitativeParams([
@@ -197,15 +197,7 @@ export default function ToolConfigPage() {
                 testValues: [{ label: "ค่าทดสอบที่ 1", value: 0 }],
               },
             ])
-
-            const targetCat = cats.find(
-              (c) =>
-                c.name.toLowerCase().includes("ultrasound") ||
-                c.name.toLowerCase().includes("phantom")
-            )
-            if (targetCat) {
-              setSelectedCategories([targetCat])
-            }
+            // No pre-selection for ultrasound tools — user selects manually
           } else {
             // Check default settings for infusion pump
             const fallback = getDefaultSettings(toolName)
@@ -247,18 +239,18 @@ export default function ToolConfigPage() {
     void init()
   }, [toolName])
 
-  const confirmAddCategory = () => {
-    if (selectedCategoryToAdd) {
-      if (!selectedCategories.some((c) => c.id === selectedCategoryToAdd.id)) {
-        setSelectedCategories([...selectedCategories, selectedCategoryToAdd])
+  const confirmAddTool = () => {
+    if (selectedToolToAdd) {
+      if (!selectedStandardTools.some((t) => t.id === selectedToolToAdd.id)) {
+        setSelectedStandardTools([...selectedStandardTools, selectedToolToAdd])
       }
-      setSelectedCategoryToAdd(null)
-      setShowAddCategoryDialog(false)
+      setSelectedToolToAdd(null)
+      setShowAddToolDialog(false)
     }
   }
 
-  const removeCategory = (idx: number) => {
-    setSelectedCategories(selectedCategories.filter((_, i) => i !== idx))
+  const removeTool = (idx: number) => {
+    setSelectedStandardTools(selectedStandardTools.filter((_, i) => i !== idx))
   }
 
   const addQuantitative = () => {
@@ -308,8 +300,8 @@ export default function ToolConfigPage() {
     setIsSaving(true)
     try {
       const payload: CalibrationSetting[] = []
-      const globalCategoryIds = selectedCategories
-        .map((c) => c.id)
+      const globalStandardToolIds = selectedStandardTools
+        .map((t) => t.id)
         .filter((id): id is number => id !== undefined)
 
       // Map quantitative
@@ -327,7 +319,7 @@ export default function ToolConfigPage() {
             ...v,
             label: `ค่าทดสอบที่ ${idx + 1}`,
           })),
-          category_ids: globalCategoryIds,
+          standard_tool_ids: globalStandardToolIds,
         })
       })
 
@@ -341,7 +333,7 @@ export default function ToolConfigPage() {
             label: item.name || `รายการที่ ${idx + 1}`,
             value: 0,
           })),
-          category_ids: globalCategoryIds,
+          standard_tool_ids: globalStandardToolIds,
         })
       })
 
@@ -381,19 +373,21 @@ export default function ToolConfigPage() {
       {/* ── Section: เครื่องมือมาตรฐาน ── */}
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
         <div className="bg-secondary text-white text-xs font-bold px-5 py-3.5 flex items-center justify-between">
-          ประเภทเครื่องมือมาตรฐานที่ต้องใช้
+          เครื่องมือมาตรฐานที่ต้องใช้
         </div>
         <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
           {[0, 1, 2].map((slot) => {
-            const hasCategory = !!selectedCategories[slot]
-            const isNextAddSlot = slot === selectedCategories.length
+            const hasTool = !!selectedStandardTools[slot]
+            const isNextAddSlot = slot === selectedStandardTools.length
 
-            if (hasCategory) {
+            if (hasTool) {
               return (
                 <div key={slot} className="h-full">
                   <ConfigStandardToolCard
-                    name={selectedCategories[slot].name}
-                    onRemove={() => removeCategory(slot)}
+                    name={selectedStandardTools[slot].tool_name}
+                    subtitle={[selectedStandardTools[slot].manufacturer, selectedStandardTools[slot].model].filter(Boolean).join(' | ')}
+                    assetCode={selectedStandardTools[slot].asset_code ?? undefined}
+                    onRemove={() => removeTool(slot)}
                   />
                 </div>
               )
@@ -402,14 +396,14 @@ export default function ToolConfigPage() {
                 <button
                   key={slot}
                   type="button"
-                  onClick={() => setShowAddCategoryDialog(true)}
+                  onClick={() => setShowAddToolDialog(true)}
                   className="w-full min-h-[200px] border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 hover:border-secondary hover:bg-cyan-50/20 transition-all flex flex-col items-center justify-center p-6 cursor-pointer"
                 >
                   <div className="flex flex-col items-center">
                     <div className="w-16 h-16 rounded-full bg-secondary text-white flex items-center justify-center mb-3">
                       <Plus className="size-8" />
                     </div>
-                    <span className="text-xs font-bold text-slate-500">เพิ่มประเภทเครื่องมือ</span>
+                    <span className="text-xs font-bold text-slate-500">เพิ่มเครื่องมือมาตรฐาน</span>
                   </div>
                 </button>
               )
@@ -519,25 +513,25 @@ export default function ToolConfigPage() {
         </button>
       </div>
 
-      {/* ── Dialog: Add Standard Tool Category ── */}
-      {showAddCategoryDialog && (
+      {/* ── Dialog: เลือกเครื่องมือมาตรฐาน ── */}
+      {showAddToolDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-sans overflow-y-auto">
           <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
             <div className="p-6">
-              <h3 className="text-base font-bold text-slate-800 mb-4">เลือกประเภทเครื่องมือมาตรฐาน</h3>
+              <h3 className="text-base font-bold text-slate-800 mb-4">เลือกเครื่องมือมาตรฐาน</h3>
               <select
-                value={selectedCategoryToAdd?.id || ""}
+                value={selectedToolToAdd?.id || ""}
                 onChange={(e) => {
                   const id = Number(e.target.value)
-                  const cat = allCategories.find((c) => c.id === id)
-                  setSelectedCategoryToAdd(cat || null)
+                  const tool = allStandardTools.find((t) => t.id === id)
+                  setSelectedToolToAdd(tool || null)
                 }}
                 className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-secondary focus:bg-white transition-all outline-none"
               >
-                <option value="">เลือกประเภทเครื่องมือมาตรฐาน</option>
-                {allCategories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
+                <option value="">เลือกเครื่องมือมาตรฐาน</option>
+                {allStandardTools.map((tool) => (
+                  <option key={tool.id} value={tool.id}>
+                    {tool.tool_name}{tool.asset_code ? ` (${tool.asset_code})` : ""}
                   </option>
                 ))}
               </select>
@@ -547,8 +541,8 @@ export default function ToolConfigPage() {
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedCategoryToAdd(null)
-                  setShowAddCategoryDialog(false)
+                  setSelectedToolToAdd(null)
+                  setShowAddToolDialog(false)
                 }}
                 className="px-5 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors text-xs font-medium cursor-pointer"
               >
@@ -556,8 +550,8 @@ export default function ToolConfigPage() {
               </button>
               <button
                 type="button"
-                disabled={!selectedCategoryToAdd}
-                onClick={confirmAddCategory}
+                disabled={!selectedToolToAdd}
+                onClick={confirmAddTool}
                 className="px-5 py-2 bg-secondary disabled:opacity-50 hover:bg-secondary/95 text-white rounded-lg transition-colors text-xs font-bold cursor-pointer"
               >
                 เพิ่ม
