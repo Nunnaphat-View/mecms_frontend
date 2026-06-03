@@ -18,7 +18,7 @@ export interface InspectionSection {
 }
 
 export interface DeviceInfo {
-  deviceName: string
+  tool_name: string
   company: string
   manufacturer: string
   model: string
@@ -82,7 +82,7 @@ interface InspectionState {
 }
 
 const defaultDeviceInfo: DeviceInfo = {
-  deviceName: "",
+  tool_name: "",
   company: "",
   manufacturer: "",
   model: "",
@@ -147,7 +147,7 @@ export const useInspectionStore = create<InspectionState>((set, get) => ({
         const mfr = eq.manufacturer ?? "-"
         set({
           deviceInfo: {
-            deviceName: eq.name,
+            tool_name: eq.tool_name,
             company: mfr,
             manufacturer: mfr,
             model: eq.model ?? "-",

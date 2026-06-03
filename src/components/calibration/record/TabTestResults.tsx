@@ -34,7 +34,7 @@ const TabTestResults = forwardRef<TestDynamicHandle, Props>(function TabTestResu
       {hasSettings ? (
         <TestDynamic ref={ref} onSave={onSave} />
       ) : (
-        <TestUnknown equipmentType={store.equipmentDetails.name} />
+        <TestUnknown equipmentType={store.equipmentDetails.tool_name} />
       )}
     </div>
   )

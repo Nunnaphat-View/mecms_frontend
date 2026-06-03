@@ -47,7 +47,7 @@ export default function CalibrationPage() {
       const matchSearch =
         !q ||
         r.id.toLowerCase().includes(q) ||
-        r.deviceName.toLowerCase().includes(q) ||
+        r.tool_name.toLowerCase().includes(q) ||
         r.deviceCode.toLowerCase().includes(q) ||
         r.responsible.toLowerCase().includes(q)
 
@@ -198,7 +198,7 @@ export default function CalibrationPage() {
                     return (
                       <tr key={record.id} className="hover:bg-slate-50/80 transition-colors">
                         <td className="px-5 py-3.5 font-bold text-[#1a1a2e] whitespace-nowrap">{record.id}</td>
-                        <td className="px-5 py-3.5 font-medium whitespace-nowrap">{record.deviceName}</td>
+                        <td className="px-5 py-3.5 font-medium whitespace-nowrap">{record.tool_name}</td>
                         <td className="px-5 py-3.5 whitespace-nowrap">{record.deviceCode}</td>
                         <td className="px-5 py-3.5 text-center whitespace-nowrap">{record.location}</td>
                         <td className="px-5 py-3.5 text-center whitespace-nowrap">{record.type}</td>

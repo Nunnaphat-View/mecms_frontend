@@ -68,7 +68,7 @@ export default function ToolsPage() {
     const filtered = tools.filter((t) => {
       const matchSearch =
         !q ||
-        t.name.toLowerCase().includes(q) ||
+        t.tool_name.toLowerCase().includes(q) ||
         t.id.toLowerCase().includes(q) ||
         t.model.toLowerCase().includes(q) ||
         t.location.toLowerCase().includes(q)
@@ -90,11 +90,11 @@ export default function ToolsPage() {
         return 3                       // matched via other field
       }
 
-      const scoreA = scoreField(a.name)
-      const scoreB = scoreField(b.name)
+      const scoreA = scoreField(a.tool_name)
+      const scoreB = scoreField(b.tool_name)
 
       if (scoreA !== scoreB) return scoreA - scoreB
-      return a.name.localeCompare(b.name)
+      return a.tool_name.localeCompare(b.tool_name)
     })
   }, [tools, searchQuery, selectedType])
 
@@ -252,7 +252,7 @@ export default function ToolsPage() {
                   return (
                     <tr key={tool.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="px-5 py-3.5 font-semibold text-slate-800 whitespace-nowrap">{tool.id}</td>
-                      <td className="px-5 py-3.5 font-medium whitespace-nowrap">{tool.name}</td>
+                      <td className="px-5 py-3.5 font-medium whitespace-nowrap">{tool.tool_name}</td>
                       <td className="px-5 py-3.5 whitespace-nowrap">{tool.company}</td>
                       <td className="px-5 py-3.5 whitespace-nowrap">{tool.model}</td>
                       <td className="px-5 py-3.5 whitespace-nowrap">{tool.type}</td>
@@ -327,7 +327,7 @@ export default function ToolsPage() {
       {/* Delete Confirmation Dialog */}
       <ConfirmDeleteDialog
         isOpen={isDeleteOpen}
-        itemName={selectedToolForDelete?.name}
+        itemName={selectedToolForDelete?.tool_name}
         loading={isDeleting}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setIsDeleteOpen(false)}

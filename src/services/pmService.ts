@@ -46,7 +46,7 @@ export interface ChecklistCategoryApi {
 
 export interface EquipmentApi {
   id: number
-  name: string
+  tool_name: string
   asset_code: string
   serial_number: string
   manufacturer: string
@@ -165,7 +165,7 @@ export interface TaskApi {
   environments?: { id: number; ambient_temp?: number; ambient_humidity?: number }[]
   standardTools?: {
     id: number
-    name: string
+    tool_name: string
     model?: string
     manufacturer?: string
     serial_number?: string

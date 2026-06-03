@@ -134,7 +134,7 @@ export default function ApprovalTabTestResults({ task }: Props) {
   }, [groupedQualitatives, groupedMeasurements])
 
   const isUltrasound = useMemo(() => {
-    return task?.equipment?.name?.toLowerCase().includes("ultrasound") || false
+    return task?.equipment?.tool_name?.toLowerCase().includes("ultrasound") || false
   }, [task])
 
   const getProbeChecklist = (rangeNum: number) => {

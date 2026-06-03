@@ -60,7 +60,7 @@ export default function StandardToolFormDialog({
 
   // Lazy initializers — safe because the parent conditionally mounts this component,
   // so `tool` already has the correct value at mount time. No useEffect needed.
-  const [name, setName] = useState(() => tool?.name ?? "")
+  const [name, setName] = useState(() => tool?.tool_name ?? "")
   const [assetCode, setAssetCode] = useState(() => tool?.asset_code ?? "")
   const [manufacturer, setManufacturer] = useState(() => tool?.manufacturer ?? "")
   const [model, setModel] = useState(() => tool?.model ?? "")
@@ -99,7 +99,7 @@ export default function StandardToolFormDialog({
 
     try {
       const payload = {
-        name: name.trim(),
+        tool_name: name.trim(),
         asset_code: assetCode.trim() || null,
         manufacturer: manufacturer.trim() || null,
         model: model.trim() || null,

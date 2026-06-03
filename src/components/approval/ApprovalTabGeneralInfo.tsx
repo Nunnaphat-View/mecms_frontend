@@ -20,7 +20,7 @@ export default function ApprovalTabGeneralInfo({ task }: Props) {
   const equipmentInfo = useMemo(() => {
     const eq = task?.equipment
     return {
-      deviceName: eq?.name || "-",
+      tool_name: eq?.tool_name || "-",
       company: eq?.manufacturer || "-",
       model: eq?.model || "-",
       serialNumber: eq?.serial_number || "-",

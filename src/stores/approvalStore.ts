@@ -4,7 +4,7 @@ import { pmService } from "../services/pmService"
 export interface ApprovalEvent {
   id: string
   taskId: number
-  toolName: string
+  tool_name: string
   toolCode: string
   location: string
   calDate: string
@@ -59,7 +59,7 @@ export const useApprovalStore = create<ApprovalState>((set, get) => ({
         return {
           id: task.pm_no || `CAL-${task.id}`,
           taskId: task.id,
-          toolName: task.equipment?.name || "Unknown",
+          tool_name: task.equipment?.tool_name || "Unknown",
           toolCode: task.equipment?.asset_code || "-",
           location: task.equipment?.section?.name || task.equipment?.location || "-",
           calDate: task.createdAt ? new Date(task.createdAt).toLocaleDateString("th-TH") : "-",

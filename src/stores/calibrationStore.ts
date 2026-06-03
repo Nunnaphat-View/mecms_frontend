@@ -4,7 +4,7 @@ import { pmService } from "../services/pmService"
 export interface CalibrationRecord {
   id: string // รหัสสอบเทียบ e.g. CAL-01
   taskId: number // backend task id
-  deviceName: string // ชื่อเครื่องมือ
+  tool_name: string // ชื่อเครื่องมือ
   deviceCode: string // รหัสเครื่อง e.g. BME-001
   location: string // ที่ตั้ง e.g. ICU-01
   type: string // ประเภท e.g. Medical
@@ -50,7 +50,7 @@ export const useCalibrationStore = create<CalibrationState>((set) => ({
       const mappedRecords: CalibrationRecord[] = pendingTasks.map((task) => ({
         id: task.pm_no || `TASK-${task.id}`,
         taskId: task.id,
-        deviceName: task.equipment?.name ?? `Equipment #${task.equipment_id}`,
+        tool_name: task.equipment?.tool_name ?? `Equipment #${task.equipment_id}`,
         deviceCode: task.equipment?.asset_code ?? String(task.equipment_id),
         location: task.equipment?.section?.name || task.equipment?.location || "-",
         type: "Medical", // Matches original Quasar default

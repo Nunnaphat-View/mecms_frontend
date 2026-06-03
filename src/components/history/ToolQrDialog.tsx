@@ -6,7 +6,7 @@ interface ToolQrDialogProps {
   tool: {
     id: number
     taskId: number
-    deviceName: string
+    tool_name: string
     deviceCode: string
     date: string
   } | null
@@ -81,7 +81,7 @@ export default function ToolQrDialog({ isOpen, onClose, tool }: ToolQrDialogProp
               ชื่อเครื่องมือ
             </div>
             <div className="font-semibold text-slate-900 text-right max-w-[180px] truncate">
-              {tool.deviceName}
+              {tool.tool_name}
             </div>
           </div>
           <div className="flex justify-between items-center px-5 py-2.5 min-h-[44px]">

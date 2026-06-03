@@ -18,8 +18,8 @@ const TestDynamic = forwardRef<TestDynamicHandle, Props>(function TestDynamic({ 
   const settingStore = useCalibrationSettingStore()
 
   // 1. Differentiate equipment types
-  const isInfusion = useMemo(() => isInfusionPump(store.equipmentDetails?.name), [store.equipmentDetails])
-  const isUltrasound = useMemo(() => store.equipmentDetails?.name?.toLowerCase().includes("ultrasound"), [store.equipmentDetails])
+  const isInfusion = useMemo(() => isInfusionPump(store.equipmentDetails?.tool_name), [store.equipmentDetails])
+  const isUltrasound = useMemo(() => store.equipmentDetails?.tool_name?.toLowerCase().includes("ultrasound"), [store.equipmentDetails])
 
   // 2. Local parameters and fields
   const qualitativeParams = useMemo(() => settingStore.settings.filter((s) => s.type === "qualitative"), [settingStore.settings])

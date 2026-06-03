@@ -25,7 +25,7 @@ export const WardTimeline: React.FC = () => {
               <div className="flex-1 ml-8">
                 <div className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex flex-col justify-center min-h-[52px]">
                   <span className="text-sm font-semibold text-slate-800">
-                    {event.toolName}
+                    {event.tool_name}
                   </span>
                   <span className="text-xs text-slate-400 font-mono mt-0.5">
                     {event.toolCode}

@@ -35,7 +35,7 @@ export default function ToolFormDialog({ isOpen, tool, onClose, onSaved }: ToolF
   const toast = useToast()
 
   const [id, setId] = useState(() => (tool ? tool.id : getNextId()))
-  const [name, setName] = useState(() => (tool ? tool.name : ""))
+  const [name, setName] = useState(() => (tool ? tool.tool_name : ""))
   const [company, setCompany] = useState(() => (tool ? (tool.company === "-" ? "" : tool.company) : ""))
   const [model, setModel] = useState(() => (tool ? (tool.model === "-" ? "" : tool.model) : ""))
   const [equipmentTypeId, setEquipmentTypeId] = useState<number | "">(() => (tool ? (tool.equipment_type_id ?? "") : ""))
@@ -68,7 +68,7 @@ export default function ToolFormDialog({ isOpen, tool, onClose, onSaved }: ToolF
     setIsSaving(true)
     const selectedTypeObj = equipmentTypes.find((t) => t.id === equipmentTypeId)
     const payload: Omit<MedicalTool, "id"> & { asset_code: string } = {
-      name,
+      tool_name: name,
       company: company || "-",
       model: model || "-",
       type: selectedTypeObj?.name || "-",

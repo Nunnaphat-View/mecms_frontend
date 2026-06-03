@@ -6,7 +6,7 @@ import { useStandardToolStore } from "./standardToolStore"
 export interface EquipmentDetails {
   id: string
   backendId?: number
-  name: string
+  tool_name: string
   company: string
   model: string
   serialNumber: string
@@ -103,7 +103,7 @@ interface CalibrationRecordState {
 
 const defaultEquipmentDetails: EquipmentDetails = {
   id: "",
-  name: "",
+  tool_name: "",
   company: "",
   model: "",
   serialNumber: "",
@@ -173,7 +173,7 @@ export const useCalibrationRecordStore = create<CalibrationRecordState>((set, ge
         ? {
             id: eq.asset_code || String(eq.id),
             backendId: eq.id,
-            name: eq.name.trim(),
+            tool_name: eq.tool_name.trim(),
             company: eq.manufacturer ?? "-",
             model: eq.model ?? "-",
             serialNumber: eq.serial_number ?? "-",
@@ -209,8 +209,8 @@ export const useCalibrationRecordStore = create<CalibrationRecordState>((set, ge
         standardToolIds: task.checklistResults?.length ? [] : [], // Empty on new record
       })
 
-      if (eq?.name) {
-        await useCalibrationSettingStore.getState().fetchSettings(eq.name.trim())
+      if (eq?.tool_name) {
+        await useCalibrationSettingStore.getState().fetchSettings(eq.tool_name.trim())
       }
     } catch (error) {
       console.error("Failed to fetch calibration record:", error)

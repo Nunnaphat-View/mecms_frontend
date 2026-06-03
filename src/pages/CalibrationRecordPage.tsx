@@ -127,7 +127,7 @@ export default function CalibrationRecordPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end p-6 border-b border-slate-200 gap-6 bg-slate-50/50">
           <div>
             <h2 className="text-lg font-bold text-slate-800">
-              {store.equipmentDetails.name || "Patient Monitor"}
+              {store.equipmentDetails.tool_name || "Patient Monitor"}
             </h2>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-slate-500 mt-1">
               <div>

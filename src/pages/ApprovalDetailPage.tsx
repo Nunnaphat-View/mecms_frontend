@@ -148,7 +148,7 @@ export default function ApprovalDetailPage() {
             <div className="p-6 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-slate-50/50">
               <div className="flex-1">
                 <h2 className="text-lg font-bold text-slate-800">
-                  {task?.equipment?.name || "ไม่ระบุชื่อเครื่อง"}
+                  {task?.equipment?.tool_name || "ไม่ระบุชื่อเครื่อง"}
                 </h2>
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-1.5 mt-2 text-xs text-slate-500 font-medium">
                   <div>

@@ -42,7 +42,7 @@ export default function HistoryPage() {
   const [selectedTool, setSelectedTool] = useState<{
     id: number
     taskId: number
-    deviceName: string
+    tool_name: string
     deviceCode: string
     date: string
   } | null>(null)
@@ -59,7 +59,7 @@ export default function HistoryPage() {
   }, [fetchRecords])
 
   // Derive unique device names for filter options
-  const deviceNames = Array.from(new Set(records.map((r) => r.deviceName)))
+  const deviceNames = Array.from(new Set(records.map((r) => r.tool_name)))
   const deviceOptions = [
     { label: "เครื่องมือทั้งหมด", value: "" },
     ...deviceNames.map((name) => ({ label: name, value: name })),
@@ -77,10 +77,10 @@ export default function HistoryPage() {
     const q = searchQuery.toLowerCase()
     const matchSearch =
       !q ||
-      r.deviceName.toLowerCase().includes(q) ||
+      r.tool_name.toLowerCase().includes(q) ||
       r.deviceCode.toLowerCase().includes(q) ||
       r.inspector.toLowerCase().includes(q)
-    const matchDevice = !selectedDevice || r.deviceName === selectedDevice
+    const matchDevice = !selectedDevice || r.tool_name === selectedDevice
     const matchResult = !selectedResult || r.result === selectedResult
     return matchSearch && matchDevice && matchResult
   })
@@ -94,7 +94,7 @@ export default function HistoryPage() {
     setSelectedTool({
       id: isNaN(numericId) ? row.taskId : numericId,
       taskId: row.taskId,
-      deviceName: row.deviceName,
+      tool_name: row.tool_name,
       deviceCode: row.deviceCode,
       date: row.date,
     })
@@ -203,7 +203,7 @@ export default function HistoryPage() {
                   >
                     <td className="px-5 py-3.5 whitespace-nowrap">{record.date}</td>
                     <td className="px-5 py-3.5 font-semibold text-slate-800">
-                      {record.deviceName}
+                      {record.tool_name}
                     </td>
                     <td className="px-5 py-3.5 font-mono text-slate-500 font-medium">
                       {record.deviceCode}

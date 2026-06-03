@@ -5,7 +5,7 @@ import { ArrowLeft, RefreshCw, AlertCircle, Settings, CheckCircle, XCircle, User
 interface PublicStatusData {
   equipment: {
     id: number
-    name: string
+    tool_name: string
     model: string
     serial_number: string
     manufacturer: string
@@ -129,7 +129,7 @@ export default function PublicStatusPlaceholderPage() {
                   </div>
                   <div>
                     <h2 className="font-bold text-sm text-slate-800 leading-tight">
-                      {data.equipment.name}
+                      {data.equipment.tool_name}
                     </h2>
                     <p className="text-[11px] text-slate-400 mt-0.5">
                       {data.equipment.model} ({data.equipment.equipmentType?.name || "-"})

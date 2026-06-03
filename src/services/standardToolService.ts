@@ -31,7 +31,7 @@ async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
 }
 
 export type CreateStandardToolPayload = {
-  name: string
+  tool_name: string
   asset_code?: string | null
   serial_number?: string | null
   manufacturer?: string | null

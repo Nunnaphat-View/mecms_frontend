@@ -55,7 +55,7 @@ export interface CerCalibrationData {
 
 export interface CalibrationSettingItem {
   id?: number
-  equipment_name?: string
+  tool_name?: string
   type?: string
   parameter_name?: string
   unit?: string
@@ -66,7 +66,7 @@ export interface CalibrationSettingItem {
 }
 
 interface StandardItem {
-  name: string
+  tool_name: string
   manufacture: string
   model: string
   sn: string
@@ -803,7 +803,7 @@ export default function CerCalibration({
                 {standards && standards.length > 0 ? (
                   standards.map((std, idx) => (
                     <tr key={idx}>
-                      <td>{std.name}</td>
+                      <td>{std.tool_name}</td>
                       <td className="italic">{std.manufacture}</td>
                       <td className="italic">{std.model}</td>
                       <td>{std.sn}</td>

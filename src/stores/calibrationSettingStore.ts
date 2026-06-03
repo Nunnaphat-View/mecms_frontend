@@ -25,18 +25,18 @@ export function isInfusionPump(name: string | null | undefined): boolean {
   )
 }
 
-function getDefaultSettings(equipmentName: string): CalibrationSetting[] {
-  if (!isInfusionPump(equipmentName)) return []
+function getDefaultSettings(toolName: string): CalibrationSetting[] {
+  if (!isInfusionPump(toolName)) return []
 
   return [
     {
-      equipment_name: equipmentName,
+      tool_name: toolName,
       type: "qualitative",
       parameter_name: "Occlusion",
       test_values: [{ label: "Occlusion Alarm", value: 0 }],
     },
     {
-      equipment_name: equipmentName,
+      tool_name: toolName,
       type: "quantitative",
       parameter_name: "Flow Rate",
       unit: "mL/hr",
@@ -50,7 +50,7 @@ function getDefaultSettings(equipmentName: string): CalibrationSetting[] {
       ],
     },
     {
-      equipment_name: equipmentName,
+      tool_name: toolName,
       type: "quantitative",
       parameter_name: "Volume",
       unit: "mL",
@@ -70,8 +70,8 @@ interface CalibrationSettingState {
   settings: CalibrationSetting[]
   loading: boolean
   clearSettings: () => void
-  fetchSettings: (equipmentName: string) => Promise<CalibrationSetting[]>
-  saveSettings: (equipmentName: string, payload: CalibrationSetting[]) => Promise<CalibrationSetting[]>
+  fetchSettings: (toolName: string) => Promise<CalibrationSetting[]>
+  saveSettings: (toolName: string, payload: CalibrationSetting[]) => Promise<CalibrationSetting[]>
 }
 
 export const useCalibrationSettingStore = create<CalibrationSettingState>((set) => ({
@@ -80,16 +80,16 @@ export const useCalibrationSettingStore = create<CalibrationSettingState>((set) 
 
   clearSettings: () => set({ settings: [] }),
 
-  fetchSettings: async (equipmentName: string) => {
+  fetchSettings: async (toolName: string) => {
     set({ loading: true, settings: [] })
     try {
-      const data = await calibrationSettingService.getByEquipment(equipmentName)
-      const fetchedSettings = data.length > 0 ? data : getDefaultSettings(equipmentName)
+      const data = await calibrationSettingService.getByEquipment(toolName)
+      const fetchedSettings = data.length > 0 ? data : getDefaultSettings(toolName)
       set({ settings: fetchedSettings })
       return fetchedSettings
     } catch (error) {
       console.error("Failed to fetch settings:", error)
-      const fallbackSettings = getDefaultSettings(equipmentName)
+      const fallbackSettings = getDefaultSettings(toolName)
       set({ settings: fallbackSettings })
       return fallbackSettings
     } finally {
@@ -97,10 +97,10 @@ export const useCalibrationSettingStore = create<CalibrationSettingState>((set) 
     }
   },
 
-  saveSettings: async (equipmentName: string, payload: CalibrationSetting[]) => {
+  saveSettings: async (toolName: string, payload: CalibrationSetting[]) => {
     set({ loading: true })
     try {
-      const data = await calibrationSettingService.saveBatch(equipmentName, payload)
+      const data = await calibrationSettingService.saveBatch(toolName, payload)
       set({ settings: data })
       return data
     } catch (error) {

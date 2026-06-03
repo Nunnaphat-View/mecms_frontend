@@ -6,7 +6,7 @@ export default function TabGeneralInfo() {
   const calRecord = useCalibrationRecordStore()
 
   const equipmentInfo = {
-    deviceName: calRecord.equipmentDetails.name,
+    tool_name: calRecord.equipmentDetails.tool_name,
     company: calRecord.equipmentDetails.company,
     model: calRecord.equipmentDetails.model,
     serialNumber: calRecord.equipmentDetails.serialNumber,

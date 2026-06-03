@@ -39,7 +39,7 @@ export interface EquipmentType {
 
 export interface MedicalTool {
   id: string; // asset_code
-  name: string;
+  tool_name: string;
   company: string; // manufacturer
   model: string;
   type: string; // equipmentType.name
@@ -65,7 +65,7 @@ export interface StandardToolCategory {
 
 export interface BackendStandardTool {
   id: number
-  name: string
+  tool_name: string
   asset_code: string | null
   serial_number: string | null
   manufacturer: string | null
@@ -81,7 +81,7 @@ export interface BackendStandardTool {
 
 export interface BackendEquipment {
   id: number;
-  name: string;
+  tool_name: string;
   asset_code: string | null;
   serial_number: string | null;
   manufacturer: string | null;
@@ -110,7 +110,7 @@ export interface CalibrationProcess {
   procedure: string;
   unit: string;
   standard_tool_id?: number | null;
-  standardTool?: { name: string; manufacturer?: string; asset_code?: string };
+  standardTool?: { tool_name: string; manufacturer?: string; asset_code?: string };
 }
 
 export interface CalibrationCost {
@@ -127,7 +127,7 @@ export interface ICalibrationTestValue {
 
 export interface CalibrationSetting {
   id?: number;
-  equipment_name: string;
+  tool_name: string;
   type: "quantitative" | "qualitative";
   parameter_name: string;
   unit?: string;

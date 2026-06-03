@@ -52,7 +52,7 @@ export const ScheduleEventCard = ({ event }: ScheduleEventCardProps) => {
       <div className="flex justify-between items-start gap-4">
         <div>
           <h4 className="font-bold text-sm text-slate-800 leading-snug">
-            {event.toolName}
+            {event.tool_name}
           </h4>
           <span className="text-[11px] font-mono text-slate-400 mt-1 block">
             {event.toolCode}

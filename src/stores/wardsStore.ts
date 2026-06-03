@@ -11,13 +11,13 @@ export interface Ward {
 export interface WardTimelineEvent {
   id: number
   date: number // Just the day number of the due date
-  toolName: string
+  tool_name: string
   toolCode: string
 }
 
 export interface WardTool {
   id: string // e.g. ER-BME-001 or asset_code
-  name: string
+  tool_name: string
   dueDate: string // e.g. 2026-06-26
   statusLabel: string // e.g. 'วันนี้', 'อีก 2 วัน'
   isDanger: boolean // For red status text
@@ -107,7 +107,7 @@ export const useWardsStore = create<WardsState>((set, get) => ({
           const { statusLabel, isDanger, cleanDate } = calculateStatus(eq.calibration_due_date)
           return {
             id: eq.asset_code || `BME-${eq.id}`,
-            name: eq.name,
+            tool_name: eq.tool_name,
             dueDate: cleanDate,
             statusLabel,
             isDanger,
@@ -163,7 +163,7 @@ export const useWardsStore = create<WardsState>((set, get) => ({
         return {
           id: index + 1,
           date: dateDay,
-          toolName: t.name,
+          tool_name: t.tool_name,
           toolCode: t.id,
         }
       })

@@ -24,7 +24,7 @@ export default function ApprovalCard({ item }: Props) {
       {/* Card Header */}
       <div className="flex justify-between items-start gap-3">
         <div>
-          <div className="font-bold text-slate-800 text-sm tracking-tight">{item.toolName}</div>
+          <div className="font-bold text-slate-800 text-sm tracking-tight">{item.tool_name}</div>
           <div className="text-[11px] text-slate-400 mt-0.5 font-medium">{item.toolCode}</div>
         </div>
         <div className="text-xs font-semibold text-slate-500 px-2 py-1 bg-slate-50 border border-slate-100 rounded-lg whitespace-nowrap">

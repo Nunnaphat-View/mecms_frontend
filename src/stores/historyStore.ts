@@ -7,7 +7,7 @@ export interface HistoryRecord {
   id: string
   taskId: number
   date: string // YYYY-MM-DD
-  deviceName: string
+  tool_name: string
   deviceCode: string
   inspector: string
   result: CalibrationResult
@@ -50,8 +50,8 @@ export const useHistoryStore = create<HistoryState>((set) => ({
         return {
           id: String(task.pm_no || `CAL-${task.id}`),
           taskId: Number(task.id),
-          date: String((task.createdAt || "").split("T")[0]),
-          deviceName: String(task.equipment?.name || "Unknown"),
+           date: String((task.createdAt || "").split("T")[0]),
+          tool_name: String(task.equipment?.tool_name || "Unknown"),
           deviceCode: String(task.equipment?.asset_code || "-"),
           inspector: String(
             task.certificate_data?.technician?.name || task.technician?.name || "-"

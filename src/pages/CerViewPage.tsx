@@ -59,8 +59,8 @@ export default function CerViewPage() {
       try {
         const data = await pmService.getTask(taskId!)
         setTask(data)
-        if (data.equipment?.name) {
-          await settingStore.fetchSettings(data.equipment.name.trim())
+        if (data.equipment?.tool_name) {
+          await settingStore.fetchSettings(data.equipment.tool_name.trim())
         }
       } catch (error) {
         console.error("Failed to fetch task for CER:", error)
@@ -101,7 +101,7 @@ export default function CerViewPage() {
     return {
       pmNo: t.pm_no || `CAL-${t.id}`,
       pmId: t.pm_no?.substring(0, 8) || "PM-1-69-",
-      detail: t.equipment?.name || "-",
+      detail: t.equipment?.tool_name || "-",
       manufacture: t.equipment?.manufacturer || "-",
       model: t.equipment?.model || "-",
       serialNo: t.equipment?.serial_number || "-",
@@ -200,7 +200,7 @@ export default function CerViewPage() {
     const t = task
     return {
       certNo: t?.pm_no || (t ? `CAL-${t.id}` : "-"),
-      detail: t?.equipment?.name || "-",
+      detail: t?.equipment?.tool_name || "-",
       manufacture: t?.equipment?.manufacturer || "-",
       model: t?.equipment?.model || "-",
       serialNo: t?.equipment?.serial_number || "-",
@@ -321,7 +321,7 @@ export default function CerViewPage() {
 
   const standardsData = useMemo(() => {
     return task?.standardTools?.map((std) => ({
-      name: std.name,
+      tool_name: std.tool_name,
       manufacture: std.manufacturer || "-",
       model: std.model || "-",
       sn: std.serial_number || "-",

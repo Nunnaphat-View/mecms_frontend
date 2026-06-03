@@ -39,7 +39,7 @@ export default function ApprovalsPage() {
       result = result.filter(
         (a) =>
           a.id.toLowerCase().includes(q) ||
-          a.toolName.toLowerCase().includes(q) ||
+          a.tool_name.toLowerCase().includes(q) ||
           a.toolCode.toLowerCase().includes(q)
       )
     }
@@ -177,7 +177,7 @@ export default function ApprovalsPage() {
                         <td className="px-5 py-3.5 font-bold text-[#1a1a2e] text-center whitespace-nowrap">
                           {row.id}
                         </td>
-                        <td className="px-5 py-3.5 font-medium whitespace-nowrap">{row.toolName}</td>
+                        <td className="px-5 py-3.5 font-medium whitespace-nowrap">{row.tool_name}</td>
                         <td className="px-5 py-3.5 whitespace-nowrap">{row.toolCode}</td>
                         <td className="px-5 py-3.5 whitespace-nowrap">{row.location}</td>
                         <td className="px-5 py-3.5 text-center whitespace-nowrap">{row.calDate}</td>

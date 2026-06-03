@@ -5,7 +5,7 @@ export interface CalibrationEvent {
   id: string
   taskId: number
   toolCode: string
-  toolName: string
+  tool_name: string
   location: string
   frequency: string
   assignedTo: string
@@ -66,7 +66,7 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
             id: task.pm_no || `TASK-${task.id}`,
             taskId: task.id,
             toolCode: task.equipment?.asset_code || String(task.equipment_id),
-            toolName: task.equipment?.name || `เครื่องมือ #${task.equipment_id}`,
+            tool_name: task.equipment?.tool_name || `เครื่องมือ #${task.equipment_id}`,
             location: task.equipment?.section?.name || task.equipment?.location || "-",
             frequency,
             assignedTo: task.technician?.name || "-",

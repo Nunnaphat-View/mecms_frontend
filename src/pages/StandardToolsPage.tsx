@@ -48,7 +48,7 @@ export default function StandardToolsPage() {
     const filtered = tools.filter((t) => {
       if (!q) return true
       return (
-        t.name.toLowerCase().includes(q) ||
+        t.tool_name.toLowerCase().includes(q) ||
         (t.asset_code ?? "").toLowerCase().includes(q) ||
         (t.manufacturer ?? "").toLowerCase().includes(q) ||
         (t.model ?? "").toLowerCase().includes(q) ||
@@ -67,10 +67,10 @@ export default function StandardToolsPage() {
     }
 
     return filtered.sort((a, b) => {
-      const sa = score(a.name)
-      const sb = score(b.name)
+      const sa = score(a.tool_name)
+      const sb = score(b.tool_name)
       if (sa !== sb) return sa - sb
-      return a.name.localeCompare(b.name)
+      return a.tool_name.localeCompare(b.tool_name)
     })
   }, [tools, searchQuery])
 
@@ -215,7 +215,7 @@ export default function StandardToolsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="font-medium text-slate-800 text-[13.5px]">{tool.name}</span>
+                      <span className="font-medium text-slate-800 text-[13.5px]">{tool.tool_name}</span>
                     </td>
                     <td className="px-4 py-3 text-slate-600 text-[13.5px]">
                       {tool.manufacturer || "-"}
@@ -302,7 +302,7 @@ export default function StandardToolsPage() {
         message="ต้องการลบข้อมูลเครื่องมือมาตรฐานนี้ใช่หรือไม่?"
         itemName={
           deleteTarget
-            ? `${deleteTarget.asset_code ?? ""} ${deleteTarget.name}`.trim()
+            ? `${deleteTarget.asset_code ?? ""} ${deleteTarget.tool_name}`.trim()
             : ""
         }
         loading={isDeleting}

@@ -96,7 +96,7 @@ export const useToolStore = create<ToolState>((set, get) => ({
       const mappedTools: MedicalTool[] = backendItems.map((item: BackendEquipment) => ({
         id: item.asset_code || String(item.id),
         backendId: item.id,
-        name: item.name,
+        tool_name: item.tool_name,
         company: item.manufacturer ?? "-",
         model: item.model ?? "-",
         type: item.equipmentType?.name || "-",
@@ -123,7 +123,7 @@ export const useToolStore = create<ToolState>((set, get) => ({
 
   addTool: async (tool) => {
     await toolService.create({
-      name: tool.name,
+      tool_name: tool.tool_name,
       manufacturer: tool.company,
       model: tool.model,
       serial_number: tool.serialNumber,
@@ -144,7 +144,7 @@ export const useToolStore = create<ToolState>((set, get) => ({
     const backendId = target?.backendId ?? Number(id)
     
     await toolService.update(backendId, {
-      ...(data.name !== undefined && { name: data.name }),
+      ...(data.tool_name !== undefined && { tool_name: data.tool_name }),
       ...(data.company !== undefined && { manufacturer: data.company }),
       ...(data.model !== undefined && { model: data.model }),
       ...(data.serialNumber !== undefined && { serial_number: data.serialNumber }),

@@ -38,7 +38,7 @@ export const CalibrationProcessDialog: React.FC<CalibrationProcessDialogProps> =
 
   const standardOptions = useMemo(() => {
     return standardTools.map((t) => ({
-      label: `${t.name} - ${t.manufacturer || ""}`,
+      label: `${t.tool_name} - ${t.manufacturer || ""}`,
       value: t.id,
     }))
   }, [standardTools])

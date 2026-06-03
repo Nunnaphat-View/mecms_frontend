@@ -29,7 +29,7 @@ export default function CalibrationCard({ record, isOwner }: CalibrationCardProp
       {/* Card Header */}
       <div className="flex justify-between items-start gap-2">
         <div>
-          <div className="font-bold text-sm text-slate-800 line-clamp-1">{record.deviceName}</div>
+          <div className="font-bold text-sm text-slate-800 line-clamp-1">{record.tool_name}</div>
           <div className="text-xs text-slate-400 mt-0.5">{record.deviceCode}</div>
         </div>
         <div className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-lg whitespace-nowrap">

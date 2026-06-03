@@ -9,7 +9,7 @@ export const WardToolCard: React.FC<WardToolCardProps> = ({ tool }) => {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 transition-all duration-200 hover:shadow-sm hover:border-slate-300">
       <div className="flex justify-between items-start">
-        <span className="text-sm font-semibold text-slate-800">{tool.name}</span>
+        <span className="text-sm font-semibold text-slate-800">{tool.tool_name}</span>
         <span className={`text-xs font-bold ${tool.isDanger ? "text-red-600" : "text-primary"}`}>
           {tool.statusLabel}
         </span>

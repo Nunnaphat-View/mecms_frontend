@@ -147,7 +147,7 @@ export default function ToolsManagePage() {
       (p) =>
         p.parameter_name.toLowerCase().includes(q) ||
         p.unit.toLowerCase().includes(q) ||
-        (p.standardTool ? `${p.standardTool.name}-${p.standardTool.manufacturer}` : "")
+        (p.standardTool ? `${p.standardTool.tool_name}-${p.standardTool.manufacturer}` : "")
           .toLowerCase()
           .includes(q) ||
         p.procedure.toLowerCase().includes(q)
@@ -166,13 +166,13 @@ export default function ToolsManagePage() {
     const seen = new Set<string>()
     return tools
       .filter((t) => {
-        const normalizedName = t.name.trim().toLowerCase()
+        const normalizedName = t.tool_name.trim().toLowerCase()
         if (seen.has(normalizedName)) return false
         seen.add(normalizedName)
         return true
       })
       .map((t) => ({
-        name: t.name.trim(),
+        tool_name: t.tool_name.trim(),
         type: t.type,
         department: t.department,
       }))
@@ -181,7 +181,7 @@ export default function ToolsManagePage() {
   const filteredUniqueTools = useMemo(() => {
     return uniqueTools.filter((t) => {
       const matchSearch =
-        !settingsSearch || t.name.toLowerCase().includes(settingsSearch.toLowerCase().trim())
+        !settingsSearch || t.tool_name.toLowerCase().includes(settingsSearch.toLowerCase().trim())
       const matchType = !selectedSettingType || t.type === selectedSettingType
       return matchSearch && matchType
     })
@@ -374,7 +374,7 @@ export default function ToolsManagePage() {
                           <td className="px-5 py-3.5 text-center font-semibold text-primary w-[100px]">{row.unit}</td>
                           <td className="px-5 py-3.5 w-[25%]">
                             {row.standardTool
-                              ? `${row.standardTool.name}-${row.standardTool.manufacturer || ""}`
+                              ? `${row.standardTool.tool_name}-${row.standardTool.manufacturer || ""}`
                               : ""}
                           </td>
                           {isAdmin && (
@@ -474,13 +474,13 @@ export default function ToolsManagePage() {
                       </tr>
                     ) : (
                       paginatedUniqueTools.map((row) => (
-                        <tr key={row.name} className="hover:bg-slate-50/70 transition-colors">
-                          <td className="px-5 py-3.5 font-semibold text-slate-800 w-[35%]">{row.name}</td>
+                        <tr key={row.tool_name} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="px-5 py-3.5 font-semibold text-slate-800 w-[35%]">{row.tool_name}</td>
                           <td className="px-5 py-3.5 text-center w-[20%]">{row.type}</td>
                           <td className="px-5 py-3.5 text-slate-600 w-[30%]">{row.department}</td>
                           <td className="px-5 py-3.5 text-center w-[15%]">
                             <button
-                              onClick={() => navigate(`/tools/config/${encodeURIComponent(row.name)}`)}
+                              onClick={() => navigate(`/tools/config/${encodeURIComponent(row.tool_name)}`)}
                               className="px-5 py-1.5 bg-primary hover:bg-primary/95 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer w-24 text-center"
                             >
                               ตั้งค่า

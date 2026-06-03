@@ -139,7 +139,7 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
                         <option value="">เลือกเครื่องมือ...</option>
                         {filteredTools.map((t) => (
                           <option key={t.id} value={t.id}>
-                            {t.name} | S/N: {t.serial_number ?? "-"}
+                            {t.tool_name} | S/N: {t.serial_number ?? "-"}
                           </option>
                         ))}
                       </select>
@@ -153,7 +153,7 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
                         <Cpu className="size-6 text-primary" />
                       </div>
                       <div className="font-bold text-sm text-slate-800 text-center">
-                        {currentTool ? currentTool.name : getCategoryName(catId)}
+                        {currentTool ? currentTool.tool_name : getCategoryName(catId)}
                       </div>
                       {currentTool ? (
                         <div className="text-xs text-slate-400 mt-0.5">

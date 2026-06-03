@@ -41,18 +41,18 @@ function isInfusionPump(name: string | null | undefined) {
   )
 }
 
-const getDefaultSettings = (equipmentName: string): CalibrationSetting[] => {
-  if (!isInfusionPump(equipmentName)) return []
+const getDefaultSettings = (toolName: string): CalibrationSetting[] => {
+  if (!isInfusionPump(toolName)) return []
 
   return [
     {
-      equipment_name: equipmentName,
+      tool_name: toolName,
       type: "qualitative",
       parameter_name: "Occlusion",
       test_values: [{ label: "Occlusion Alarm", value: 0 }],
     },
     {
-      equipment_name: equipmentName,
+      tool_name: toolName,
       type: "quantitative",
       parameter_name: "Flow Rate",
       unit: "mL/hr",
@@ -66,7 +66,7 @@ const getDefaultSettings = (equipmentName: string): CalibrationSetting[] => {
       ],
     },
     {
-      equipment_name: equipmentName,
+      tool_name: toolName,
       type: "quantitative",
       parameter_name: "Volume",
       unit: "mL",
@@ -315,7 +315,7 @@ export default function ToolConfigPage() {
       // Map quantitative
       quantitativeParams.forEach((qp) => {
         payload.push({
-          equipment_name: toolName,
+          tool_name: toolName,
           type: "quantitative",
           parameter_name: qp.parameter,
           unit: qp.unit,
@@ -334,7 +334,7 @@ export default function ToolConfigPage() {
       // Map qualitative
       qualitativeParams.forEach((qp) => {
         payload.push({
-          equipment_name: toolName,
+          tool_name: toolName,
           type: "qualitative",
           parameter_name: qp.name,
           test_values: qp.testItems.map((item, idx) => ({

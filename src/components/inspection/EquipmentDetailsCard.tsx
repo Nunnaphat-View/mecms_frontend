@@ -1,5 +1,5 @@
 interface EquipmentDetails {
-  deviceName: string
+  tool_name: string
   company: string
   model: string
   serialNumber: string
@@ -38,7 +38,7 @@ export default function EquipmentDetailsCard({ details }: Props) {
         {/* Left Card */}
         <div className="border border-slate-300 rounded-xl p-4 bg-white">
           <div className="flex flex-col gap-3">
-            <InfoRow label="เครื่องมือ" value={details.deviceName} />
+            <InfoRow label="เครื่องมือ" value={details.tool_name} />
             <InfoRow label="บริษัท" value={details.company} />
             <InfoRow label="รุ่น" value={details.model} />
             <InfoRow label="หมายเลขเครื่อง" value={details.serialNumber} />
