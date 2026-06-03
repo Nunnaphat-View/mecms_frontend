@@ -6,6 +6,7 @@ import { useToolStore } from "../../stores/toolStore"
 interface CalibrationCostDialogProps {
   isOpen: boolean
   cost?: CalibrationCost | null
+  existingCosts?: CalibrationCost[]
   onSaved: (value: Omit<CalibrationCost, "id">) => Promise<void>
   onClose: () => void
 }
@@ -13,6 +14,7 @@ interface CalibrationCostDialogProps {
 export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
   isOpen,
   cost = null,
+  existingCosts = [],
   onSaved,
   onClose,
 }) => {
@@ -29,6 +31,10 @@ export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
     return Array.from(new Set(tools.map((t) => t.tool_name))).filter(Boolean).sort()
   }, [tools])
 
+  const uniqueDescriptions = useMemo(() => {
+    return Array.from(new Set(existingCosts.map((c) => c.description))).filter(Boolean).sort()
+  }, [existingCosts])
+
   const [form, setForm] = useState(() => ({
     tool_name: cost?.tool_name ?? "",
     description: cost?.description ?? "",
@@ -38,6 +44,10 @@ export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
   const [searchQuery, setSearchQuery] = useState(() => cost?.tool_name ?? "")
   const [isOpenDropdown, setIsOpenDropdown] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const [descSearchQuery, setDescSearchQuery] = useState(() => cost?.description ?? "")
+  const [isOpenDescDropdown, setIsOpenDescDropdown] = useState(false)
+  const descDropdownRef = useRef<HTMLDivElement>(null)
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -55,6 +65,8 @@ export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
     })
     setSearchQuery(cost?.tool_name ?? "")
     setIsOpenDropdown(false)
+    setDescSearchQuery(cost?.description ?? "")
+    setIsOpenDescDropdown(false)
     setErrors({})
   }
 
@@ -69,11 +81,25 @@ export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
     return sorted.filter((name) => name.toLowerCase().includes(query))
   }, [uniqueToolNames, cost, searchQuery])
 
-  // Handle click outside dropdown to close it
+  const filteredDescOptions = useMemo(() => {
+    const list = [...uniqueDescriptions]
+    if (cost?.description && !list.includes(cost.description)) {
+      list.push(cost.description)
+    }
+    const sorted = list.sort()
+    const query = descSearchQuery.trim().toLowerCase()
+    if (!query) return sorted
+    return sorted.filter((desc) => desc.toLowerCase().includes(query))
+  }, [uniqueDescriptions, cost, descSearchQuery])
+
+  // Handle click outside dropdowns to close them
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpenDropdown(false)
+      }
+      if (descDropdownRef.current && !descDropdownRef.current.contains(event.target as Node)) {
+        setIsOpenDescDropdown(false)
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
@@ -222,25 +248,71 @@ export const CalibrationCostDialog: React.FC<CalibrationCostDialogProps> = ({
               )}
             </div>
 
-            {/* Description Input */}
-            <div className="space-y-1">
+            {/* Searchable Description Input */}
+            <div className="space-y-1 relative" ref={descDropdownRef}>
               <label className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
                 รายการ <span className="text-red-500">*</span>
               </label>
-              <div className="relative flex items-center">
-                <FileSpreadsheet className="absolute left-3.5 size-4 text-slate-400" />
+              <div className="relative flex items-center w-full">
+                <FileSpreadsheet className="absolute left-3.5 size-4 text-slate-400 z-10 pointer-events-none" />
                 <input
                   type="text"
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="ระบุรายการ"
-                  className={`w-full h-11 pl-10 pr-4 bg-slate-50 border ${
+                  value={descSearchQuery}
+                  onFocus={() => setIsOpenDescDropdown(true)}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setDescSearchQuery(val)
+                    setForm((prev) => ({ ...prev, description: val }))
+                    setIsOpenDescDropdown(true)
+                  }}
+                  placeholder="พิมพ์ค้นหาหรือระบุรายการเครื่องมือ..."
+                  className={`w-full h-11 pl-10 pr-10 bg-slate-50 border ${
                     errors.description ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
                   } rounded-xl text-sm focus:bg-white outline-none transition-all`}
                 />
+                <button
+                  type="button"
+                  onClick={() => setIsOpenDescDropdown((prev) => !prev)}
+                  className="absolute right-3 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+                >
+                  <ChevronDown className="size-4" />
+                </button>
               </div>
               {errors.description && (
                 <p className="text-[11px] text-red-500 font-medium px-1 mt-0.5">{errors.description}</p>
+              )}
+
+              {/* Floating Dropdown List */}
+              {isOpenDescDropdown && (
+                <div className="absolute top-[calc(100%+4px)] left-0 right-0 z-50 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg p-1 animate-in fade-in duration-100">
+                  {filteredDescOptions.length === 0 ? (
+                    <div className="px-4 py-3 text-xs text-slate-400 text-center font-medium">
+                      ไม่พบรายการที่ตรงกัน
+                    </div>
+                  ) : (
+                    filteredDescOptions.map((desc: string) => (
+                      <button
+                        key={desc}
+                        type="button"
+                        onClick={() => {
+                          setForm((prev) => ({ ...prev, description: desc }))
+                          setDescSearchQuery(desc)
+                          setIsOpenDescDropdown(false)
+                        }}
+                        className={`w-full px-4 py-2.5 text-left text-xs font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-between ${
+                          form.description === desc
+                            ? "bg-primary/10 text-primary"
+                            : "text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+                        }`}
+                      >
+                        <span>{desc}</span>
+                        {form.description === desc && (
+                          <span className="text-primary text-[10px]">✔</span>
+                        )}
+                      </button>
+                    ))
+                  )}
+                </div>
               )}
             </div>
 

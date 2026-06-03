@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react"
+import React, { useState, useEffect, useMemo, useRef } from "react"
 import { ListTodo, Wrench, X, Save, ChevronDown } from "lucide-react"
 import type { CalibrationProcess } from "../../types/tool"
 import { useStandardToolStore } from "../../stores/standardToolStore"
+import { useToolStore } from "../../stores/toolStore"
 
 interface CalibrationProcessDialogProps {
   isOpen: boolean
@@ -17,8 +18,6 @@ export const CalibrationProcessDialog: React.FC<CalibrationProcessDialogProps> =
   onClose,
 }) => {
   const isEdit = !!process
-  const { tools: standardTools, fetchTools } = useStandardToolStore()
-
   const [form, setForm] = useState(() => ({
     parameter_name: process?.parameter_name ?? "",
     unit: process?.unit ?? "",
@@ -26,15 +25,78 @@ export const CalibrationProcessDialog: React.FC<CalibrationProcessDialogProps> =
     procedure: process?.procedure ?? "",
   }))
 
+  const { tools: standardTools, fetchTools } = useStandardToolStore()
+  const { tools: inventoryTools, fetchTools: fetchInventoryTools } = useToolStore()
+
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isOpenDropdown, setIsOpenDropdown] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const [paramSearchQuery, setParamSearchQuery] = useState(() => process?.parameter_name ?? "")
+  const [isOpenParamDropdown, setIsOpenParamDropdown] = useState(false)
+  const paramDropdownRef = useRef<HTMLDivElement>(null)
+
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
 
-  // Fetch standard tools on mount if not loaded
+  const [prevProcess, setPrevProcess] = useState(process)
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen)
+  const [prevStandardTools, setPrevStandardTools] = useState(standardTools)
+
+  if (process !== prevProcess || isOpen !== prevIsOpen) {
+    setPrevProcess(process)
+    setPrevIsOpen(isOpen)
+    setForm({
+      parameter_name: process?.parameter_name ?? "",
+      unit: process?.unit ?? "",
+      standard_tool_id: process?.standard_tool_id ?? null,
+      procedure: process?.procedure ?? "",
+    })
+    const selTool = standardTools.find(t => t.id === (process?.standard_tool_id ?? null))
+    setSearchQuery(selTool ? `${selTool.tool_name} - ${selTool.manufacturer || ""}` : "")
+    setIsOpenDropdown(false)
+    setParamSearchQuery(process?.parameter_name ?? "")
+    setIsOpenParamDropdown(false)
+    setErrors({})
+  }
+
+  if (standardTools !== prevStandardTools) {
+    setPrevStandardTools(standardTools)
+    if (form.standard_tool_id && !searchQuery) {
+      const selTool = standardTools.find((t) => t.id === form.standard_tool_id)
+      if (selTool) {
+        setSearchQuery(`${selTool.tool_name} - ${selTool.manufacturer || ""}`)
+      }
+    }
+  }
+
+  // Fetch standard tools and inventory tools on mount if not loaded
   useEffect(() => {
     if (isOpen) {
       void fetchTools()
+      void fetchInventoryTools()
     }
-  }, [isOpen, fetchTools])
+  }, [isOpen, fetchTools, fetchInventoryTools])
+
+  // Handle click outside dropdowns to close them
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpenDropdown(false)
+      }
+      if (paramDropdownRef.current && !paramDropdownRef.current.contains(event.target as Node)) {
+        setIsOpenParamDropdown(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
+
+  const uniqueToolNames = useMemo(() => {
+    return Array.from(new Set(inventoryTools.map((t) => t.tool_name))).filter(Boolean).sort()
+  }, [inventoryTools])
 
   const standardOptions = useMemo(() => {
     return standardTools.map((t) => ({
@@ -42,6 +104,23 @@ export const CalibrationProcessDialog: React.FC<CalibrationProcessDialogProps> =
       value: t.id,
     }))
   }, [standardTools])
+
+  const filteredOptions = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return standardOptions
+    return standardOptions.filter((opt) => opt.label.toLowerCase().includes(query))
+  }, [standardOptions, searchQuery])
+
+  const filteredParamOptions = useMemo(() => {
+    const list = [...uniqueToolNames]
+    if (process?.parameter_name && !list.includes(process.parameter_name)) {
+      list.push(process.parameter_name)
+    }
+    const sorted = list.sort()
+    const query = paramSearchQuery.trim().toLowerCase()
+    if (!query) return sorted
+    return sorted.filter((name) => name.toLowerCase().includes(query))
+  }, [uniqueToolNames, process, paramSearchQuery])
 
   if (!isOpen) return null
 
@@ -121,24 +200,70 @@ export const CalibrationProcessDialog: React.FC<CalibrationProcessDialogProps> =
               </div>
 
               {/* Parameter Name */}
-              <div className="space-y-1">
+              <div className="space-y-1 relative" ref={paramDropdownRef}>
                 <label className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
                   รายการ <span className="text-red-500">*</span>
                 </label>
-                <div className="relative flex items-center">
-                  <ListTodo className="absolute left-3.5 size-4 text-slate-400" />
+                <div className="relative flex items-center w-full">
+                  <ListTodo className="absolute left-3.5 size-4 text-slate-400 z-10 pointer-events-none" />
                   <input
                     type="text"
-                    value={form.parameter_name}
-                    onChange={(e) => setForm({ ...form, parameter_name: e.target.value })}
-                    placeholder="ระบุรายการ"
-                    className={`w-full h-11 pl-10 pr-4 bg-slate-50 border ${
+                    value={paramSearchQuery}
+                    onFocus={() => setIsOpenParamDropdown(true)}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setParamSearchQuery(val)
+                      setForm((prev) => ({ ...prev, parameter_name: val }))
+                      setIsOpenParamDropdown(true)
+                    }}
+                    placeholder="พิมพ์ค้นหาหรือระบุชื่อเครื่องมือ..."
+                    className={`w-full h-11 pl-10 pr-10 bg-slate-50 border ${
                       errors.parameter_name ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
                     } rounded-xl text-sm focus:bg-white outline-none transition-all`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setIsOpenParamDropdown((prev) => !prev)}
+                    className="absolute right-3 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+                  >
+                    <ChevronDown className="size-4" />
+                  </button>
                 </div>
                 {errors.parameter_name && (
                   <p className="text-[11px] text-red-500 font-medium px-1 mt-0.5">{errors.parameter_name}</p>
+                )}
+
+                {/* Floating Dropdown List */}
+                {isOpenParamDropdown && (
+                  <div className="absolute top-[calc(100%+4px)] left-0 right-0 z-50 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg p-1 animate-in fade-in duration-100">
+                    {filteredParamOptions.length === 0 ? (
+                      <div className="px-4 py-3 text-xs text-slate-400 text-center font-medium">
+                        ไม่พบเครื่องมือแพทย์ที่ตรงกัน
+                      </div>
+                    ) : (
+                      filteredParamOptions.map((name: string) => (
+                        <button
+                          key={name}
+                          type="button"
+                          onClick={() => {
+                            setForm((prev) => ({ ...prev, parameter_name: name }))
+                            setParamSearchQuery(name)
+                            setIsOpenParamDropdown(false)
+                          }}
+                          className={`w-full px-4 py-2.5 text-left text-xs font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-between ${
+                            form.parameter_name === name
+                              ? "bg-primary/10 text-primary"
+                              : "text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+                          }`}
+                        >
+                          <span>{name}</span>
+                          {form.parameter_name === name && (
+                            <span className="text-primary text-[10px]">✔</span>
+                          )}
+                        </button>
+                      ))
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -166,30 +291,77 @@ export const CalibrationProcessDialog: React.FC<CalibrationProcessDialogProps> =
                 </div>
 
                 {/* Standard Tool Selection */}
-                <div className="space-y-1">
+                <div className="space-y-1 relative" ref={dropdownRef}>
                   <label className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
                     เครื่องมือมาตรฐาน <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative flex items-center">
-                    <Wrench className="absolute left-3.5 size-4 text-slate-400 pointer-events-none" />
-                    <select
-                      value={form.standard_tool_id || ""}
-                      onChange={(e) => setForm({ ...form, standard_tool_id: e.target.value ? Number(e.target.value) : null })}
+                  <div className="relative flex items-center w-full">
+                    <Wrench className="absolute left-3.5 size-4 text-slate-400 z-10 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onFocus={() => setIsOpenDropdown(true)}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setSearchQuery(val)
+                        setIsOpenDropdown(true)
+                        
+                        // Clear the selected tool ID if they clear or type something that doesn't match
+                        const match = standardOptions.find(opt => opt.label.toLowerCase() === val.trim().toLowerCase())
+                        if (match) {
+                          setForm((prev) => ({ ...prev, standard_tool_id: match.value }))
+                        } else {
+                          setForm((prev) => ({ ...prev, standard_tool_id: null }))
+                        }
+                      }}
+                      placeholder="พิมพ์ค้นหาเครื่องมือมาตรฐาน..."
                       className={`w-full h-11 pl-10 pr-10 bg-slate-50 border ${
                         errors.standard_tool_id ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-primary"
-                      } rounded-xl text-sm appearance-none focus:bg-white outline-none transition-all`}
+                      } rounded-xl text-sm focus:bg-white outline-none transition-all`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsOpenDropdown((prev) => !prev)}
+                      className="absolute right-3 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
                     >
-                      <option value="">เลือกเครื่องมือมาตรฐาน</option>
-                      {standardOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-3.5 size-4 text-slate-400 pointer-events-none" />
+                      <ChevronDown className="size-4" />
+                    </button>
                   </div>
                   {errors.standard_tool_id && (
                     <p className="text-[11px] text-red-500 font-medium px-1 mt-0.5">{errors.standard_tool_id}</p>
+                  )}
+
+                  {/* Floating Dropdown List */}
+                  {isOpenDropdown && (
+                    <div className="absolute top-[calc(100%+4px)] left-0 right-0 z-50 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg p-1 animate-in fade-in duration-100">
+                      {filteredOptions.length === 0 ? (
+                        <div className="px-4 py-3 text-xs text-slate-400 text-center font-medium">
+                          ไม่พบเครื่องมือมาตรฐานที่ตรงกัน
+                        </div>
+                      ) : (
+                        filteredOptions.map((opt: { label: string; value: number }) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => {
+                              setForm((prev) => ({ ...prev, standard_tool_id: opt.value }))
+                              setSearchQuery(opt.label)
+                              setIsOpenDropdown(false)
+                            }}
+                            className={`w-full px-4 py-2.5 text-left text-xs font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-between ${
+                              form.standard_tool_id === opt.value
+                                ? "bg-primary/10 text-primary"
+                                : "text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+                            }`}
+                          >
+                            <span>{opt.label}</span>
+                            {form.standard_tool_id === opt.value && (
+                              <span className="text-primary text-[10px]">✔</span>
+                            )}
+                          </button>
+                        ))
+                      )}
+                    </div>
                   )}
                 </div>
               </div>

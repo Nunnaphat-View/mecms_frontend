@@ -631,6 +631,7 @@ export default function ToolsManagePage() {
           key={editingCost?.id || "new"}
           isOpen={showAddCost}
           cost={editingCost}
+          existingCosts={costs}
           onSaved={handleCostSaved}
           onClose={() => {
             setShowAddCost(false)
