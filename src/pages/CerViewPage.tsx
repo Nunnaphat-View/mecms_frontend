@@ -99,8 +99,8 @@ export default function CerViewPage() {
 
     const t = task
     return {
-      pmNo: t.pm_no || `CAL-${t.id}`,
-      pmId: t.pm_no?.substring(0, 8) || "PM-1-69-",
+      pmNo: t.cal_no || `CAL-${t.id}`,
+      pmId: t.cal_no?.substring(0, 8) || "CAL-1-69-",
       detail: t.equipment?.tool_name || "-",
       manufacture: t.equipment?.manufacturer || "-",
       model: t.equipment?.model || "-",
@@ -199,7 +199,7 @@ export default function CerViewPage() {
   const calibrationCertData = useMemo((): CerCalibrationData => {
     const t = task
     return {
-      certNo: t?.pm_no || (t ? `CAL-${t.id}` : "-"),
+      certNo: t?.cal_no || (t ? `CAL-${t.id}` : "-"),
       detail: t?.equipment?.tool_name || "-",
       manufacture: t?.equipment?.manufacturer || "-",
       model: t?.equipment?.model || "-",

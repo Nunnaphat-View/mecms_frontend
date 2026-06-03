@@ -63,7 +63,7 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
           }
 
           return {
-            id: task.pm_no || `TASK-${task.id}`,
+            id: task.cal_no || `TASK-${task.id}`,
             taskId: task.id,
             toolCode: task.equipment?.asset_code || String(task.equipment_id),
             tool_name: task.equipment?.tool_name || `เครื่องมือ #${task.equipment_id}`,

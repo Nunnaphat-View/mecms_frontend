@@ -48,7 +48,7 @@ export const useHistoryStore = create<HistoryState>((set) => ({
       const mappedRecords: HistoryRecord[] = approvedOrRejected.map((task) => {
         const resVal = task.overall_result?.toLowerCase()
         return {
-          id: String(task.pm_no || `CAL-${task.id}`),
+          id: String(task.cal_no || `CAL-${task.id}`),
           taskId: Number(task.id),
            date: String((task.createdAt || "").split("T")[0]),
           tool_name: String(task.equipment?.tool_name || "Unknown"),

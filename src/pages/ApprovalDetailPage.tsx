@@ -153,7 +153,7 @@ export default function ApprovalDetailPage() {
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-1.5 mt-2 text-xs text-slate-500 font-medium">
                   <div>
                     <span>รหัสการสอบเทียบ : </span>
-                    <span className="font-bold text-slate-800">{task?.pm_no || approvalId}</span>
+                    <span className="font-bold text-slate-800">{task?.cal_no || approvalId}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span>สถานะ :</span>

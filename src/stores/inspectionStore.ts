@@ -131,7 +131,7 @@ export const useInspectionStore = create<InspectionState>((set, get) => ({
 
       set({
         taskId: task.id,
-        pmNo: task.pm_no ?? "",
+        pmNo: task.cal_no ?? "",
         pmByName: task.technician?.name ?? "",
         pmByPosition: task.technician?.role?.description ?? "",
       })

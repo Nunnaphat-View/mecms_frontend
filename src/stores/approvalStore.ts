@@ -57,7 +57,7 @@ export const useApprovalStore = create<ApprovalState>((set, get) => ({
         else if (task.status === "Rejected") displayStatus = "rejected"
 
         return {
-          id: task.pm_no || `CAL-${task.id}`,
+          id: task.cal_no || `CAL-${task.id}`,
           taskId: task.id,
           tool_name: task.equipment?.tool_name || "Unknown",
           toolCode: task.equipment?.asset_code || "-",

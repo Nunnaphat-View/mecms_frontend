@@ -48,7 +48,7 @@ export const useCalibrationStore = create<CalibrationState>((set) => ({
       )
 
       const mappedRecords: CalibrationRecord[] = pendingTasks.map((task) => ({
-        id: task.pm_no || `TASK-${task.id}`,
+        id: task.cal_no || `TASK-${task.id}`,
         taskId: task.id,
         tool_name: task.equipment?.tool_name ?? `Equipment #${task.equipment_id}`,
         deviceCode: task.equipment?.asset_code ?? String(task.equipment_id),

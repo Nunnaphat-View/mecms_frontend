@@ -127,7 +127,7 @@ export interface PmCategoryRemarkApi {
 
 export interface TaskApi {
   id: number
-  pm_no: string
+  cal_no: string
   equipment_id: number
   status: string
   overall_result: string
