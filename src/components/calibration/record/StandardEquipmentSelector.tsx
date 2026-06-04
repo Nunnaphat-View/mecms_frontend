@@ -80,14 +80,20 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
   }, [selectedTools])
 
   // Filter available tools for a dropdown slot
-  // If a specific tool is allowed for this slot, show only that tool + all others for flexibility
+  // Show only standard tools that share the same tool_name as the configured allowed tool
   function getFilteredToolsForSlot(index: number): BackendStandardTool[] {
     const allowedId = allowedStandardToolIds[index]
     if (!allowedId) return standardToolStore.tools
-    // Show the allowed tool first, then all others
-    const allowed = standardToolStore.tools.filter((t) => Number(t.id) === Number(allowedId))
-    const others = standardToolStore.tools.filter((t) => Number(t.id) !== Number(allowedId))
-    return [...allowed, ...others]
+
+    // Find the allowed tool to get its name
+    const allowedTool = standardToolStore.tools.find((t) => Number(t.id) === Number(allowedId))
+    if (!allowedTool) return standardToolStore.tools
+
+    // Filter tools with the same name (ignoring leading/trailing spaces and casing)
+    const targetName = allowedTool.tool_name.trim().toLowerCase()
+    return standardToolStore.tools.filter(
+      (t) => t.tool_name.trim().toLowerCase() === targetName
+    )
   }
 
   function getSlotLabel(index: number): string {
@@ -144,7 +150,7 @@ export default function StandardEquipmentSelector({ readonly = false, selectedId
                         <option value="">เลือกเครื่องมือ...</option>
                         {filteredTools.map((t) => (
                           <option key={t.id} value={t.id}>
-                            {t.tool_name} | S/N: {t.serial_number ?? "-"}
+                            {t.tool_name} {t.model ? `(${t.model})` : ""} | S/N: {t.serial_number ?? "-"}
                           </option>
                         ))}
                       </select>
