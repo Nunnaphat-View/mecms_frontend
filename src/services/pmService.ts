@@ -281,4 +281,10 @@ export const pmService = {
       method: "PATCH",
       body: JSON.stringify({ taskIds, newDate }),
     }),
+
+  analyzeSchedule: (month: number, year: number) =>
+    apiFetch<{ analysis: string }>("/pm-task/schedule/analyze", {
+      method: "POST",
+      body: JSON.stringify({ month, year }),
+    }),
 }

@@ -83,6 +83,41 @@ export function ManageScheduleView() {
   const [tasks, setTasks] = useState<TaskApi[]>([])
   const [technicians, setTechnicians] = useState<User[]>([])
 
+  // AI Analysis State
+  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null)
+  const [loadingAnalysis, setLoadingAnalysis] = useState(false)
+  const [isAiPanelVisible, setIsAiPanelVisible] = useState(false)
+  const [isAiPanelCollapsed, setIsAiPanelCollapsed] = useState(false)
+
+  const handleAnalyzeSchedule = async (m = currentMonth, y = currentYear) => {
+    setIsAiPanelVisible(true)
+    setIsAiPanelCollapsed(false)
+
+    const hasTasks = tasks.some((task) => {
+      const rawDate = task.equipment?.calibration_due_date || task.createdAt
+      if (!rawDate) return false
+      const dateObj = new Date(rawDate)
+      return dateObj.getMonth() === m && dateObj.getFullYear() === y
+    })
+
+    if (!hasTasks) {
+      setAiAnalysis("ไม่มีรายการงานสอบเทียบในเดือนและปีที่เลือก จึงไม่มีข้อมูลสำหรับให้ AI วิเคราะห์แผนงาน")
+      return
+    }
+
+    setLoadingAnalysis(true)
+    try {
+      const res = await pmService.analyzeSchedule(m + 1, y)
+      setAiAnalysis(res.analysis)
+    } catch (err: unknown) {
+      console.error(err)
+      const msg = err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการวิเคราะห์แผนงานจากระบบ AI"
+      setAiAnalysis(`เกิดข้อผิดพลาด: ${msg}`)
+    } finally {
+      setLoadingAnalysis(false)
+    }
+  }
+
   // Reassignment Modal State
   const [editingGroup, setEditingGroup] = useState<GroupedTask | null>(null)
   const [selectedTechId, setSelectedTechId] = useState<number | "">("")
@@ -161,6 +196,7 @@ export function ManageScheduleView() {
       active = false
     }
   }, [toast])
+
 
   const daysInMonth = useMemo(() => {
     return new Date(currentYear, currentMonth + 1, 0).getDate()
@@ -268,6 +304,8 @@ export function ManageScheduleView() {
         return [...filtered, ...updatedTasks]
       })
       toast.success("AI จัดการแบ่งมอบหมายงานสอบเทียบสำเร็จ")
+      // Auto trigger AI analysis after assignment
+      void handleAnalyzeSchedule(currentMonth, currentYear)
     } catch (err: unknown) {
       console.error(err)
       const msg = err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการรัน AI"
@@ -327,6 +365,8 @@ export function ManageScheduleView() {
       
       setCurrentMonth(5)
       setCurrentYear(2026)
+      setAiAnalysis(null)
+      setIsAiPanelVisible(false)
     } catch (err: unknown) {
       console.error(err)
       const msg = err instanceof Error ? err.message : "เกิดข้อผิดพลาด"
@@ -480,7 +520,11 @@ export function ManageScheduleView() {
           <div className="relative">
             <select
               value={currentMonth}
-              onChange={(e) => setCurrentMonth(Number(e.target.value))}
+              onChange={(e) => {
+                setCurrentMonth(Number(e.target.value))
+                setAiAnalysis(null)
+                setIsAiPanelVisible(false)
+              }}
               className="appearance-none h-10 pl-3.5 pr-9 bg-white border border-slate-200 text-slate-800 rounded-xl text-xs font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none cursor-pointer shadow-3xs"
             >
               {thaiMonths.map((m, idx) => (
@@ -495,7 +539,11 @@ export function ManageScheduleView() {
           <div className="relative">
             <select
               value={currentYear}
-              onChange={(e) => setCurrentYear(Number(e.target.value))}
+              onChange={(e) => {
+                setCurrentYear(Number(e.target.value))
+                setAiAnalysis(null)
+                setIsAiPanelVisible(false)
+              }}
               className="appearance-none h-10 pl-3.5 pr-9 bg-white border border-slate-200 text-slate-800 rounded-xl text-xs font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none cursor-pointer shadow-3xs"
             >
               {years.map((y) => (
@@ -527,6 +575,16 @@ export function ManageScheduleView() {
           >
             <Sparkles className="size-3.5" />
             AI จัดตารางงาน
+          </button>
+
+          <button
+            onClick={() => handleAnalyzeSchedule(currentMonth, currentYear)}
+            disabled={currentMonthTasks.length === 0}
+            className="flex items-center gap-1.5 px-4 h-10 border border-slate-200 bg-white hover:bg-slate-50 font-bold text-xs rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-3xs text-slate-600 select-none"
+            title="วิเคราะห์และสรุปข้อเสนอแนะในการจัดตารางงานด้วย AI"
+          >
+            <Sparkles className="size-3.5 text-amber-500" />
+            AI วิเคราะห์ตาราง
           </button>
 
           <button
@@ -675,9 +733,6 @@ export function ManageScheduleView() {
                     <Paintbrush className="size-3 text-slate-400" />
                     รายชื่อช่างสอบเทียบ (คลิกเพื่อเปลี่ยนสีที่ต้องการ)
                   </div>
-                  <div className="text-[9px] font-medium text-slate-400">
-                    * สีจะบันทึกเก็บไว้ในเบราว์เซอร์ของคุณโดยอัตโนมัติ
-                  </div>
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5">
@@ -706,6 +761,75 @@ export function ManageScheduleView() {
             )}
         </div>
       </div>
+
+      {/* AI Assistant Analysis Panel */}
+      {isAiPanelVisible && (
+        <div className="mt-4.5 bg-slate-50/50 border border-slate-200 rounded-2xl overflow-hidden shadow-3xs">
+          <div className="px-5 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-4 text-amber-500 animate-pulse" />
+              <span className="text-sm font-bold text-slate-700">AI Assistant บทวิเคราะห์ตารางงาน</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              {loadingAnalysis && (
+                <span className="text-xs font-bold text-slate-400 animate-pulse mr-2">
+                  กำลังวิเคราะห์แผนงาน...
+                </span>
+              )}
+              
+              {/* Collapse/Expand Button */}
+              <button
+                onClick={() => setIsAiPanelCollapsed(!isAiPanelCollapsed)}
+                className="p-1 hover:bg-slate-200/60 text-slate-500 hover:text-slate-700 rounded-lg transition-colors cursor-pointer"
+                title={isAiPanelCollapsed ? "แสดงเนื้อหา" : "ย่อเนื้อหา"}
+              >
+                <ChevronDown className={`size-4 transition-transform duration-200 ${isAiPanelCollapsed ? "" : "rotate-180"}`} />
+              </button>
+              
+              {/* Close Button */}
+              <button
+                onClick={() => setIsAiPanelVisible(false)}
+                className="p-1 hover:bg-slate-200/60 text-slate-500 hover:text-slate-700 rounded-lg transition-colors cursor-pointer"
+                title="ปิดบทวิเคราะห์"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          </div>
+
+          {!isAiPanelCollapsed && (
+            <div className="p-5 font-sans">
+              {loadingAnalysis ? (
+                <div className="flex flex-col gap-2.5 py-4">
+                  <div className="h-4 bg-slate-200/60 rounded-md animate-pulse w-3/4" />
+                  <div className="h-3 bg-slate-200/60 rounded-md animate-pulse w-full" />
+                  <div className="h-3 bg-slate-200/60 rounded-md animate-pulse w-5/6" />
+                  <div className="h-3 bg-slate-200/60 rounded-md animate-pulse w-4/5" />
+                </div>
+              ) : aiAnalysis ? (
+                <div className="space-y-1">
+                  {renderMarkdown(aiAnalysis)}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <span className="text-xs text-slate-400 font-medium">
+                    ยังไม่มีข้อมูลบทวิเคราะห์แผนงานสอบเทียบในเดือนนี้
+                  </span>
+                  <button
+                    onClick={() => handleAnalyzeSchedule(currentMonth, currentYear)}
+                    disabled={currentMonthTasks.length === 0}
+                    className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 font-bold text-[10.5px] rounded-lg text-slate-650 transition-all cursor-pointer shadow-3xs disabled:opacity-40 disabled:cursor-not-allowed select-none"
+                  >
+                    <Sparkles className="size-3 text-amber-500" />
+                    เริ่มวิเคราะห์โดย AI
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Manual Assignment Dialog */}
       {editingGroup && (
@@ -866,4 +990,40 @@ export function ManageScheduleView() {
       )}
     </div>
   )
+}
+
+function parseBoldText(text: string) {
+  const parts = text.split(/\*\*(.*?)\*\*/g)
+  return parts.map((part, index) => {
+    if (index % 2 === 1) {
+      return <strong key={index} className="font-bold text-slate-800">{part}</strong>
+    }
+    return part
+  })
+}
+
+function renderMarkdown(text: string) {
+  return text.split("\n").map((line, i) => {
+    if (line.startsWith("### ")) {
+      return <h4 key={i} className="text-base font-bold text-slate-800 mt-3.5 mb-1.5 flex items-center gap-1.5">{line.slice(4)}</h4>
+    }
+    if (line.startsWith("## ")) {
+      return <h3 key={i} className="text-lg font-bold text-slate-800 mt-4.5 mb-2 flex items-center gap-1.5 border-b border-slate-100 pb-1">{line.slice(3)}</h3>
+    }
+    if (line.startsWith("# ")) {
+      return <h2 key={i} className="text-xl font-bold text-slate-900 mt-5.5 mb-2.5 flex items-center gap-2">{line.slice(2)}</h2>
+    }
+    if (line.trim().startsWith("- ") || line.trim().startsWith("* ")) {
+      const content = line.trim().slice(2)
+      return (
+        <li key={i} className="text-sm text-slate-600 list-disc ml-5 mb-1 leading-relaxed">
+          {parseBoldText(content)}
+        </li>
+      )
+    }
+    if (line.trim() === "") {
+      return <div key={i} className="h-1.5" />
+    }
+    return <p key={i} className="text-sm text-slate-600 leading-relaxed mb-1.5">{parseBoldText(line)}</p>
+  })
 }
