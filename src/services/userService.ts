@@ -58,6 +58,19 @@ export const userService = {
   async remove(id: number): Promise<void> {
     return apiFetch<void>(`/users/${id}`, {
       method: "DELETE",
+      body: undefined, // ensure compatibility
+    })
+  },
+
+  async getSpecialties(userId: number): Promise<{ id: number; userId: number; toolName: string }[]> {
+    return apiFetch<{ id: number; userId: number; toolName: string }[]>(`/users/${userId}/specialties`)
+  },
+
+  async updateSpecialties(userId: number, toolNames: string[]): Promise<unknown> {
+    return apiFetch<unknown>(`/users/${userId}/specialties`, {
+      method: "PUT",
+      body: JSON.stringify({ toolNames }),
     })
   },
 }
+

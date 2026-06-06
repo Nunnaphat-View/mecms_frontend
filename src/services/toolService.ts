@@ -43,6 +43,10 @@ export const toolService = {
     return apiFetch<EquipmentType[]>("/equipment-types")
   },
 
+  async getUniqueToolNames(): Promise<string[]> {
+    return apiFetch<string[]>("/equipment/tool-names")
+  },
+
   async getAll(): Promise<BackendEquipment[]> {
     return apiFetch<BackendEquipment[]>("/equipment")
   },

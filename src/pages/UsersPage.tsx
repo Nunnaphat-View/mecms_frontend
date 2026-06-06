@@ -1,10 +1,11 @@
 import { useEffect, useState, useMemo } from "react"
-import { Plus, Users as UsersIcon, Edit, Trash2 } from "lucide-react"
+import { Plus, Users as UsersIcon, Edit, Trash2, Award } from "lucide-react"
 import TablePagination from "../components/common/TablePagination"
 import { useUserStore } from "../stores/userStore"
 import type { User } from "../types/auth"
 import { userService } from "../services/userService"
 import UserFormDialog from "../components/users/UserFormDialog"
+import SpecialtyDialog from "../components/users/SpecialtyDialog"
 import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
 import SearchBar from "../components/SearchBar"
 
@@ -39,6 +40,10 @@ export default function UsersPage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [selectedForDelete, setSelectedForDelete] = useState<User | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  // Specialty Dialog
+  const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false)
+  const [selectedForSpecialty, setSelectedForSpecialty] = useState<User | null>(null)
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1)
@@ -108,6 +113,11 @@ export default function UsersPage() {
   function confirmDelete(user: User) {
     setSelectedForDelete(user)
     setIsDeleteOpen(true)
+  }
+
+  function openSpecialty(user: User) {
+    setSelectedForSpecialty(user)
+    setIsSpecialtyOpen(true)
   }
 
   async function handleDeleteConfirm() {
@@ -297,6 +307,15 @@ export default function UsersPage() {
                     {/* จัดการ */}
                     <td className="px-5 py-3.5 text-center whitespace-nowrap">
                       <div className="flex justify-center gap-1">
+                        {u.roleId === 2 && (
+                          <button
+                            onClick={() => openSpecialty(u)}
+                            className="p-1.5 text-cyan-700 hover:text-cyan-900 hover:bg-cyan-50 rounded-lg transition-colors cursor-pointer"
+                            title="ตั้งค่าความเชี่ยวชาญช่าง"
+                          >
+                            <Award className="size-4" />
+                          </button>
+                        )}
                         <button
                           onClick={() => openEdit(u)}
                           className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
@@ -347,6 +366,22 @@ export default function UsersPage() {
           }}
           onSaved={() => {
             showToast("success", selectedForEdit ? "แก้ไขข้อมูลสำเร็จ" : "เพิ่มผู้ใช้งานสำเร็จ")
+            void fetchUsers()
+          }}
+        />
+      )}
+
+      {/* Specialty Dialog */}
+      {isSpecialtyOpen && selectedForSpecialty && (
+        <SpecialtyDialog
+          isOpen={isSpecialtyOpen}
+          userId={selectedForSpecialty.id}
+          userName={selectedForSpecialty.name}
+          onClose={() => {
+            setIsSpecialtyOpen(false)
+            setSelectedForSpecialty(null)
+          }}
+          onSaved={() => {
             void fetchUsers()
           }}
         />
