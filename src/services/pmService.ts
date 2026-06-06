@@ -252,4 +252,33 @@ export const pmService = {
       body: formData,
     })
   },
+
+  autoAssign: (month: number, year: number) =>
+    apiFetch<TaskApi[]>("/pm-task/auto-assign", {
+      method: "POST",
+      body: JSON.stringify({ month, year }),
+    }),
+
+  publishAssignments: (month: number, year: number) =>
+    apiFetch<TaskApi[]>("/pm-task/publish", {
+      method: "POST",
+      body: JSON.stringify({ month, year }),
+    }),
+
+  assignTechnician: (taskId: number, technicianId: number) =>
+    apiFetch<TaskApi>(`/pm-task/${taskId}/assign`, {
+      method: "PATCH",
+      body: JSON.stringify({ technician_id: technicianId }),
+    }),
+
+  seed: () =>
+    apiFetch<{ message: string }>("/pm-task/seed", {
+      method: "POST",
+    }),
+
+  reschedule: (taskIds: number[], newDate: string) =>
+    apiFetch<TaskApi[]>("/pm-task/reschedule", {
+      method: "PATCH",
+      body: JSON.stringify({ taskIds, newDate }),
+    }),
 }

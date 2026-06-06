@@ -25,7 +25,7 @@ export const RolePermissionsMap: Record<AppRole, RolePermissions> = {
     canManageTools: false,
     canManageDepartments: false,
     canApproveCalibration: true,
-    allowedMenus: ["/dashboard", "/schedule", "/ward", "/approval", "/tools", "/history", "/settings"],
+    allowedMenus: ["/dashboard", "/schedule", "/schedule/manage", "/ward", "/approval", "/tools", "/history", "/settings"],
   },
   [AppRole.ADMIN]: {
     canManageTools: true,
@@ -34,6 +34,7 @@ export const RolePermissionsMap: Record<AppRole, RolePermissions> = {
     allowedMenus: [
       "/dashboard",
       "/schedule",
+      "/schedule/manage",
       "/ward",
       "/calibration",
       "/approval",

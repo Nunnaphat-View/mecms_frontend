@@ -1,6 +1,7 @@
 import {
   Home,
   Calendar,
+  CalendarDays,
   MapPin,
   FileText,
   FileCheck,
@@ -38,6 +39,12 @@ export const ALL_NAV_LINKS: NavLinkProps[] = [
     caption: "Calibration Schedule",
     icon: Calendar,
     link: "/schedule",
+  },
+  {
+    title: "จัดการงานสอบเทียบ",
+    caption: "Manage Calibration",
+    icon: CalendarDays,
+    link: "/schedule/manage",
   },
   { 
     title: "จัดการวอร์ด", 
