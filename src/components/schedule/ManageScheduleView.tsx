@@ -14,6 +14,7 @@ import {
   ClipboardList,
   UserCheck,
   UserX,
+  Pencil,
 } from "lucide-react"
 import { pmService } from "../../services/pmService"
 import type { TaskApi } from "../../services/pmService"
@@ -121,6 +122,8 @@ export function ManageScheduleView() {
   // Reassignment Modal State
   const [editingGroup, setEditingGroup] = useState<GroupedTask | null>(null)
   const [selectedTechId, setSelectedTechId] = useState<number | "">("")
+  const [selectedDay, setSelectedDay] = useState<number>(1)
+  const [isEditModeOverride, setIsEditModeOverride] = useState(false)
 
   // Drag & Drop state
   const [draggedGroup, setDraggedGroup] = useState<GroupedTask | null>(null)
@@ -131,6 +134,7 @@ export function ManageScheduleView() {
   // Auth role
   const { appRole } = useAuthStore()
   const canDrag = appRole === AppRole.ADMIN || appRole === AppRole.HEAD_OF_DEPT
+  const canEdit = appRole === AppRole.ADMIN || appRole === AppRole.HEAD_OF_DEPT
 
   // Color selection state
   const [pickingColorTech, setPickingColorTech] = useState<User | null>(null)
@@ -235,6 +239,9 @@ export function ManageScheduleView() {
     return currentMonthTasks.some((t) => t.status !== "Pending")
   }, [currentMonthTasks])
 
+  // Compute edit mode dynamically (always edit mode if unpublished, or if explicitly overridden by user)
+  const isEditMode = !isPublished || isEditModeOverride
+
   // Get list of technicians currently assigned to tasks in this month for Legend
   const activeTechniciansInMonth = useMemo(() => {
     const assignedIds = new Set(assignedTasks.map((t) => t.technician_id))
@@ -333,25 +340,48 @@ export function ManageScheduleView() {
   const handleOpenReassignGroup = (group: GroupedTask) => {
     setEditingGroup(group)
     setSelectedTechId(group.technicianId || "")
+    setSelectedDay(group.day)
   }
 
   const handleSaveReassignGroup = async () => {
     if (!editingGroup || !selectedTechId) return
     try {
-      const updatedTasks = await Promise.all(
-        editingGroup.taskIds.map((id) => pmService.assignTechnician(id, Number(selectedTechId)))
-      )
-      
-      setTasks((prev) => {
-        const updatedMap = new Map(updatedTasks.map((t) => [t.id, t]))
-        return prev.map((t) => updatedMap.get(t.id) || t)
-      })
+      const techChanged = editingGroup.technicianId !== Number(selectedTechId)
+      const dayChanged = editingGroup.day !== selectedDay
 
-      toast.success("เปลี่ยนผู้รับผิดชอบกลุ่มงานสอบเทียบเรียบร้อย")
+      let resultTasks: TaskApi[] = []
+
+      // 1. If technician changed, assign new technician
+      if (techChanged) {
+        const updatedAssign = await Promise.all(
+          editingGroup.taskIds.map((id) => pmService.assignTechnician(id, Number(selectedTechId)))
+        )
+        resultTasks = [...resultTasks, ...updatedAssign]
+      }
+
+      // 2. If day changed, reschedule
+      if (dayChanged) {
+        const dayStr = String(selectedDay).padStart(2, "0")
+        const monthStr = String(currentMonth + 1).padStart(2, "0")
+        const newDate = `${currentYear}-${monthStr}-${dayStr}`
+        
+        const updatedSchedule = await pmService.reschedule(editingGroup.taskIds, newDate)
+        resultTasks = [...resultTasks, ...updatedSchedule]
+      }
+
+      // 3. Update tasks in state
+      if (resultTasks.length > 0) {
+        setTasks((prev) => {
+          const updatedMap = new Map(resultTasks.map((t) => [t.id, t]))
+          return prev.map((t) => updatedMap.get(t.id) || t)
+        })
+      }
+
+      toast.success("บันทึกการแก้ไขข้อมูลกลุ่มงานสอบเทียบเรียบร้อยแล้ว")
       setEditingGroup(null)
     } catch (err) {
       console.error(err)
-      toast.error("ไม่สามารถบันทึกผู้รับผิดชอบใหม่ได้")
+      toast.error("ไม่สามารถบันทึกข้อมูลแก้ไขได้")
     }
   }
 
@@ -367,6 +397,7 @@ export function ManageScheduleView() {
       setCurrentYear(2026)
       setAiAnalysis(null)
       setIsAiPanelVisible(false)
+      setIsEditModeOverride(false)
     } catch (err: unknown) {
       console.error(err)
       const msg = err instanceof Error ? err.message : "เกิดข้อผิดพลาด"
@@ -524,6 +555,7 @@ export function ManageScheduleView() {
                 setCurrentMonth(Number(e.target.value))
                 setAiAnalysis(null)
                 setIsAiPanelVisible(false)
+                setIsEditModeOverride(false)
               }}
               className="appearance-none h-10 pl-3.5 pr-9 bg-white border border-slate-200 text-slate-800 rounded-xl text-xs font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none cursor-pointer shadow-3xs"
             >
@@ -543,6 +575,7 @@ export function ManageScheduleView() {
                 setCurrentYear(Number(e.target.value))
                 setAiAnalysis(null)
                 setIsAiPanelVisible(false)
+                setIsEditModeOverride(false)
               }}
               className="appearance-none h-10 pl-3.5 pr-9 bg-white border border-slate-200 text-slate-800 rounded-xl text-xs font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none cursor-pointer shadow-3xs"
             >
@@ -587,6 +620,21 @@ export function ManageScheduleView() {
             AI วิเคราะห์ตาราง
           </button>
 
+          {canEdit && isPublished && (
+            <button
+              onClick={() => setIsEditModeOverride((prev) => !prev)}
+              className={`flex items-center gap-1.5 px-4 h-10 border font-bold text-xs rounded-xl transition-all cursor-pointer shadow-3xs select-none ${
+                isEditModeOverride
+                  ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600"
+                  : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              }`}
+              title="เปิด/ปิดโหมดแก้ไขเพื่อปรับตารางงาน (ลากวางหรือแก้ไขข้อมูล)"
+            >
+              <Pencil className="size-3.5" />
+              {isEditModeOverride ? "ปิดโหมดแก้ไข" : "เปิดโหมดแก้ไข"}
+            </button>
+          )}
+
           <button
             onClick={handlePublish}
             disabled={isPublished || currentMonthTasks.length === 0 || unassignedTasks.length > 0}
@@ -603,11 +651,16 @@ export function ManageScheduleView() {
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
         
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/40 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Calendar className="size-4 text-primary" />
             <span className="text-xs font-bold text-slate-700">
               ตารางปฏิบัติงานสอบเทียบประจำเดือน {thaiMonths[currentMonth]} {currentYear + 543}
             </span>
+            {isEditMode && isPublished && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 animate-pulse select-none">
+                โหมดแก้ไขเปิดอยู่
+              </span>
+            )}
           </div>
           
           <div className="text-[11px] text-slate-400 font-bold">
@@ -648,9 +701,9 @@ export function ManageScheduleView() {
                 return (
                   <div
                     key={`day-${dayNum}`}
-                    onDragOver={canDrag && !isPublished ? (e) => handleDragOver(e, dayNum) : undefined}
-                    onDragLeave={canDrag && !isPublished ? handleDragLeave : undefined}
-                    onDrop={canDrag && !isPublished ? (e) => handleDrop(e, dayNum) : undefined}
+                    onDragOver={canDrag && isEditMode ? (e) => handleDragOver(e, dayNum) : undefined}
+                    onDragLeave={canDrag && isEditMode ? handleDragLeave : undefined}
+                    onDrop={canDrag && isEditMode ? (e) => handleDrop(e, dayNum) : undefined}
                     className={`min-h-[110px] p-2 flex flex-col relative transition-all border ${
                       dragOverDay === dayNum && draggedGroup !== null
                         ? "bg-primary/10 border-primary/50 ring-2 ring-primary/30 ring-inset"
@@ -687,19 +740,19 @@ export function ManageScheduleView() {
                         return (
                           <div
                             key={group.key}
-                            draggable={canDrag && !isPublished}
-                            onDragStart={canDrag && !isPublished ? () => handleDragStart(group) : undefined}
-                            onDragEnd={canDrag && !isPublished ? handleDragEnd : undefined}
-                            onClick={() => !isPublished && handleOpenReassignGroup(group)}
+                            draggable={canDrag && isEditMode}
+                            onDragStart={canDrag && isEditMode ? () => handleDragStart(group) : undefined}
+                            onDragEnd={canDrag && isEditMode ? handleDragEnd : undefined}
+                            onClick={canEdit && isEditMode ? () => handleOpenReassignGroup(group) : undefined}
                             className={`group text-[10px] px-2 py-1.5 border ${style.border} ${style.borderL} border-l-4 ${style.bg} rounded-lg flex items-center justify-between gap-1.5 transition-all select-none w-full overflow-hidden ${
                               draggedGroup?.key === group.key
                                 ? "opacity-40 cursor-grabbing"
-                                : canDrag && !isPublished
-                                  ? "cursor-grab hover:shadow-xs"
-                                  : "cursor-pointer hover:shadow-xs"
+                                : canDrag && isEditMode
+                                  ? "cursor-grab hover:shadow-xs animate-in fade-in duration-200"
+                                  : "cursor-default"
                             }`}
                             title={`${group.toolName} (${group.assetCodes.join(", ")}) [ช่าง: ${group.technicianName}]${
-                              canDrag && !isPublished ? " — ลากเพื่อย้ายวัน" : ""
+                              canDrag && isEditMode ? " — ลากเพื่อย้ายวัน" : ""
                             }`}
                           >
                             <span className={`font-bold ${style.text} leading-none flex items-center justify-between gap-1.5 min-w-0 w-full`}>
@@ -710,11 +763,26 @@ export function ManageScheduleView() {
                                   {group.toolName}
                                 </span>
                               </span>
-                              {count > 1 && (
-                                <span className={`text-[8.5px] px-1 py-0.5 rounded-sm font-extrabold ${style.legendBg} text-white shrink-0 leading-none`}>
-                                  x{count}
-                                </span>
-                              )}
+                              
+                              <div className="flex items-center gap-1 shrink-0">
+                                {count > 1 && (
+                                  <span className={`text-[8.5px] px-1 py-0.5 rounded-sm font-extrabold ${style.legendBg} text-white leading-none`}>
+                                    x{count}
+                                  </span>
+                                )}
+                                {canEdit && isEditMode && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleOpenReassignGroup(group)
+                                    }}
+                                    className="p-0.5 rounded-sm hover:bg-black/10 text-current transition-colors opacity-65 hover:opacity-100 cursor-pointer"
+                                    title="แก้ไขผู้รับผิดชอบหรือวันปฏิบัติงาน"
+                                  >
+                                    <Pencil className="size-3" />
+                                  </button>
+                                )}
+                              </div>
                             </span>
                           </div>
                         )
@@ -840,7 +908,7 @@ export function ManageScheduleView() {
             <div className="bg-primary text-white flex justify-between items-center px-6 py-4">
               <div className="flex items-center gap-2.5">
                 <UserPlus className="size-5" />
-                <span className="font-bold text-sm">มอบหมายงานสอบเทียบ</span>
+                <span className="font-bold text-sm">แก้ไขแผนการจัดตารางงาน</span>
               </div>
               <button
                 onClick={() => setEditingGroup(null)}
@@ -852,18 +920,48 @@ export function ManageScheduleView() {
 
             {/* Body */}
             <div className="p-6 space-y-4">
+              {isPublished && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-800 font-medium">
+                  ⚠️ หมายเหตุ: ตารางงานนี้เผยแพร่แล้ว การเปลี่ยนแปลงผู้รับผิดชอบหรือวันจะอัปเดตงานสอบเทียบในระบบทันที
+                </div>
+              )}
+
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-slate-700 text-xs space-y-2">
                 <div className="flex justify-between">
                   <span className="text-slate-400">เครื่องมือสอบเทียบ:</span>
-                  <span className="font-bold">{editingGroup.toolName}</span>
+                  <span className="font-bold text-slate-800">{editingGroup.toolName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">แผนก/ห้อง:</span>
-                  <span className="font-semibold">{editingGroup.sectionName}</span>
+                  <span className="font-semibold text-slate-800">{editingGroup.sectionName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">จำนวนเครื่องมือ:</span>
                   <span className="font-bold text-primary">{editingGroup.taskIds.length} เครื่อง</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">วันครบกำหนดเดิม:</span>
+                  <span className="font-semibold text-slate-800">
+                    {(() => {
+                      const groupTasks = tasks.filter((t) => editingGroup.taskIds.includes(t.id))
+                      const dueDates = Array.from(
+                        new Set(
+                          groupTasks
+                            .map((t) => t.equipment?.calibration_due_date)
+                            .filter((d): d is string => !!d)
+                        )
+                      )
+                      if (dueDates.length === 0) return "-"
+                      return dueDates.map((d) => {
+                        const parts = d.split("T")[0].split("-")
+                        if (parts.length === 3) {
+                          const [year, month, day] = parts
+                          return `${day}/${month}/${Number(year) + 543}`
+                        }
+                        return d
+                      }).join(", ")
+                    })()}
+                  </span>
                 </div>
                 <div className="flex flex-col gap-1 border-t border-slate-200/50 pt-2 mt-1">
                   <span className="text-slate-450 text-[10px]">รหัสเครื่องมือในกลุ่ม:</span>
@@ -871,8 +969,9 @@ export function ManageScheduleView() {
                 </div>
               </div>
 
+              {/* 1. Technician Selector */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500">เลือกช่างเทคนิคผู้รับผิดชอบ</label>
+                <label className="text-xs font-bold text-slate-500">ช่างเทคนิคผู้รับผิดชอบ</label>
                 <div className="relative">
                   <select
                     value={selectedTechId}
@@ -887,6 +986,28 @@ export function ManageScheduleView() {
                         {tech.name}
                       </option>
                     ))}
+                  </select>
+                  <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* 2. Date Selector */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-500">วันที่ปฏิบัติงาน</label>
+                <div className="relative">
+                  <select
+                    value={selectedDay}
+                    onChange={(e) => setSelectedDay(Number(e.target.value))}
+                    className="appearance-none w-full h-10 px-4 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none cursor-pointer shadow-3xs"
+                  >
+                    {Array.from({ length: daysInMonth }).map((_, idx) => {
+                      const d = idx + 1
+                      return (
+                        <option key={d} value={d}>
+                          วันที่ {d} {thaiMonths[currentMonth]} {currentYear + 543}
+                        </option>
+                      )
+                    })}
                   </select>
                   <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-slate-400 pointer-events-none" />
                 </div>
