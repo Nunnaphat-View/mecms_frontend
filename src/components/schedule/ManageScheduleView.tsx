@@ -385,25 +385,25 @@ export function ManageScheduleView() {
     }
   }
 
-  const handleSeedTestData = async () => {
-    try {
-      const res = await pmService.seed()
-      toast.success(res.message || "จำลองข้อมูลสำเร็จแล้ว!")
+  // const handleSeedTestData = async () => {
+  //   try {
+  //     const res = await pmService.seed()
+  //     toast.success(res.message || "จำลองข้อมูลสำเร็จแล้ว!")
       
-      const allTasks = await pmService.getTasks()
-      setTasks(allTasks)
+  //     const allTasks = await pmService.getTasks()
+  //     setTasks(allTasks)
       
-      setCurrentMonth(5)
-      setCurrentYear(2026)
-      setAiAnalysis(null)
-      setIsAiPanelVisible(false)
-      setIsEditModeOverride(false)
-    } catch (err: unknown) {
-      console.error(err)
-      const msg = err instanceof Error ? err.message : "เกิดข้อผิดพลาด"
-      toast.error(msg)
-    }
-  }
+  //     setCurrentMonth(5)
+  //     setCurrentYear(2026)
+  //     setAiAnalysis(null)
+  //     setIsAiPanelVisible(false)
+  //     setIsEditModeOverride(false)
+  //   } catch (err: unknown) {
+  //     console.error(err)
+  //     const msg = err instanceof Error ? err.message : "เกิดข้อผิดพลาด"
+  //     toast.error(msg)
+  //   }
+  // }
 
   // ── Drag & Drop handlers ───────────────────────────────────────────────────
   const handleDragStart = (group: GroupedTask) => {
@@ -591,15 +591,6 @@ export function ManageScheduleView() {
 
         {/* Right Side: Actions */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={handleSeedTestData}
-            className="flex items-center gap-1.5 px-4 h-10 border border-slate-200 bg-white hover:bg-slate-50 font-bold text-xs rounded-xl transition-all cursor-pointer shadow-3xs text-slate-600 select-none"
-            title="จำลองข้อมูลผู้ใช้งานช่างเทคนิคและงานทดสอบรอบเดือนมิถุนายน 2569"
-          >
-            <Calendar className="size-3.5 text-slate-500" />
-            จำลองข้อมูล
-          </button>
-
           <button
             onClick={handleAutoAssign}
             disabled={isPublished || currentMonthTasks.length === 0}
