@@ -58,45 +58,45 @@ export default function ExportDialog({
       <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-xl flex flex-col max-h-[95vh] animate-in fade-in zoom-in-95 duration-150">
         
         {/* Header */}
-        <div className="bg-[#088395] text-white flex justify-between items-center px-5 py-4 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center">
-              <Download className="size-5 text-white" />
+        <div className="bg-[#088395] text-white flex justify-between items-center px-4 py-3 flex-shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+              <Download className="size-4 text-white" />
             </div>
             <div>
-              <div className="font-bold text-sm leading-snug">ส่งออกข้อมูล (Export)</div>
-              <div className="text-[11px] opacity-80 mt-0.5">เลือกรูปแบบและตัวกรองข้อมูลที่ต้องการ</div>
+              <div className="font-bold text-xs leading-snug">ส่งออกข้อมูล (Export)</div>
+              <div className="text-[10px] opacity-80 mt-0.5">เลือกรูปแบบและตัวกรองข้อมูลที่ต้องการ</div>
             </div>
           </div>
           <button
             onClick={onClose}
             className="text-white/80 hover:text-white transition-opacity cursor-pointer"
           >
-            <X className="size-5" />
+            <X className="size-4" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
           
           {/* File Format */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">
-              <span className="w-1 h-3.5 bg-primary rounded-full"></span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+              <span className="w-1 h-3 bg-primary rounded-full"></span>
               รูปแบบไฟล์
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5">
               {/* CSV */}
               <div
                 onClick={() => setFormat("csv")}
-                className={`border-2 rounded-xl p-3 flex items-center gap-3 cursor-pointer transition-all hover:bg-slate-50 ${
+                className={`border-2 rounded-xl p-2.5 flex items-center gap-2.5 cursor-pointer transition-all hover:bg-slate-50 ${
                   format === "csv"
                     ? "border-primary bg-primary/5"
                     : "border-slate-200 bg-white"
                 }`}
               >
                 <div className="text-emerald-600">
-                  <FileSpreadsheet className="size-6" />
+                  <FileSpreadsheet className="size-5" />
                 </div>
                 <div>
                   <div className="font-bold text-xs text-slate-800">CSV</div>
@@ -107,14 +107,14 @@ export default function ExportDialog({
               {/* PDF */}
               <div
                 onClick={() => setFormat("pdf")}
-                className={`border-2 rounded-xl p-3 flex items-center gap-3 cursor-pointer transition-all hover:bg-slate-50 ${
+                className={`border-2 rounded-xl p-2.5 flex items-center gap-2.5 cursor-pointer transition-all hover:bg-slate-50 ${
                   format === "pdf"
                     ? "border-primary bg-primary/5"
                     : "border-slate-200 bg-white"
                 }`}
               >
                 <div className="text-rose-500">
-                  <FileText className="size-6" />
+                  <FileText className="size-5" />
                 </div>
                 <div>
                   <div className="font-bold text-xs text-slate-800">PDF</div>
@@ -128,23 +128,23 @@ export default function ExportDialog({
           {format === "pdf" && (
             <>
               <hr className="border-slate-100" />
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">
-                  <span className="w-1 h-3.5 bg-primary rounded-full"></span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+                  <span className="w-1 h-3 bg-primary rounded-full"></span>
                   รูปแบบการส่งออก PDF
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2.5">
                   {/* Individual files */}
                   <div
                     onClick={() => setPdfOption("individual")}
-                    className={`border-2 rounded-xl p-3 flex items-center gap-3 cursor-pointer transition-all hover:bg-slate-50 ${
+                    className={`border-2 rounded-xl p-2.5 flex items-center gap-2.5 cursor-pointer transition-all hover:bg-slate-50 ${
                       pdfOption === "individual"
                         ? "border-primary bg-primary/5"
                         : "border-slate-200 bg-white"
                     }`}
                   >
                     <div className="text-rose-500">
-                      <FileText className="size-6" />
+                      <FileText className="size-5" />
                     </div>
                     <div>
                       <div className="font-bold text-xs text-slate-800">แยกไฟล์เดี่ยว</div>
@@ -155,14 +155,14 @@ export default function ExportDialog({
                   {/* ZIP archive */}
                   <div
                     onClick={() => setPdfOption("zip")}
-                    className={`border-2 rounded-xl p-3 flex items-center gap-3 cursor-pointer transition-all hover:bg-slate-50 ${
+                    className={`border-2 rounded-xl p-2.5 flex items-center gap-2.5 cursor-pointer transition-all hover:bg-slate-50 ${
                       pdfOption === "zip"
                         ? "border-primary bg-primary/5"
                         : "border-slate-200 bg-white"
                     }`}
                   >
                     <div className="text-primary">
-                      <Archive className="size-6" />
+                      <Archive className="size-5" />
                     </div>
                     <div>
                       <div className="font-bold text-xs text-slate-800">รวมเป็นไฟล์ ZIP</div>
@@ -177,17 +177,17 @@ export default function ExportDialog({
           <hr className="border-slate-100" />
 
           {/* Cert Type */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">
-              <span className="w-1 h-3.5 bg-blue-500 rounded-full"></span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+              <span className="w-1 h-3 bg-blue-500 rounded-full"></span>
               ประเภทใบรับรอง
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2.5">
               {certTypesList.map((ct) => (
                 <div
                   key={ct.value}
                   onClick={() => setCertType(ct.value)}
-                  className={`border-2 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:bg-slate-50 ${
+                  className={`border-2 rounded-xl p-2 flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:bg-slate-50 ${
                     certType === ct.value
                       ? "border-primary bg-primary/5 text-primary"
                       : "border-slate-200 bg-white text-slate-400"
@@ -196,7 +196,7 @@ export default function ExportDialog({
                   <div className={certType === ct.value ? "text-primary" : "text-slate-400"}>
                     {ct.icon}
                   </div>
-                  <div className="font-bold text-xs text-slate-800 mt-2">{ct.label}</div>
+                  <div className="font-bold text-xs text-slate-800 mt-1">{ct.label}</div>
                 </div>
               ))}
             </div>
@@ -205,12 +205,12 @@ export default function ExportDialog({
           <hr className="border-slate-100" />
 
           {/* Date Range */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">
-              <span className="w-1 h-3.5 bg-emerald-500 rounded-full"></span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+              <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
               ช่วงเวลาที่ต้องการ
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5">
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-500">เริ่มจากวันที่</label>
                 <DatePicker
@@ -234,19 +234,19 @@ export default function ExportDialog({
           <hr className="border-slate-100" />
 
           {/* Filters */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">
-              <span className="w-1 h-3.5 bg-amber-500 rounded-full"></span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+              <span className="w-1 h-3 bg-amber-500 rounded-full"></span>
               ตัวกรองเพิ่มเติม
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5">
               {/* Device */}
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-500">เครื่องมือ</label>
                 <select
                   value={device}
                   onChange={(e) => setDevice(e.target.value)}
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-white transition-all text-slate-700 outline-none"
+                  className="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-white transition-all text-slate-700 outline-none"
                 >
                   {deviceOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -262,7 +262,7 @@ export default function ExportDialog({
                 <select
                   value={result}
                   onChange={(e) => setResult(e.target.value)}
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-white transition-all text-slate-700 outline-none"
+                  className="w-full h-9 px-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-white transition-all text-slate-700 outline-none"
                 >
                   {resultOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -278,18 +278,18 @@ export default function ExportDialog({
 
         {/* Footer */}
         <hr className="border-slate-100 flex-shrink-0" />
-        <div className="flex justify-end items-center gap-2.5 px-5 py-4 bg-slate-50 flex-shrink-0">
+        <div className="flex justify-end items-center gap-2 px-4 py-3 bg-slate-50 flex-shrink-0">
           <button
             onClick={onClose}
             disabled={exporting}
-            className="px-5 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer"
+            className="px-4 py-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer"
           >
             ยกเลิก
           </button>
           <button
             onClick={handleExport}
             disabled={exporting}
-            className="flex items-center gap-1.5 px-5 py-2 bg-primary hover:bg-[#07536a] text-white rounded-lg transition-colors text-xs font-bold disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-1.5 bg-primary hover:bg-[#07536a] text-white rounded-lg transition-colors text-xs font-bold disabled:opacity-50 cursor-pointer"
           >
             {exporting ? (
               <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
