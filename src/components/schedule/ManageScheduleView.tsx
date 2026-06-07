@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/useToast"
 import type { User } from "../../types/auth"
 import { useAuthStore } from "../../stores/authStore"
 import { AppRole } from "../../constants/roles"
+import { UnassignedTasksPanel } from "./UnassignedTasksPanel"
 
 interface GroupedTask {
   key: string
@@ -301,6 +302,19 @@ export function ManageScheduleView() {
       d.getMonth() === currentMonth &&
       d.getFullYear() === currentYear
     )
+  }
+
+  // Handle Manual Single Task Technician Assignment
+  const handleAssignTaskSingle = async (taskId: number, techId: number) => {
+    try {
+      const updatedTask = await pmService.assignTechnician(taskId, techId)
+      setTasks((prev) => prev.map((t) => (t.id === taskId ? updatedTask : t)))
+      toast.success("มอบหมายช่างเทคนิคสำเร็จ")
+    } catch (err: unknown) {
+      console.error(err)
+      const msg = err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการมอบหมายงาน"
+      toast.error(msg)
+    }
   }
 
   // Handle AI Auto Assign
@@ -640,8 +654,11 @@ export function ManageScheduleView() {
         </div>
       </div>
 
-      {/* Main Grid Calendar Container */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+        {/* Main Grid Calendar Container */}
+        <div className={`bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs ${
+          unassignedTasks.length > 0 ? "xl:col-span-8 2xl:col-span-9" : "xl:col-span-12"
+        }`}>
         
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/40 flex items-center justify-between">
           <div className="flex items-center gap-2 flex-wrap">
@@ -823,7 +840,23 @@ export function ManageScheduleView() {
         </div>
       </div>
 
-      {/* AI Assistant Analysis Panel */}
+      {/* List of Unassigned Tasks */}
+      {unassignedTasks.length > 0 && (
+        <div className="xl:col-span-4 2xl:col-span-3">
+          <UnassignedTasksPanel
+            unassignedTasks={unassignedTasks}
+            technicians={technicians}
+            isPublished={isPublished}
+            isEditModeOverride={isEditModeOverride}
+            onAssignTechnician={handleAssignTaskSingle}
+            thaiMonthName={thaiMonths[currentMonth]}
+            thaiYear={currentYear + 543}
+          />
+        </div>
+      )}
+    </div>
+
+    {/* AI Assistant Analysis Panel */}
       {isAiPanelVisible && (
         <div className="mt-4.5 bg-slate-50/50 border border-slate-200 rounded-2xl overflow-hidden shadow-3xs">
           <div className="px-5 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
