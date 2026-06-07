@@ -132,6 +132,7 @@ export interface TaskApi {
   status: string
   overall_result: string
   technician_id: number
+  scheduled_date?: string
   createdAt: string
   approvedAt?: string
   path_pdf_cer?: string | null

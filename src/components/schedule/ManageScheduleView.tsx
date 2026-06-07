@@ -95,7 +95,7 @@ export function ManageScheduleView() {
     setIsAiPanelCollapsed(false)
 
     const hasTasks = tasks.some((task) => {
-      const rawDate = task.equipment?.calibration_due_date || task.createdAt
+      const rawDate = task.scheduled_date || task.equipment?.calibration_due_date || task.createdAt
       if (!rawDate) return false
       const dateObj = new Date(rawDate)
       return dateObj.getMonth() === m && dateObj.getFullYear() === y
@@ -213,7 +213,7 @@ export function ManageScheduleView() {
   // Filter tasks in selected month & year
   const currentMonthTasks = useMemo(() => {
     return tasks.filter((task) => {
-      const rawDate = task.equipment?.calibration_due_date || task.createdAt
+      const rawDate = task.scheduled_date || task.equipment?.calibration_due_date || task.createdAt
       if (!rawDate) return false
       const dateObj = new Date(rawDate)
       return (
@@ -255,9 +255,11 @@ export function ManageScheduleView() {
     const dateQuery = `${currentYear}-${monthStr}-${dayStr}`
     
     const dayTasks = assignedTasks.filter((task) => {
-      const rawDate = task.equipment?.calibration_due_date || task.createdAt
+      const rawDate = task.scheduled_date || task.equipment?.calibration_due_date || task.createdAt
       if (!rawDate) return false
-      return rawDate.startsWith(dateQuery)
+      const dObj = new Date(rawDate)
+      const localDateStr = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, "0")}-${String(dObj.getDate()).padStart(2, "0")}`
+      return localDateStr === dateQuery
     })
 
     const groups: Record<string, GroupedTask> = {}

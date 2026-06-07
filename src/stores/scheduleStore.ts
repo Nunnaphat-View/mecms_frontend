@@ -41,7 +41,7 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
       
       const mappedEvents: CalibrationEvent[] = tasks
         .map((task) => {
-          const rawDate = task.equipment?.calibration_due_date || task.createdAt
+          const rawDate = task.scheduled_date || task.equipment?.calibration_due_date || task.createdAt
           const dueDate = rawDate ? rawDate.split("T")[0] : "-"
           
           let frequency = "ทุก 12 เดือน"
