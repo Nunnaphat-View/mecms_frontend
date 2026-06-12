@@ -8,6 +8,8 @@ import {
   CheckCircle,
   HelpCircle,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Save,
   Paintbrush,
   Check,
@@ -304,6 +306,31 @@ export function ManageScheduleView() {
     )
   }
 
+  // Month Navigation Handlers
+  const handlePrevMonth = () => {
+    setAiAnalysis(null)
+    setIsAiPanelVisible(false)
+    setIsEditModeOverride(false)
+    if (currentMonth === 0) {
+      setCurrentMonth(11)
+      setCurrentYear((prev) => prev - 1)
+    } else {
+      setCurrentMonth((prev) => prev - 1)
+    }
+  }
+
+  const handleNextMonth = () => {
+    setAiAnalysis(null)
+    setIsAiPanelVisible(false)
+    setIsEditModeOverride(false)
+    if (currentMonth === 11) {
+      setCurrentMonth(0)
+      setCurrentYear((prev) => prev + 1)
+    } else {
+      setCurrentMonth((prev) => prev + 1)
+    }
+  }
+
   // Handle Manual Single Task Technician Assignment
   const handleAssignTaskSingle = async (taskId: number, techId: number) => {
     try {
@@ -563,7 +590,15 @@ export function ManageScheduleView() {
       <div className="bg-white p-4.5 border border-slate-200 rounded-2xl flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-3xs">
         
         {/* Left Side: Selectors */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handlePrevMonth}
+            className="flex items-center justify-center size-10 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-xl transition-all cursor-pointer shadow-3xs"
+            title="เดือนก่อนหน้า"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+
           <div className="relative">
             <select
               value={currentMonth}
@@ -603,6 +638,14 @@ export function ManageScheduleView() {
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-slate-400 pointer-events-none" />
           </div>
+
+          <button
+            onClick={handleNextMonth}
+            className="flex items-center justify-center size-10 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-xl transition-all cursor-pointer shadow-3xs"
+            title="เดือนถัดไป"
+          >
+            <ChevronRight className="size-4" />
+          </button>
         </div>
 
         {/* Right Side: Actions */}
@@ -767,7 +810,6 @@ export function ManageScheduleView() {
                           >
                             <span className={`font-bold ${style.text} leading-none flex items-center justify-between gap-1.5 min-w-0 w-full`}>
                               <span className="flex items-center gap-1.5 min-w-0">
-                                <span className={`size-1.5 rounded-full ${style.dot} shrink-0`} />
                                 <span className="truncate">
                                   <span className="font-semibold opacity-75 mr-1 text-[9.5px]">[{group.sectionName}]</span>
                                   {group.toolName}

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { pmService } from "../services/pmService"
-import { useCalibrationSettingStore } from "./calibrationSettingStore"
+import { useCalibrationSettingStore, isInfusionPump } from "./calibrationSettingStore"
 import { useStandardToolStore } from "./standardToolStore"
 
 export interface EquipmentDetails {
@@ -373,27 +373,44 @@ export const useCalibrationRecordStore = create<CalibrationRecordState>((set, ge
 
   isEnvironmentValid: () => {
     const { environment } = get()
-    return (
+    const isValid =
       environment.temperature !== null &&
       environment.temperature !== undefined &&
       environment.humidity !== null &&
-      environment.humidity !== undefined
-    )
+      environment.humidity !== undefined;
+    if (!isValid) {
+      console.log("isEnvironmentValid check failed. Environment:", environment);
+    }
+    return isValid;
   },
 
   isStandardToolsValid: () => {
-    return get().standardToolIds.length > 0
+    const isValid = get().standardToolIds.length > 0;
+    if (!isValid) {
+      console.log("isStandardToolsValid check failed. standardToolIds:", get().standardToolIds);
+    }
+    return isValid;
   },
 
   isTestsValid: () => {
     const settingStore = useCalibrationSettingStore.getState()
     const { measurements, qualitatives } = get()
 
+    const toolName = get().equipmentDetails.tool_name
+    const isInfusion = isInfusionPump(toolName)
+    const isUltrasound = toolName?.toLowerCase().includes("ultrasound")
+
     const hasQuantSettings = settingStore.settings.some((s) => s.type === "quantitative")
-    const hasQualSettings = settingStore.settings.some((s) => s.type === "qualitative")
+    const hasQualSettings =
+      settingStore.settings.some((s) => s.type === "qualitative") &&
+      !isInfusion &&
+      !isUltrasound
 
     if (hasQuantSettings) {
-      if (measurements.length === 0) return false
+      if (measurements.length === 0) {
+        console.log("isTestsValid check failed: has quantitative settings but measurements list is empty");
+        return false;
+      }
       for (const m of measurements) {
         const isSingle =
           m.std_type?.includes("6") ||
@@ -401,35 +418,56 @@ export const useCalibrationRecordStore = create<CalibrationRecordState>((set, ge
           m.std_type?.includes("1 STD : 1 UUC")
 
         if (isSingle) {
-          if (m.reading_1 === null || m.reading_1 === undefined) {
-            return false
+          if (m.reading_1 === null || m.reading_1 === undefined || String(m.reading_1) === "") {
+            console.log("isTestsValid check failed: single measurement missing reading_1", m);
+            return false;
           }
         } else {
           if (
             m.reading_1 === null ||
             m.reading_1 === undefined ||
+            String(m.reading_1) === "" ||
             m.reading_2 === null ||
             m.reading_2 === undefined ||
+            String(m.reading_2) === "" ||
             m.reading_3 === null ||
-            m.reading_3 === undefined
+            m.reading_3 === undefined ||
+            String(m.reading_3) === ""
           ) {
-            return false
+            console.log("isTestsValid check failed: multi measurement missing one of reading_1/2/3", m);
+            return false;
           }
         }
       }
     }
 
     if (hasQualSettings) {
-      if (qualitatives.length === 0) return false
+      if (qualitatives.length === 0) {
+        console.log("isTestsValid check failed: has qualitative settings but qualitatives list is empty");
+        return false;
+      }
       for (const q of qualitatives) {
-        if (!q.result || q.result === "NA") return false
+        if (!q.result || q.result === "NA") {
+          console.log("isTestsValid check failed: qualitative missing result or marked NA", q);
+          return false;
+        }
       }
     }
 
-    return true
+    return true;
   },
 
   canSubmit: () => {
-    return get().isEnvironmentValid() && get().isStandardToolsValid() && get().isTestsValid()
+    const isEnv = get().isEnvironmentValid();
+    const isTools = get().isStandardToolsValid();
+    const isTests = get().isTestsValid();
+    const result = isEnv && isTools && isTests;
+    console.log("canSubmit validation results:", {
+      isEnvironmentValid: isEnv,
+      isStandardToolsValid: isTools,
+      isTestsValid: isTests,
+      canSubmit: result
+    });
+    return result;
   },
 }))
