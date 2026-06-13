@@ -20,35 +20,42 @@
 
 ## 📁 โครงสร้างโฟลเดอร์ของโปรเจกต์ (Project Directory Structure)
 
-โครงสร้างโฟลเดอร์หลักภายใต้ `src/` ได้รับการจัดระเบียบตามหน้าที่และความรับผิดชอบของแต่ละโมดูลอย่างชัดเจน:
+โครงสร้างโฟลเดอร์หลักภายใต้ `src/` ได้รับการจัดระเบียบตามโมดูลฟีเจอร์ (Feature-based Modular Structure) และส่วนควบคุมกลางของระบบอย่างชัดเจน:
 
 ```text
 src/
 ├── assets/             # ไฟล์ Static Assets เช่น รูปภาพ โลโก้ และไอคอนต่างๆ
-├── components/         # คอมโพเนนต์ที่ใช้ซ้ำได้ทั่วไป (Shared Components)
-│   └── ui/             # Shadcn UI Components (เช่น button.tsx)
+├── components/         # คอมโพเนนต์ที่ใช้ซ้ำได้ทั่วไปส่วนกลาง (Shared Components)
+│   ├── common/         # คอมโพเนนต์ทั่วไปส่วนกลาง เช่น ProtectedRoute, TablePagination
+│   ├── layout/         # คอมโพเนนต์สำหรับโครงสร้างกรอบหน้าเว็บ (Sidebar, Header)
+│   └── ui/             # Shadcn UI Components (เช่น button.tsx, dialog.tsx)
 ├── context/            # Context สำหรับการแชร์ State ในระดับย่อย (Sub-tree)
 ├── hooks/              # Custom React Hooks สำหรับ Logic ที่ใช้ซ้ำได้
 ├── layouts/            # เลย์เอาต์หลักของแอปพลิเคชัน (Layout Components)
 │   ├── MainLayout.tsx       # เลย์เอาต์หลักหลังเข้าสู่ระบบ (มี Sidebar, Header)
 │   └── FullScreenLayout.tsx # เลย์เอาต์แบบเต็มหน้าจอ (เช่น หน้า Login)
-├── lib/                # ไฟล์ยูทิลิตี้และคอนฟิกูเรชันของไลบรารี
-│   └── utils.ts             # ฟังก์ชันการผสานคลาส CSS (`cn` helper จาก clsx & tailwind-merge)
-├── pages/              # หน้าจอหลักของแอปพลิเคชัน (Page Components)
-│   ├── LoginPage.tsx        # หน้าล็อกอินเข้าสู่ระบบ
-│   ├── HomePage.tsx         # หน้า Dashboard สรุปภาพรวมของระบบ
-│   ├── ToolsPage.tsx        # หน้าจัดการเครื่องมือและอุปกรณ์ (Standard Tools)
-│   ├── CalibrationPage.tsx  # หน้าบันทึกและจัดการการสอบเทียบเครื่องมือ
-│   ├── HistoryPage.tsx      # หน้าประวัติการสอบเทียบและการทำงานย้อนหลัง
-│   └── UsersPage.tsx        # หน้าจัดการข้อมูลผู้ใช้งานและสิทธิ์ต่างๆ
+├── lib/                # ไฟล์ยูทิลิตี้และคอนฟิกูเรชันของไลบรารี (เช่น Axios Instance)
 ├── router/             # ระบบจัดการเส้นทาง (Routing)
 │   └── index.tsx            # กำหนดจุดเชื่อมต่อ URL และการแมปคู่หน้าจอกับ Layout (React Router DOM v7)
-├── services/           # ชั้นติดต่อกับ Backend API (API Service Layer)
-│   └── authService.ts       # บริการจัดการคำขอเกี่ยวกับ Authentication และ Session การล็อกอิน
-├── stores/             # ระบบจัดการสถานะส่วนกลางระดับแอปพลิเคชัน (Global State)
-│   └── authStore.ts         # จัดเก็บข้อมูลผู้ใช้งานและ Auth Token ปัจจุบันด้วย Zustand
-├── types/              # การกำหนดโครงสร้างประเภทข้อมูลของ TypeScript
-│   └── auth.ts              # อินเทอร์เฟซโครงสร้างข้อมูลผู้ใช้งานและ API response เกี่ยวกับ Auth
+├── types/              # การกำหนดโครงสร้างประเภทข้อมูลร่วมของ TypeScript
+├── utils/              # ฟังก์ชันช่วยเหลือและ Utility ทั่วไปส่วนกลาง
+│
+├── features/           # 📂 โฟลเดอร์รวมโมดูล/ฟีเจอร์ของระบบ (Feature-based Modules)
+│   ├── auth/           # โมดูลระบบล็อกอินและสิทธิ์ (LoginPage, authStore, authService)
+│   ├── dashboard/      # โมดูลหน้าแรกสรุปภาพรวมระบบ (HomePage)
+│   ├── calibration/    # โมดูลบันทึกและจัดการการสอบเทียบเครื่องมือแพทย์
+│   ├── approval/       # โมดูลระบบอนุมัติผลการสอบเทียบสำหรับผู้อนุมัติ/หัวหน้างาน
+│   ├── pm/             # โมดูลระบบบำรุงรักษาเชิงป้องกัน (Preventive Maintenance)
+│   ├── tools/          # โมดูลจัดการเครื่องมือแพทย์และเครื่องมือมาตรฐาน (Standard Tools)
+│   ├── hospital/       # โมดูลจัดการข้อมูลโรงพยาบาลในเครือข่าย
+│   ├── section/        # โมดูลจัดการข้อมูลแผนกงานในแต่ละโรงพยาบาล
+│   ├── ward/           # โมดูลจัดการและเฝ้าสังเกตการณ์ตารางเวลาแผนกวอร์ด
+│   ├── users/          # โมดูลจัดการข้อมูลผู้ใช้งานและวิศวกรผู้ทดสอบ
+│   ├── schedule/       # โมดูลปฏิทินและตารางนัดหมายตรวจเช็คอุปกรณ์
+│   ├── inspection/     # โมดูลระบบตรวจสภาพภายนอกอุปกรณ์ (External Inspection)
+│   ├── history/        # โมดูลประวัติการสอบเทียบล่าสุดและการส่งออกไฟล์
+│   └── public-status/  # โมดูลหน้าดูสถานะของเครื่องมือแพทย์สำหรับสาธารณะผ่าน QR Code
+│
 ├── App.tsx             # ไฟล์ Entry Component หลักของแอปพลิเคชัน
 ├── index.css           # ไฟล์ CSS หลักสำหรับการนำเข้า Tailwind v4 และการตั้งค่า Font
 └── main.tsx            # จุดเริ่มต้นการเรนเดอร์ React แอปพลิเคชันเข้าสู่ DOM
