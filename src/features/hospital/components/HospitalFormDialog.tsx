@@ -1,6 +1,6 @@
 import { useState, useRef } from "react"
 import { X, Hospital, Save, ImagePlus, Trash2 } from "lucide-react"
-import type { Hospital as HospitalType } from "../../types/tool"
+import type { Hospital as HospitalType } from "@/types/tool"
 
 interface HospitalFormDialogProps {
   isOpen: boolean

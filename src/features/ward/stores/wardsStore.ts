@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { toolService } from "../services/toolService"
+import { toolService } from "@/features/tools/services/toolService"
 
 export interface Ward {
   id: string

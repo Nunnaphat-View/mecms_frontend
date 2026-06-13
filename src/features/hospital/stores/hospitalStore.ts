@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import type { Hospital } from "../types/tool"
-import { hospitalService } from "../services/hospitalService"
+import type { Hospital } from "@/types/tool"
+import { hospitalService } from "@/features/hospital/services/hospitalService"
 
 interface HospitalState {
   hospitals: Hospital[]

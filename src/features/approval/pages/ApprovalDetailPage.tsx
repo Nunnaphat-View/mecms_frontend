@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { Loader2, CheckCircle2, XCircle, HelpCircle, AlertTriangle } from "lucide-react"
-import { useApprovalStore } from "../stores/approvalStore"
-import { pmService } from "../services/pmService"
-import type { TaskApi } from "../services/pmService"
-import { useAuthStore } from "../stores/authStore"
-import ApprovalTabGeneralInfo from "../components/approval/ApprovalTabGeneralInfo"
-import ApprovalTabTestResults from "../components/approval/ApprovalTabTestResults"
+import { useApprovalStore } from "@/features/approval/stores/approvalStore"
+import { pmService } from "@/features/pm/services/pmService"
+import type { TaskApi } from "@/features/pm/services/pmService"
+import { useAuthStore } from "@/features/auth/stores/authStore"
+import ApprovalTabGeneralInfo from "@/features/approval/components/ApprovalTabGeneralInfo"
+import ApprovalTabTestResults from "@/features/approval/components/ApprovalTabTestResults"
 
 type ToastType = "success" | "error" | "warning"
 

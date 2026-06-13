@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Search, MapPin } from "lucide-react"
-import { useWardsStore } from "@/stores/wardsStore"
+import { useWardsStore } from "@/features/ward/stores/wardsStore"
 
 export const WardDepartmentList: React.FC = () => {
   const { selectedWardId, selectWard, getWards } = useWardsStore()

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { X, Building2, Save, Hospital } from "lucide-react"
-import type { Section } from "../../types/tool"
+import type { Section } from "@/types/tool"
 
 interface SectionFormDialogProps {
   isOpen: boolean

@@ -1,13 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
 import { Plus, Building2, Edit, Trash2 } from "lucide-react";
-import TablePagination from "../components/common/TablePagination";
-import { useSectionStore } from "../stores/sectionStore";
-import { useHospitalStore } from "../stores/hospitalStore";
-import { useAuthStore } from "../stores/authStore";
-import type { Section } from "../types/tool";
-import SectionFormDialog from "../components/section/SectionFormDialog";
-import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog";
-import SearchBar from "../components/SearchBar";
+import TablePagination from "@/components/common/TablePagination";
+import { useSectionStore } from "@/features/section/stores/sectionStore";
+import { useHospitalStore } from "@/features/hospital/stores/hospitalStore";
+import { useAuthStore } from "@/features/auth/stores/authStore";
+import type { Section } from "@/types/tool";
+import SectionFormDialog from "@/features/section/components/SectionFormDialog";
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
+import SearchBar from "@/components/SearchBar";
 
 // ── Toast notification ────────────────────────────────────────────────────────
 type ToastType = "success" | "error" | "warning";

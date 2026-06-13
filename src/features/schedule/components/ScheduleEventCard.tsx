@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { MapPin, User, RefreshCw, CalendarDays } from "lucide-react"
-import type { CalibrationEvent } from "../../stores/scheduleStore"
-import { useHistoryStore } from "../../stores/historyStore"
+import type { CalibrationEvent } from "@/features/schedule/stores/scheduleStore"
+import { useHistoryStore } from "@/features/history/stores/historyStore"
 
 interface ScheduleEventCardProps {
   event: CalibrationEvent

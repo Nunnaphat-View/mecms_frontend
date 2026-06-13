@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import { useWardsStore } from "@/stores/wardsStore"
+import { useWardsStore } from "@/features/ward/stores/wardsStore"
 
 export const WardScheduleCalendar: React.FC = () => {
   const { getTimelineEvents } = useWardsStore()

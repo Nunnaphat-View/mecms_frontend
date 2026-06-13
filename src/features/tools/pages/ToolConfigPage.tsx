@@ -2,15 +2,15 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Plus, ChevronRight } from "lucide-react"
 
-import ConfigStandardToolCard from "../components/tools/config/ConfigStandardToolCard"
-import ConfigQualitativeBlock from "../components/tools/config/ConfigQualitativeBlock"
-import ConfigQuantitativeBlock from "../components/tools/config/ConfigQuantitativeBlock"
-import type { QuantData } from "../components/tools/config/ConfigQuantitativeBlock"
+import ConfigStandardToolCard from "@/features/tools/components/config/ConfigStandardToolCard"
+import ConfigQualitativeBlock from "@/features/tools/components/config/ConfigQualitativeBlock"
+import ConfigQuantitativeBlock from "@/features/tools/components/config/ConfigQuantitativeBlock"
+import type { QuantData } from "@/features/tools/components/config/ConfigQuantitativeBlock"
 import { useToast } from "@/hooks/useToast"
 
-import { standardToolService } from "../services/standardToolService"
-import { calibrationSettingService } from "../services/calibrationMgmtService"
-import type { BackendStandardTool, CalibrationSetting } from "../types/tool"
+import { standardToolService } from "@/features/tools/services/standardToolService"
+import { calibrationSettingService } from "@/features/calibration/services/calibrationMgmtService"
+import type { BackendStandardTool, CalibrationSetting } from "@/types/tool"
 
 interface TestItem {
   name: string

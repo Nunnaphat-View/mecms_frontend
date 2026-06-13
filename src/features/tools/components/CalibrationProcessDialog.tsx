@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from "react"
 import { ListTodo, Wrench, X, Save, ChevronDown } from "lucide-react"
-import type { CalibrationProcess } from "../../types/tool"
-import { useStandardToolStore } from "../../stores/standardToolStore"
-import { useToolStore } from "../../stores/toolStore"
+import type { CalibrationProcess } from "@/types/tool"
+import { useStandardToolStore } from "@/features/tools/stores/standardToolStore"
+import { useToolStore } from "@/features/tools/stores/toolStore"
 
 interface CalibrationProcessDialogProps {
   isOpen: boolean

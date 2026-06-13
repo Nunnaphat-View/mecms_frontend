@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from "lucide-react"
-import { formatThaiDate } from "../../utils/date"
+import { formatThaiDate } from "@/utils/date"
 
 interface DatePickerProps {
   value: string // YYYY-MM-DD format

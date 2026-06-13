@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react"
 import { X, Edit, Upload, RefreshCw, Eye, EyeOff, Save, Key, User as UserIcon, Mail, Phone, Shield, MessageCircle } from "lucide-react"
-import type { User } from "../../types/auth"
-import { useUserStore } from "../../stores/userStore"
-import { userService } from "../../services/userService"
+import type { User } from "@/types/auth"
+import { useUserStore } from "@/features/users/stores/userStore"
+import { userService } from "@/features/users/services/userService"
 import { useToast } from "@/hooks/useToast"
 
 interface UserFormDialogProps {

@@ -1,4 +1,4 @@
-import type { BackendEquipment, Hospital, Section, EquipmentType } from "../types/tool"
+import type { BackendEquipment, Hospital, Section, EquipmentType } from "@/types/tool"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
 

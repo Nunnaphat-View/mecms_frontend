@@ -2,20 +2,20 @@ import { useState, useEffect, useMemo } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { Settings2, Plus, Edit, Trash2 } from "lucide-react"
 
-import SearchBar from "../components/SearchBar"
-import TablePagination from "../components/common/TablePagination"
-import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
-import { CalibrationCostDialog } from "../components/tools/CalibrationCostDialog"
-import { CalibrationProcessDialog } from "../components/tools/CalibrationProcessDialog"
+import SearchBar from "@/components/SearchBar"
+import TablePagination from "@/components/common/TablePagination"
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog"
+import { CalibrationCostDialog } from "@/features/tools/components/CalibrationCostDialog"
+import { CalibrationProcessDialog } from "@/features/tools/components/CalibrationProcessDialog"
 
-import { useToolStore } from "../stores/toolStore"
-import { useAuthStore } from "../stores/authStore"
-import type { CalibrationProcess, CalibrationCost } from "../types/tool"
+import { useToolStore } from "@/features/tools/stores/toolStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
+import type { CalibrationProcess, CalibrationCost } from "@/types/tool"
 import { useToast } from "@/hooks/useToast"
 import {
   calibrationProcessService,
   calibrationCostService,
-} from "../services/calibrationMgmtService"
+} from "@/features/calibration/services/calibrationMgmtService"
 
 interface PageInfo {
   title: string

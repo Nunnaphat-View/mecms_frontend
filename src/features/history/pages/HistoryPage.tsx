@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useHistoryStore, type HistoryRecord } from "../stores/historyStore"
-import SearchBar from "../components/SearchBar"
-import ExportDialog from "../components/history/ExportDialog"
-import ToolQrDialog from "../components/history/ToolQrDialog"
+import { useHistoryStore, type HistoryRecord } from "@/features/history/stores/historyStore"
+import SearchBar from "@/components/SearchBar"
+import ExportDialog from "@/features/history/components/ExportDialog"
+import ToolQrDialog from "@/features/history/components/ToolQrDialog"
 import {
   FileText,
   QrCode,

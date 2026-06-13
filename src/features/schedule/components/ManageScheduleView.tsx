@@ -18,13 +18,13 @@ import {
   UserX,
   Pencil,
 } from "lucide-react"
-import { pmService } from "../../services/pmService"
-import type { TaskApi } from "../../services/pmService"
-import { userService } from "../../services/userService"
+import { pmService } from "@/features/pm/services/pmService"
+import type { TaskApi } from "@/features/pm/services/pmService"
+import { userService } from "@/features/users/services/userService"
 import { useToast } from "@/hooks/useToast"
-import type { User } from "../../types/auth"
-import { useAuthStore } from "../../stores/authStore"
-import { AppRole } from "../../constants/roles"
+import type { User } from "@/types/auth"
+import { useAuthStore } from "@/features/auth/stores/authStore"
+import { AppRole } from "@/constants/roles"
 import { UnassignedTasksPanel } from "./UnassignedTasksPanel"
 
 interface GroupedTask {

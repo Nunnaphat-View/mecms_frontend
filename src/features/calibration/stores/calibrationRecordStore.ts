@@ -1,7 +1,7 @@
 import { create } from "zustand"
-import { pmService } from "../services/pmService"
+import { pmService } from "@/features/pm/services/pmService"
 import { useCalibrationSettingStore, isInfusionPump } from "./calibrationSettingStore"
-import { useStandardToolStore } from "./standardToolStore"
+import { useStandardToolStore } from "@/features/tools/stores/standardToolStore"
 
 export interface EquipmentDetails {
   id: string

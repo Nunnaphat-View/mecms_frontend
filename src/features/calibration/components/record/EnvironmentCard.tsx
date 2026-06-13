@@ -1,4 +1,4 @@
-import { useCalibrationRecordStore } from "@/stores/calibrationRecordStore"
+import { useCalibrationRecordStore } from "@/features/calibration/stores/calibrationRecordStore"
 import { Thermometer, Droplets } from "lucide-react"
 
 interface EnvData {

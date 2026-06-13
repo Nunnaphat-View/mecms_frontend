@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react"
-import { useCalibrationRecordStore } from "@/stores/calibrationRecordStore"
-import { useStandardToolStore } from "@/stores/standardToolStore"
-import { useCalibrationSettingStore } from "@/stores/calibrationSettingStore"
+import { useCalibrationRecordStore } from "@/features/calibration/stores/calibrationRecordStore"
+import { useStandardToolStore } from "@/features/tools/stores/standardToolStore"
+import { useCalibrationSettingStore } from "@/features/calibration/stores/calibrationSettingStore"
 import type { BackendStandardTool } from "@/types/tool"
 import { Cpu, AlertTriangle, Loader2 } from "lucide-react"
 

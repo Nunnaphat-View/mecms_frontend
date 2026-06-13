@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { FileCheck, List, LayoutGrid, CheckCircle2, XCircle, HelpCircle } from "lucide-react"
-import SearchBar from "../components/SearchBar"
-import TablePagination from "../components/common/TablePagination"
-import ApprovalCard from "../components/approval/ApprovalCard"
-import { useApprovalStore } from "../stores/approvalStore"
+import SearchBar from "@/components/SearchBar"
+import TablePagination from "@/components/common/TablePagination"
+import ApprovalCard from "@/features/approval/components/ApprovalCard"
+import { useApprovalStore } from "@/features/approval/stores/approvalStore"
 
 export default function ApprovalsPage() {
   const navigate = useNavigate()

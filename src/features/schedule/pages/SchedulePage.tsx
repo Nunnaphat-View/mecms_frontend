@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from "react"
 import { Calendar, CalendarX, RefreshCw } from "lucide-react"
-import { useScheduleStore } from "../stores/scheduleStore"
-import { useAuthStore } from "../stores/authStore"
-import { ScheduleCalendar } from "../components/schedule/ScheduleCalendar"
-import { ScheduleEventCard } from "../components/schedule/ScheduleEventCard"
+import { useScheduleStore } from "@/features/schedule/stores/scheduleStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
+import { ScheduleCalendar } from "@/features/schedule/components/ScheduleCalendar"
+import { ScheduleEventCard } from "@/features/schedule/components/ScheduleEventCard"
 
 export default function SchedulePage() {
   const { events, selectedDate, loading, fetchEvents } = useScheduleStore()

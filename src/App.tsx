@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { RouterProvider } from "react-router-dom"
 import { router } from "@/router"
-import { useAuthStore } from "@/stores/authStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
 import { ToastProvider } from "@/context/ToastContext"
 
 function App() {

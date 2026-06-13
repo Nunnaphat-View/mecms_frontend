@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react"
 import { ReceiptText, Wrench, FileSpreadsheet, DollarSign, X, Save, ChevronDown } from "lucide-react"
-import type { CalibrationCost } from "../../types/tool"
-import { useToolStore } from "../../stores/toolStore"
+import type { CalibrationCost } from "@/types/tool"
+import { useToolStore } from "@/features/tools/stores/toolStore"
 
 interface CalibrationCostDialogProps {
   isOpen: boolean

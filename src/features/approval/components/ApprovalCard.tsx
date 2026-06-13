@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { CheckCircle2, XCircle, HelpCircle } from "lucide-react"
-import type { ApprovalEvent } from "@/stores/approvalStore"
+import type { ApprovalEvent } from "@/features/approval/stores/approvalStore"
 
 interface Props {
   item: ApprovalEvent

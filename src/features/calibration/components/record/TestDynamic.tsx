@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from "react"
-import { useCalibrationRecordStore, type MeasurementRecord, type QualitativeRecord } from "@/stores/calibrationRecordStore"
-import { useCalibrationSettingStore, isInfusionPump } from "@/stores/calibrationSettingStore"
+import { useCalibrationRecordStore, type MeasurementRecord, type QualitativeRecord } from "@/features/calibration/stores/calibrationRecordStore"
+import { useCalibrationSettingStore, isInfusionPump } from "@/features/calibration/stores/calibrationSettingStore"
 import EkgTestCard, { type EkgItem } from "./EkgTestCard"
 import TestParameterTable, { type TestRow } from "./TestParameterTable"
 import CalibrationSummary from "./CalibrationSummary"

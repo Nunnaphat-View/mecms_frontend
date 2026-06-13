@@ -1,5 +1,5 @@
 import React from "react"
-import type { WardTool } from "@/stores/wardsStore"
+import type { WardTool } from "@/features/ward/stores/wardsStore"
 
 interface WardToolCardProps {
   tool: WardTool

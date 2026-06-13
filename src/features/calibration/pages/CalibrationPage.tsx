@@ -1,11 +1,11 @@
 import { useEffect, useState, useMemo } from "react"
 import { ClipboardCheck, List, LayoutGrid } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import SearchBar from "../components/SearchBar"
-import TablePagination from "../components/common/TablePagination"
-import CalibrationCard, { CalibrationCardSkeleton } from "../components/calibration/CalibrationCard"
-import { useCalibrationStore } from "../stores/calibrationStore"
-import { useAuthStore } from "../stores/authStore"
+import SearchBar from "@/components/SearchBar"
+import TablePagination from "@/components/common/TablePagination"
+import CalibrationCard, { CalibrationCardSkeleton } from "@/features/calibration/components/CalibrationCard"
+import { useCalibrationStore } from "@/features/calibration/stores/calibrationStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
 
 export default function CalibrationPage() {
   const navigate = useNavigate()

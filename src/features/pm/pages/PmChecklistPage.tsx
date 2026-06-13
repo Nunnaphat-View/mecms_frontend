@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import { Plus, Edit2, Trash2, Check, X, ClipboardList, FileText, Settings2 } from "lucide-react"
-import { checklistService } from "../services/checklistService"
-import type { ChecklistCategoryApi, ChecklistItemApi } from "../services/pmService"
-import { useChecklistStore } from "../stores/checklistStore"
-import AddCategoryDialog from "../components/pm/AddCategoryDialog"
-import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
+import { checklistService } from "@/features/pm/services/checklistService"
+import type { ChecklistCategoryApi, ChecklistItemApi } from "@/features/pm/services/pmService"
+import { useChecklistStore } from "@/features/pm/stores/checklistStore"
+import AddCategoryDialog from "@/features/pm/components/AddCategoryDialog"
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog"
 
 // ── Toast notification ────────────────────────────────────────────────────────
 type ToastType = "success" | "error" | "warning"

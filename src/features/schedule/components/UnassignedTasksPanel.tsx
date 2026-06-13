@@ -1,6 +1,6 @@
 import { ClipboardList, User2, ChevronDown, CalendarDays, MapPin } from "lucide-react"
-import type { TaskApi } from "../../services/pmService"
-import type { User } from "../../types/auth"
+import type { TaskApi } from "@/features/pm/services/pmService"
+import type { User } from "@/types/auth"
 
 interface UnassignedTasksPanelProps {
   unassignedTasks: TaskApi[]

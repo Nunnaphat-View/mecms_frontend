@@ -1,14 +1,15 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react"
-import { useScheduleStore } from "../../stores/scheduleStore"
-import { useAuthStore } from "../../stores/authStore"
+import { useScheduleStore } from "@/features/schedule/stores/scheduleStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
+
+const today = new Date()
 
 export const ScheduleCalendar = () => {
   const { events, selectedDate, selectDate } = useScheduleStore()
   const { user } = useAuthStore()
   const currentUserName = user?.name || ""
 
-  const today = new Date()
   const [currentYear, setCurrentYear] = useState(today.getFullYear())
   const [currentMonth, setCurrentMonth] = useState(today.getMonth()) // 0-11
 
@@ -48,20 +49,20 @@ export const ScheduleCalendar = () => {
     return new Date(currentYear, currentMonth, 1).getDay()
   }, [currentYear, currentMonth])
 
-  const getDateStr = (day: number) => {
+  const getDateStr = useCallback((day: number) => {
     const m = String(currentMonth + 1).padStart(2, "0")
     const d = String(day).padStart(2, "0")
     return `${currentYear}-${m}-${d}`
-  }
+  }, [currentMonth, currentYear])
 
   // Count events for a specific day
-  const getEventCounts = (day: number) => {
+  const getEventCounts = useCallback((day: number) => {
     const dateStr = getDateStr(day)
     const dayEvents = events.filter((e) => e.dueDate === dateStr)
     const mine = dayEvents.filter((e) => e.assignedTo === currentUserName).length
     const others = dayEvents.filter((e) => e.assignedTo !== currentUserName).length
     return { mine, others }
-  }
+  }, [events, currentUserName, getDateStr])
 
   // Total events in the current month
   const totalEventsInMonth = useMemo(() => {
@@ -71,7 +72,7 @@ export const ScheduleCalendar = () => {
       total += mine + others
     }
     return total
-  }, [events, daysInMonth, currentMonth, currentYear, currentUserName])
+  }, [daysInMonth, getEventCounts])
 
   const isToday = (day: number) => {
     const d = new Date()

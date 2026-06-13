@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import type { User } from "../types/auth"
-import { authService } from "../services/authService"
+import type { User } from "@/types/auth"
+import { authService } from "@/features/auth/services/authService"
 import { AppRole, type RolePermissions, RolePermissionsMap, mapRoleToAppRole } from "@/constants/roles"
 
 interface AuthState {

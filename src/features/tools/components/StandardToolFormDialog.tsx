@@ -1,9 +1,9 @@
 import { useState, useRef } from "react"
 import { X, Tag, FileText, Settings, Award, FileCheck2, Image, CheckCircle2 } from "lucide-react"
-import type { BackendStandardTool } from "../../types/tool"
-import { useStandardToolStore } from "../../stores/standardToolStore"
-import { getFileUrl } from "../../services/standardToolService"
-import DatePicker from "../common/DatePicker"
+import type { BackendStandardTool } from "@/types/tool"
+import { useStandardToolStore } from "@/features/tools/stores/standardToolStore"
+import { getFileUrl } from "@/features/tools/services/standardToolService"
+import DatePicker from "@/components/common/DatePicker"
 import { useToast } from "@/hooks/useToast"
 
 interface StandardToolFormDialogProps {

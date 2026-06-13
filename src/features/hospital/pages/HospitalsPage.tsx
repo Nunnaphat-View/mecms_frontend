@@ -7,13 +7,13 @@ import {
   MapPin,
   ImageOff,
 } from "lucide-react";
-import TablePagination from "../components/common/TablePagination";
-import { useHospitalStore } from "../stores/hospitalStore";
-import { useAuthStore } from "../stores/authStore";
-import type { Hospital as HospitalType } from "../types/tool";
-import HospitalFormDialog from "../components/hospital/HospitalFormDialog";
-import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog";
-import SearchBar from "../components/SearchBar";
+import TablePagination from "@/components/common/TablePagination";
+import { useHospitalStore } from "@/features/hospital/stores/hospitalStore";
+import { useAuthStore } from "@/features/auth/stores/authStore";
+import type { Hospital as HospitalType } from "@/types/tool";
+import HospitalFormDialog from "@/features/hospital/components/HospitalFormDialog";
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
+import SearchBar from "@/components/SearchBar";
 
 // ── Toast notification ────────────────────────────────────────────────────────
 type ToastType = "success" | "error" | "warning";

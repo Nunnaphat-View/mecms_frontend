@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import type { CalibrationRecord } from "../../stores/calibrationStore"
+import type { CalibrationRecord } from "@/features/calibration/stores/calibrationStore"
 
 interface CalibrationCardProps {
   record: CalibrationRecord

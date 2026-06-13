@@ -1,4 +1,4 @@
-import type { InspectionItem, InspectionValue } from "../../stores/inspectionStore"
+import type { InspectionItem, InspectionValue } from "@/features/inspection/stores/inspectionStore"
 
 interface Props {
   title: string

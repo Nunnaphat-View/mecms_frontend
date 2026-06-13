@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import type { User } from "../types/auth"
-import { userService } from "../services/userService"
+import type { User } from "@/types/auth"
+import { userService } from "@/features/users/services/userService"
 
 interface UserState {
   users: User[]

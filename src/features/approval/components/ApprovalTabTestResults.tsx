@@ -1,9 +1,9 @@
-import { useMemo } from "react"
-import type { TaskApi } from "@/services/pmService"
-import EnvironmentCard from "../calibration/record/EnvironmentCard"
-import StandardEquipmentSelector from "../calibration/record/StandardEquipmentSelector"
-import EkgTestCard from "../calibration/record/EkgTestCard"
-import CalibrationSummary from "../calibration/record/CalibrationSummary"
+import { useMemo, useCallback } from "react"
+import type { TaskApi } from "@/features/pm/services/pmService"
+import EnvironmentCard from "@/features/calibration/components/record/EnvironmentCard"
+import StandardEquipmentSelector from "@/features/calibration/components/record/StandardEquipmentSelector"
+import EkgTestCard from "@/features/calibration/components/record/EkgTestCard"
+import CalibrationSummary from "@/features/calibration/components/record/CalibrationSummary"
 import ApprovalParameterTable from "./ApprovalParameterTable"
 import type { TestRow } from "./ApprovalParameterTable"
 
@@ -137,7 +137,7 @@ export default function ApprovalTabTestResults({ task }: Props) {
     return task?.equipment?.tool_name?.toLowerCase().includes("ultrasound") || false
   }, [task])
 
-  const getProbeChecklist = (rangeNum: number) => {
+  const getProbeChecklist = useCallback((rangeNum: number) => {
     const measurements = task?.measurements || []
     const getStatus = (keywords: string[]) => {
       const matching = measurements.filter((m) => {
@@ -173,10 +173,10 @@ export default function ApprovalTabTestResults({ task }: Props) {
         passed: getStatus(["depth"]),
       },
     ]
-  }
+  }, [task])
 
-  const probe1SummaryItems = useMemo(() => getProbeChecklist(1), [task])
-  const probe2SummaryItems = useMemo(() => getProbeChecklist(2), [task])
+  const probe1SummaryItems = useMemo(() => getProbeChecklist(1), [getProbeChecklist])
+  const probe2SummaryItems = useMemo(() => getProbeChecklist(2), [getProbeChecklist])
 
   const inspectorName = task?.approver?.name || task?.technician?.name || "-"
   const inspectorRole =

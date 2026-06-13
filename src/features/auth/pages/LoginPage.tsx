@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { useAuthStore } from "@/stores/authStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
 import { AppRole } from "@/constants/roles"
 import { 
   AlertCircle, 

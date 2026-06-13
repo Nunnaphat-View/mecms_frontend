@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import type { BackendStandardTool } from "../types/tool"
-import { standardToolService, type CreateStandardToolPayload } from "../services/standardToolService"
+import type { BackendStandardTool } from "@/types/tool"
+import { standardToolService, type CreateStandardToolPayload } from "@/features/tools/services/standardToolService"
 
 interface StandardToolState {
   tools: BackendStandardTool[]

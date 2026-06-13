@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import { checklistService } from "../services/checklistService"
-import type { ChecklistCategoryApi } from "../services/pmService"
+import { checklistService } from "@/features/pm/services/checklistService"
+import type { ChecklistCategoryApi } from "@/features/pm/services/pmService"
 
 export interface ExtendedCategory extends ChecklistCategoryApi {
   newItemDescription: string

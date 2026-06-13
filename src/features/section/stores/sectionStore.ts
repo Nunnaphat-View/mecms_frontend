@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import type { Section } from "../types/tool"
-import { sectionService } from "../services/sectionService"
+import type { Section } from "@/types/tool"
+import { sectionService } from "@/features/section/services/sectionService"
 
 interface SectionState {
   sections: Section[]

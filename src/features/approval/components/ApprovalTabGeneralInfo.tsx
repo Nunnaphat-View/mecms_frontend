@@ -1,7 +1,7 @@
 import { useMemo } from "react"
-import type { TaskApi } from "@/services/pmService"
-import EquipmentDetailsCard from "@/components/inspection/EquipmentDetailsCard"
-import LocationDetailsCard from "../calibration/record/LocationDetailsCard"
+import type { TaskApi } from "@/features/pm/services/pmService"
+import EquipmentDetailsCard from "@/features/inspection/components/EquipmentDetailsCard"
+import LocationDetailsCard from "@/features/calibration/components/record/LocationDetailsCard"
 
 interface Props {
   task: TaskApi | null

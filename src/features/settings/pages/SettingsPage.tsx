@@ -13,9 +13,9 @@ import {
   AlertCircle,
   PenLine,
 } from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
-import { userService } from "../services/userService";
-import { authService } from "../services/authService";
+import { useAuthStore } from "@/features/auth/stores/authStore";
+import { userService } from "@/features/users/services/userService";
+import { authService } from "@/features/auth/services/authService";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type ToastType = "success" | "error" | "warning";

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react"
-import { useAuthStore } from "@/stores/authStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
 import { LogOut, ChevronRight, Settings } from "lucide-react"
-import { userService } from "@/services/userService"
+import { userService } from "@/features/users/services/userService"
 
 interface ProfileCardProps {
   children: React.ReactNode

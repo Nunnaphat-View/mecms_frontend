@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import { calibrationSettingService } from "../services/calibrationMgmtService"
-import type { CalibrationSetting } from "../types/tool"
+import { calibrationSettingService } from "@/features/calibration/services/calibrationMgmtService"
+import type { CalibrationSetting } from "@/types/tool"
 
 export function normalizeEquipmentName(name: string | null | undefined): string {
   if (!name) return ""

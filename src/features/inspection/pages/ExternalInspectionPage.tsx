@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Sparkles, CheckCircle2, AlertTriangle, AlertCircle } from "lucide-react"
-import { useInspectionStore } from "../stores/inspectionStore"
-import type { InspectionValue } from "../stores/inspectionStore"
-import EquipmentDetailsCard from "../components/inspection/EquipmentDetailsCard"
-import InspectionSection from "../components/inspection/InspectionSection"
-import PmResultCard from "../components/inspection/PmResultCard"
+import { useInspectionStore } from "@/features/inspection/stores/inspectionStore"
+import type { InspectionValue } from "@/features/inspection/stores/inspectionStore"
+import EquipmentDetailsCard from "@/features/inspection/components/EquipmentDetailsCard"
+import InspectionSection from "@/features/inspection/components/InspectionSection"
+import PmResultCard from "@/features/inspection/components/PmResultCard"
 
 export default function ExternalInspectionPage() {
   const { id } = useParams<{ id: string }>()

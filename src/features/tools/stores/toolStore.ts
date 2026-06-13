@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import type { MedicalTool, ToolStatus, BackendEquipment, Hospital, Section, EquipmentType } from "../types/tool"
-import { toolService } from "../services/toolService"
+import type { MedicalTool, ToolStatus, BackendEquipment, Hospital, Section, EquipmentType } from "@/types/tool"
+import { toolService } from "@/features/tools/services/toolService"
 
 interface ToolState {
   tools: MedicalTool[]

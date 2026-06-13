@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react"
 import { ALL_NAV_LINKS } from "@/constants/navLinks"
 import { EssentialLink } from "./EssentialLink"
-import { useAuthStore } from "@/stores/authStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
 interface AppDrawerProps {
   isOpen: boolean
   isPinned: boolean

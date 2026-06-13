@@ -1,9 +1,9 @@
 import React, { useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAuthStore } from "@/stores/authStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
 import { Menu, Bell, Activity } from "lucide-react"
 import { ProfileCard } from "./ProfileCard"
-import { userService } from "@/services/userService"
+import { userService } from "@/features/users/services/userService"
 
 interface AppHeaderProps {
   onToggleDrawer: () => void

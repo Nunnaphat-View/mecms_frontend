@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { pmService } from "../services/pmService"
+import { pmService } from "@/features/pm/services/pmService"
 
 export interface CalibrationEvent {
   id: string

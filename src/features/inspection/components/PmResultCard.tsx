@@ -1,4 +1,4 @@
-import type { InspectionValue } from "../../stores/inspectionStore"
+import type { InspectionValue } from "@/features/inspection/stores/inspectionStore"
 
 interface Props {
   result: InspectionValue

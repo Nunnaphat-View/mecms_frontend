@@ -1,4 +1,4 @@
-import type { LocationDetails } from "../../../stores/calibrationRecordStore"
+import type { LocationDetails } from "@/features/calibration/stores/calibrationRecordStore"
 
 interface Props {
   details?: LocationDetails

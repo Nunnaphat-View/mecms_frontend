@@ -1,10 +1,10 @@
 import  { useEffect } from "react"
 import { MapPin, RefreshCw, AlertCircle } from "lucide-react"
-import { useWardsStore } from "@/stores/wardsStore"
-import { WardDepartmentList } from "@/components/ward/WardDepartmentList"
-import { WardScheduleCalendar } from "@/components/ward/WardScheduleCalendar"
-import { WardTimeline } from "@/components/ward/WardTimeline"
-import { WardToolCard } from "@/components/ward/WardToolCard"
+import { useWardsStore } from "@/features/ward/stores/wardsStore"
+import { WardDepartmentList } from "@/features/ward/components/WardDepartmentList"
+import { WardScheduleCalendar } from "@/features/ward/components/WardScheduleCalendar"
+import { WardTimeline } from "@/features/ward/components/WardTimeline"
+import { WardToolCard } from "@/features/ward/components/WardToolCard"
 
 export default function WardPage() {
   const { fetchWardsData, getSelectedWard, getTools, loading, wards } = useWardsStore()

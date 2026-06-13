@@ -1,6 +1,6 @@
 import { forwardRef } from "react"
-import { useCalibrationRecordStore } from "@/stores/calibrationRecordStore"
-import { useCalibrationSettingStore } from "@/stores/calibrationSettingStore"
+import { useCalibrationRecordStore } from "@/features/calibration/stores/calibrationRecordStore"
+import { useCalibrationSettingStore } from "@/features/calibration/stores/calibrationSettingStore"
 import EnvironmentCard from "./EnvironmentCard"
 import StandardEquipmentSelector from "./StandardEquipmentSelector"
 import TestUnknown from "./TestUnknown"

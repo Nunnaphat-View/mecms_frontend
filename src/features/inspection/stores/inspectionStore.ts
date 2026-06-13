@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { pmService, type ChecklistCategoryApi } from "../services/pmService"
+import { pmService, type ChecklistCategoryApi } from "@/features/pm/services/pmService"
 
 export type InspectionValue = "ผ่าน" | "ไม่ผ่าน" | "N/A"
 

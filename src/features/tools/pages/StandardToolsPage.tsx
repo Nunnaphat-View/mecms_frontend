@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { Settings2, Plus, FileText, Edit, Trash2 } from "lucide-react"
-import TablePagination from "../components/common/TablePagination"
-import type { BackendStandardTool } from "../types/tool"
-import { useStandardToolStore } from "../stores/standardToolStore"
-import { useAuthStore } from "../stores/authStore"
-import SearchBar from "../components/SearchBar"
-import StandardToolFormDialog from "../components/tools/StandardToolFormDialog"
-import ConfirmDeleteDialog from "../components/common/ConfirmDeleteDialog"
-import { getFileUrl } from "../services/standardToolService"
-import { formatDateBE } from "../utils"
+import TablePagination from "@/components/common/TablePagination"
+import type { BackendStandardTool } from "@/types/tool"
+import { useStandardToolStore } from "@/features/tools/stores/standardToolStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
+import SearchBar from "@/components/SearchBar"
+import StandardToolFormDialog from "@/features/tools/components/StandardToolFormDialog"
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog"
+import { getFileUrl } from "@/features/tools/services/standardToolService"
+import { formatDateBE } from "@/utils"
 import { useToast } from "@/hooks/useToast"
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ export default function StandardToolsPage() {
   const paginatedTools = useMemo(() => {
     const start = (currentPage - 1) * ROWS_PER_PAGE
     return filteredTools.slice(start, start + ROWS_PER_PAGE)
-  }, [filteredTools, currentPage, pageSize])
+  }, [filteredTools, currentPage, ROWS_PER_PAGE])
 
   // Reset to page 1 when search changes
   const handleSearchChange = useCallback((val: string) => {

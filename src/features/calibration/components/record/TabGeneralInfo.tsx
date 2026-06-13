@@ -1,5 +1,5 @@
-import { useCalibrationRecordStore } from "@/stores/calibrationRecordStore"
-import EquipmentDetailsCard from "@/components/inspection/EquipmentDetailsCard"
+import { useCalibrationRecordStore } from "@/features/calibration/stores/calibrationRecordStore"
+import EquipmentDetailsCard from "@/features/inspection/components/EquipmentDetailsCard"
 import LocationDetailsCard from "./LocationDetailsCard"
 
 export default function TabGeneralInfo() {

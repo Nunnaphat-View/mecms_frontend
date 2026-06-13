@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 import { Edit3, X, Tag, FileText, Settings, Award, ShieldAlert, Calendar, Layout, Info } from "lucide-react"
-import type { MedicalTool, ToolStatus } from "../../types/tool"
-import { useToolStore } from "../../stores/toolStore"
-import { useAuthStore } from "../../stores/authStore"
+import type { MedicalTool, ToolStatus } from "@/types/tool"
+import { useToolStore } from "@/features/tools/stores/toolStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
 import { useToast } from "@/hooks/useToast"
 
 interface ToolFormDialogProps {

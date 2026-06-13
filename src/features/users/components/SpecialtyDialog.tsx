@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { X, Save, RefreshCw, Award } from "lucide-react"
-import { userService } from "../../services/userService"
-import { toolService } from "../../services/toolService"
+import { userService } from "@/features/users/services/userService"
+import { toolService } from "@/features/tools/services/toolService"
 import { useToast } from "@/hooks/useToast"
 
 interface SpecialtyDialogProps {

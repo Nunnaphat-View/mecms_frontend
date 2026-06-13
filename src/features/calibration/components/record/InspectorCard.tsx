@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/stores/authStore"
+import { useAuthStore } from "@/features/auth/stores/authStore"
 import { User as UserIcon } from "lucide-react"
 
 interface Props {
