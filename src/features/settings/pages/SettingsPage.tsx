@@ -39,10 +39,14 @@ export default function SettingsPage() {
   }
 
   // ── Profile form ──────────────────────────────────────────────────────────
+  const queryParams = useMemo(() => new URLSearchParams(window.location.search), []);
+  const urlLineUserId = queryParams.get("lineUserId");
+
   const [profileForm, setProfileForm] = useState({
     name: user?.name ?? "",
     email: user?.email ?? "",
     tel: user?.tel ?? "",
+    lineUserId: urlLineUserId || user?.lineUserId || "",
   });
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
@@ -90,6 +94,7 @@ export default function SettingsPage() {
       fd.append("name", profileForm.name.trim());
       fd.append("email", profileForm.email.trim());
       fd.append("tel", profileForm.tel.trim());
+      fd.append("lineUserId", profileForm.lineUserId.trim());
       if (avatarFile) fd.append("image", avatarFile);
       if (sigFile) fd.append("signature", sigFile);
 
@@ -331,6 +336,37 @@ export default function SettingsPage() {
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-sm text-slate-400 cursor-not-allowed"
                 />
               </div>
+            </div>
+
+            {/* LINE User ID */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                <span className="size-2 bg-emerald-500 rounded-full animate-pulse mr-1" />
+                LINE User ID (สำหรับการรับแจ้งเตือน)
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={profileForm.lineUserId}
+                  onChange={(e) => setProfileForm((p) => ({ ...p, lineUserId: e.target.value }))}
+                  placeholder="ยังไม่ได้ผูกบัญชี LINE (พิมพ์ข้อความหา LINE Bot เพื่อสแกน/ผูก)"
+                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary ${
+                    urlLineUserId
+                      ? "border-emerald-300 bg-emerald-50/20 text-emerald-800 ring-2 ring-emerald-100"
+                      : "border-slate-200 text-slate-800"
+                  }`}
+                />
+                {urlLineUserId && (
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                    ตรวจพบรหัสใหม่จาก LINE
+                  </span>
+                )}
+              </div>
+              {urlLineUserId && (
+                <p className="text-[10px] text-emerald-600 mt-0.5 font-medium">
+                  * กรุณากดปุ่ม "บันทึกข้อมูล" ด้านล่างเพื่อยืนยันการเชื่อมโยงบัญชี
+                </p>
+              )}
             </div>
 
             {/* Save button */}

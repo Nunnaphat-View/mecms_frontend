@@ -8,8 +8,12 @@ function App() {
   const initialize = useAuthStore((state) => state.initialize)
 
   useEffect(() => {
-    initialize()
-  }, [initialize])
+    const queryParams = new URLSearchParams(window.location.search);
+    if (queryParams.has("lineUserId")) {
+      useAuthStore.getState().logout();
+    }
+    initialize();
+  }, [initialize]);
 
   return (
     <ToastProvider>

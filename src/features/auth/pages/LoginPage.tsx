@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/features/auth/stores/authStore"
 import { AppRole } from "@/constants/roles"
@@ -13,6 +13,7 @@ import {
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { login, isAuthenticated, appRole, isLoading } = useAuthStore()
   
   // Form states
@@ -34,13 +35,18 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated && appRole) {
-      if (appRole === AppRole.DIRECTOR) {
+      const state = location.state as { from?: { pathname: string; search: string } } | null;
+      const from = state?.from;
+      
+      if (from) {
+        navigate(from.pathname + from.search, { replace: true });
+      } else if (appRole === AppRole.DIRECTOR) {
         navigate("/director-dashboard", { replace: true })
       } else {
         navigate("/dashboard", { replace: true })
       }
     }
-  }, [isAuthenticated, appRole, isLoading, navigate])
+  }, [isAuthenticated, appRole, isLoading, navigate, location.state])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
