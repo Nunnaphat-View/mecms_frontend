@@ -40,8 +40,8 @@ export const WardScheduleCalendar: React.FC = () => {
     <div className="bg-white border border-slate-200 rounded-xl flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center px-5 py-4">
-        <span className="text-sm font-semibold text-slate-800 font-medium">Schedule</span>
-        <span className="text-xs font-semibold text-slate-500">{monthName}</span>
+        <span className="text-xs font-semibold text-slate-800">Schedule</span>
+        <span className="text-[11px] font-semibold text-slate-500">{monthName}</span>
       </div>
 
       <div className="h-px bg-slate-100" />
@@ -51,7 +51,7 @@ export const WardScheduleCalendar: React.FC = () => {
         {/* Weekdays */}
         <div className="grid grid-cols-7 mb-3 text-center">
           {weekdays.map((day, idx) => (
-            <div key={`${day}-${idx}`} className="text-xs font-semibold text-slate-400">
+            <div key={`${day}-${idx}`} className="text-[10px] font-bold text-slate-400">
               {day}
             </div>
           ))}
@@ -71,7 +71,7 @@ export const WardScheduleCalendar: React.FC = () => {
             return (
               <div key={`day-${date}`} className="flex flex-col items-center justify-start h-8 relative select-none">
                 <span
-                  className={`text-xs font-semibold ${
+                  className={`text-[11px] font-semibold ${
                     isToday ? "text-primary font-bold" : "text-slate-700"
                   }`}
                 >
@@ -89,7 +89,7 @@ export const WardScheduleCalendar: React.FC = () => {
       {/* Footer */}
       <div className="px-5 pb-5 pt-1 flex items-center gap-2">
         <div className="size-1.5 bg-slate-400 rounded-full" />
-        <span className="text-xs font-medium text-slate-500">กำหนดสอบเทียบ</span>
+        <span className="text-[11px] font-medium text-slate-500">กำหนดสอบเทียบ</span>
       </div>
     </div>
   )

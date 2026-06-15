@@ -47,16 +47,16 @@ export const WardDepartmentList: React.FC = () => {
               <div className="flex items-center gap-3">
                 <MapPin className={`size-5 shrink-0 ${isActive ? "text-white" : "text-slate-500"}`} />
                 <div className="flex flex-col">
-                  <span className={`text-sm font-bold ${isActive ? "text-white" : "text-slate-800"}`}>
+                  <span className={`text-xs font-bold ${isActive ? "text-white" : "text-slate-800"}`}>
                     {ward.name}
                   </span>
-                  <span className={`text-xs ${isActive ? "text-white/80" : "text-slate-500"}`}>
+                  <span className={`text-[11px] ${isActive ? "text-white/80" : "text-slate-500"}`}>
                     {ward.description}
                   </span>
                 </div>
               </div>
 
-              <div className={`text-xs font-semibold shrink-0 ${isActive ? "text-white" : "text-slate-600"}`}>
+              <div className={`text-[11px] font-semibold shrink-0 ${isActive ? "text-white" : "text-slate-600"}`}>
                 {ward.toolCount} เครื่องมือ
               </div>
             </div>

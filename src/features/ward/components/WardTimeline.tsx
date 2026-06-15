@@ -7,7 +7,7 @@ export const WardTimeline: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <span className="text-sm font-semibold text-slate-800 mb-4 block">Timeline</span>
+      <span className="text-xs font-semibold text-slate-800 mb-4 block">Timeline</span>
 
       {events.length > 0 ? (
         <div className="relative pl-[20px] flex flex-col mt-2 select-none">
@@ -17,17 +17,17 @@ export const WardTimeline: React.FC = () => {
           {events.map((event) => (
             <div key={event.id} className="relative flex items-center mb-4 min-h-[48px]">
               {/* Bubble */}
-              <div className="absolute left-[-20px] w-10 h-10 rounded-full bg-secondary text-white border-2 border-white flex items-center justify-center font-bold text-sm z-10 shadow-sm">
+              <div className="absolute left-[-20px] w-10 h-10 rounded-full bg-secondary text-white border-2 border-white flex items-center justify-center font-bold text-xs z-10 shadow-sm">
                 {event.date}
               </div>
 
               {/* Event Content */}
               <div className="flex-1 ml-8">
                 <div className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex flex-col justify-center min-h-[52px]">
-                  <span className="text-sm font-semibold text-slate-800">
+                  <span className="text-xs font-semibold text-slate-800">
                     {event.tool_name}
                   </span>
-                  <span className="text-xs text-slate-400 font-mono mt-0.5">
+                  <span className="text-[10px] text-slate-400 font-mono mt-0.5">
                     {event.toolCode}
                   </span>
                 </div>
