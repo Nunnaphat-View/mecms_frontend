@@ -16,6 +16,7 @@ import {
   Users,
   Hospital,
   History,
+  Shield,
   type LucideIcon
 } from "lucide-react"
 
@@ -130,5 +131,11 @@ export const ALL_NAV_LINKS: NavLinkProps[] = [
     caption: "Calibration History",
     icon: History,
     link: "/history",
+  },
+  {
+    title: "ประวัติการเข้าใช้งาน",
+    caption: "Audit Log",
+    icon: Shield,
+    link: "/audit",
   },
 ]

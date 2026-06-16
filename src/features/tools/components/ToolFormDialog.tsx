@@ -317,7 +317,7 @@ export default function ToolFormDialog({ isOpen, tool, onClose, onSaved }: ToolF
                   value={sectionId}
                   onChange={(e) => setSectionId(Number(e.target.value))}
                   required
-                  disabled={!userHospitalId}
+                  disabled={filteredSections.length === 0}
                   className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-cyan-800 focus:bg-white transition-all disabled:opacity-50"
                 >
                   <option value="">เลือกแผนก/หน่วยงาน</option>

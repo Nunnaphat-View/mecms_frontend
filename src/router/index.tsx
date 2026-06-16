@@ -25,6 +25,7 @@ import PublicStatusPlaceholderPage from "@/features/public-status/pages/PublicSt
 import SchedulePage from "@/features/schedule/pages/SchedulePage"
 import ManageSchedulePage from "@/features/schedule/pages/ManageSchedulePage"
 import WardPage from "@/features/ward/pages/WardPage"
+import AuditLogPage from "@/features/audit-log/pages/AuditLogPage"
 
 export const router = createBrowserRouter([
   {
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
       { path: "sections", element: <SectionsPage /> },
       { path: "settings", element: <SettingsPage /> },
       { path: "profile", element: <SettingsPage /> },
+      { path: "audit", element: <AuditLogPage /> },
     ],
   },
   {
