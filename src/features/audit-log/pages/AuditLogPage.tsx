@@ -227,7 +227,7 @@ export default function AuditLogPage() {
             <thead>
               <tr className="bg-primary text-white text-xs font-semibold uppercase tracking-wider">
                 <th className="px-5 py-3.5">ผู้ใช้</th>
-                <th className="px-5 py-3.5">การกระทำ</th>
+                <th className="px-5 py-3.5 text-center">การกระทำ</th>
                 <th className="px-5 py-3.5">โมดูล</th>
                 <th className="px-5 py-3.5">เวลา</th>
                 <th className="px-5 py-3.5">IP Address</th>
@@ -267,8 +267,8 @@ export default function AuditLogPage() {
                       </td>
 
                       {/* การกระทำ */}
-                      <td className="px-5 py-3.5 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1.2 rounded-full text-[11px] font-bold border ${badge.bg}`}>
+                      <td className="px-5 py-3.5 whitespace-nowrap text-center">
+                        <span className={`inline-flex items-center justify-center gap-1.5 px-2.5 py-1.2 rounded-full text-[11px] font-bold border w-[160px] ${badge.bg}`}>
                           {badge.icon}
                           {badge.label}
                         </span>

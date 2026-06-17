@@ -69,6 +69,10 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
       calibration_due_date: "วันครบกำหนดสอบเทียบ",
       calibration_date_last: "วันสอบเทียบล่าสุด",
       department: "หน่วยงาน/วอร์ด",
+      section: "หน่วยงาน/วอร์ด",
+      equipmentType: "ประเภทเครื่องมือ",
+      technician: "ช่างผู้รับผิดชอบ",
+      approver: "ผู้อนุมัติ",
       location: "สถานที่ติดตั้ง",
       name: "ชื่อ",
       username: "ชื่อผู้ใช้งาน",
@@ -95,20 +99,42 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
     const oldObj = oldValues || {}
     const newObj = newValues || {}
 
+    // Exclude database metadata and IDs that have human-readable relation objects
+    const excludeKeys = [
+      "createdAt",
+      "updatedAt",
+      "deletedAt",
+      "id",
+      "userId",
+      "roleId",
+      "hospitalId",
+      "sectionId",
+      "equipment_type_id",
+      "technician_id",
+      "approver_id",
+      "hospital", // Exclude hospital sub-object from detail logs if we want to focus on department/ward
+    ]
+
     const allKeys = Array.from(new Set([...Object.keys(oldObj), ...Object.keys(newObj)]))
-    const excludeKeys = ["createdAt", "updatedAt", "deletedAt", "id", "userId", "roleId", "hospitalId", "sectionId"]
 
     for (const key of allKeys) {
       if (excludeKeys.includes(key)) continue
 
-      const oldVal = oldObj[key]
-      const newVal = newObj[key]
+      let oldVal = oldObj[key]
+      let newVal = newObj[key]
 
+      // If the property is a relation object containing a 'name' field, compare its name instead
       if (
+        (oldVal && typeof oldVal === "object" && "name" in oldVal) ||
+        (newVal && typeof newVal === "object" && "name" in newVal)
+      ) {
+        oldVal = oldVal ? (oldVal as Record<string, unknown>).name : null
+        newVal = newVal ? (newVal as Record<string, unknown>).name : null
+      } else if (
         (typeof oldVal === "object" && oldVal !== null) ||
         (typeof newVal === "object" && newVal !== null)
       ) {
-        // Skip sub-objects or relations to avoid cluttering comparison
+        // Skip other nested objects/arrays to avoid cluttering comparison
         continue
       }
 
@@ -133,11 +159,17 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
   const isUpdate = log.action.includes("UPDATE") || log.action.includes("SUBMIT") || log.action.includes("APPROVE") || log.action.includes("ASSIGN") || log.action.includes("RESCHEDULE")
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 font-sans select-none animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 font-sans select-none animate-in fade-in duration-200"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200"
+      >
         
         {/* Header */}
-        <div className="bg-slate-900 text-white flex justify-between items-center px-6 py-4.5">
+        <div className="bg-primary text-white flex justify-between items-center px-6 py-4.5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
               <FileText className="size-5.5 text-white" />
@@ -146,7 +178,7 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
               <div className="font-bold text-sm leading-snug">
                 รายละเอียดเหตุการณ์
               </div>
-              <div className="text-[11px] opacity-75 mt-0.5 font-mono">
+              <div className="text-[11px] opacity-80 mt-0.5 font-mono">
                 Log ID: #{log.id}
               </div>
             </div>
@@ -164,46 +196,50 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
           
           {/* Metadata Section */}
           <div className="w-full md:w-80 border-r-0 md:border-r border-slate-200/60 pr-0 md:pr-6 flex flex-col gap-4.5">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Info className="size-4 text-slate-400" />
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-2.5">
+              <Info className="size-4.5 text-primary" />
               ข้อมูลพื้นฐาน
             </h3>
 
             <div className="space-y-3">
-              <div>
-                <label className="text-[10px] font-semibold text-slate-400">ผู้ทำรายการ</label>
+              <div className="bg-slate-50/60 p-3 rounded-xl border border-slate-200/50">
+                <label className="text-[10px] font-bold text-slate-400 block mb-1">ผู้ทำรายการ</label>
                 <div className="text-xs font-bold text-slate-800">{log.actorName}</div>
                 <div className="text-[10.5px] text-slate-500 font-medium mt-0.5">{log.actorRole}</div>
               </div>
 
-              <div>
-                <label className="text-[10px] font-semibold text-slate-400">การกระทำ</label>
-                <div className="text-xs font-bold text-slate-800">{translateAction(log.action)}</div>
-                <div className="text-[10px] font-mono text-slate-500 mt-0.5">{log.action}</div>
+              <div className="bg-slate-50/60 p-3 rounded-xl border border-slate-200/50">
+                <label className="text-[10px] font-bold text-slate-400 block mb-1">การกระทำ</label>
+                <div className="flex flex-col gap-1.5 items-start mt-0.5">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                    {translateAction(log.action)}
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400 leading-none">{log.action}</span>
+                </div>
               </div>
 
-              <div>
-                <label className="text-[10px] font-semibold text-slate-400">โมดูล</label>
-                <div className="text-xs font-semibold text-slate-700">
+              <div className="bg-slate-50/60 p-3 rounded-xl border border-slate-200/50">
+                <label className="text-[10px] font-bold text-slate-400 block mb-1">โมดูล</label>
+                <div className="text-xs font-bold text-slate-700 mt-0.5">
                   {translateResource(log.resourceName)}
                 </div>
               </div>
 
-              <div>
-                <label className="text-[10px] font-semibold text-slate-400">วันเวลาเกิดเหตุการณ์</label>
-                <div className="text-xs font-semibold text-slate-700">
+              <div className="bg-slate-50/60 p-3 rounded-xl border border-slate-200/50">
+                <label className="text-[10px] font-bold text-slate-400 block mb-1">วันเวลาเกิดเหตุการณ์</label>
+                <div className="text-xs font-bold text-slate-700 mt-0.5">
                   {formatThaiDate(log.createdAt, { includeTime: true, monthStyle: "short" })}
                 </div>
               </div>
 
-              <div>
-                <label className="text-[10px] font-semibold text-slate-400">IP Address</label>
-                <div className="text-xs font-mono font-semibold text-slate-700">{log.ipAddress || "-"}</div>
+              <div className="bg-slate-50/60 p-3 rounded-xl border border-slate-200/50">
+                <label className="text-[10px] font-bold text-slate-400 block mb-1">IP Address</label>
+                <div className="text-xs font-mono font-bold text-slate-700 mt-0.5">{log.ipAddress || "-"}</div>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="text-[10px] font-semibold text-slate-400">User Agent</label>
-                <div className="text-[11px] font-sans text-slate-500 leading-normal break-all line-clamp-3" title={log.userAgent || ""}>
+              <div className="bg-slate-50/60 p-3 rounded-xl border border-slate-200/50 md:col-span-2">
+                <label className="text-[10px] font-bold text-slate-400 block mb-1">User Agent</label>
+                <div className="text-[11px] font-sans text-slate-500 leading-normal break-all line-clamp-3 mt-0.5" title={log.userAgent || ""}>
                   {log.userAgent || "-"}
                 </div>
               </div>
@@ -212,7 +248,8 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
 
           {/* Diffs & Values Section */}
           <div className="flex-1 flex flex-col">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3.5">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3.5 flex items-center gap-2 border-b border-slate-100 pb-2.5">
+              <FileText className="size-4.5 text-primary" />
               ข้อมูลที่เปลี่ยนแปลง
             </h3>
 
@@ -221,13 +258,13 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
                 <span className="text-xs font-semibold text-slate-400">ไม่มีประวัติการเปลี่ยนแปลงฟิลด์ข้อมูลหลัก</span>
               </div>
             ) : (
-              <div className="border border-slate-200/80 rounded-xl overflow-hidden bg-slate-50/50">
+              <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs">
                 <table className="w-full text-left border-collapse table-fixed">
                   <thead>
-                    <tr className="bg-slate-100/80 text-[11px] font-bold text-slate-500 border-b border-slate-200">
-                      <th className="px-4 py-2.5 w-1/3">ชื่อฟิลด์</th>
-                      <th className="px-4 py-2.5 w-1/3">ค่าเดิม</th>
-                      <th className="px-4 py-2.5 w-1/3">ค่าใหม่</th>
+                    <tr className="bg-primary/5 text-[11px] font-bold text-primary border-b border-slate-200">
+                      <th className="px-4 py-3 w-1/3 font-semibold">ชื่อฟิลด์</th>
+                      <th className="px-4 py-3 w-1/3 font-semibold">ค่าเดิม</th>
+                      <th className="px-4 py-3 w-1/3 font-semibold">ค่าใหม่</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/60 text-xs">
@@ -238,13 +275,13 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
                       return (
                         <tr key={item.key} className="hover:bg-slate-50/70 transition-colors">
                           {/* Field name */}
-                          <td className="px-4 py-3 font-semibold text-slate-700">
+                          <td className="px-4 py-3 font-semibold text-slate-700 border-r border-slate-200/40">
                             {item.label}
                           </td>
                           {/* Old value */}
-                          <td className={`px-4 py-3 font-mono text-[11px] break-words ${
+                          <td className={`px-4 py-3 font-mono text-[11px] break-words border-r border-slate-200/40 ${
                             item.status === "deleted" || item.status === "modified"
-                              ? "bg-rose-50 text-rose-700 font-semibold"
+                              ? "bg-rose-50/50 text-rose-700 font-semibold border-l-2 border-rose-300"
                               : "text-slate-400"
                           }`}>
                             {item.oldVal !== null ? String(item.oldVal) : "-"}
@@ -252,8 +289,8 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
                           {/* New value */}
                           <td className={`px-4 py-3 font-mono text-[11px] break-words ${
                             item.status === "added" || item.status === "modified"
-                              ? "bg-emerald-50 text-emerald-700 font-semibold"
-                              : "text-slate-500"
+                              ? "bg-emerald-50/50 text-emerald-700 font-semibold border-l-2 border-emerald-300"
+                              : "text-slate-600"
                           }`}>
                             {item.newVal !== null ? String(item.newVal) : "-"}
                           </td>
@@ -268,17 +305,8 @@ export const AuditLogDetailDialog: React.FC<AuditLogDetailDialogProps> = ({
 
         </div>
 
-        {/* Footer */}
-        <div className="bg-slate-50 px-6 py-4 flex justify-end border-t border-slate-200/60">
-          <button
-            onClick={onClose}
-            className="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-          >
-            ปิดหน้าต่าง
-          </button>
-        </div>
-
       </div>
     </div>
   )
 }
+
