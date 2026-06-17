@@ -223,7 +223,6 @@ export const useCalibrationRecordStore = create<CalibrationRecordState>((set, ge
     const { taskId, environment, standardToolIds, measurements, qualitatives, specificParameters, overallResult } = get()
     if (!taskId) return false
 
-    set({ loading: true })
     try {
       const payload = {
         ambient_temp: environment.temperature ?? undefined,
@@ -242,8 +241,6 @@ export const useCalibrationRecordStore = create<CalibrationRecordState>((set, ge
     } catch (error) {
       console.error("Submit Failed:", error)
       throw error
-    } finally {
-      set({ loading: false })
     }
   },
 

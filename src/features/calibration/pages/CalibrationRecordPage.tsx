@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react"
 import { useParams, useNavigate, useSearchParams } from "react-router-dom"
-import { Sparkles, ArrowLeft, CheckCircle2, ChevronRight, Save } from "lucide-react"
+import { Sparkles, ArrowLeft, CheckCircle2, ChevronRight, Save, AlertCircle } from "lucide-react"
 import { useCalibrationRecordStore } from "@/features/calibration/stores/calibrationRecordStore"
 import TabGeneralInfo from "@/features/calibration/components/record/TabGeneralInfo"
 import TabTestResults, { type TabTestResultsHandle } from "@/features/calibration/components/record/TabTestResults"
 import SaveConfirmDialog from "@/features/calibration/components/record/SaveConfirmDialog"
+import SaveStatusOverlay from "@/components/common/SaveStatusOverlay"
 
 export default function CalibrationRecordPage() {
   const { id } = useParams<{ id: string }>()
@@ -13,15 +14,9 @@ export default function CalibrationRecordPage() {
   const store = useCalibrationRecordStore()
 
   const [showSaveDialog, setShowSaveDialog] = useState(false)
-  const [notify, setNotify] = useState<{ type: "success" | "error" | "warning"; message: string } | null>(null)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "success" | "error">("idle")
   const testResultsRef = useRef<TabTestResultsHandle>(null)
-
-  // Auto-dismiss notification
-  useEffect(() => {
-    if (!notify) return
-    const t = setTimeout(() => setNotify(null), 3500)
-    return () => clearTimeout(t)
-  }, [notify])
 
   // Get active tab from URL query parameter 'tab', fallback to store value
   const queryTab = searchParams.get("tab") as "general" | "test_results" | null
@@ -70,50 +65,47 @@ export default function CalibrationRecordPage() {
   }
 
   async function handleSaveDraft() {
+    setSaveStatus("saving")
     try {
       const success = await store.saveDraft()
       if (success) {
-        setNotify({ type: "success", message: "บันทึกแบบร่างสำเร็จ" })
+        setSaveStatus("success")
+        setTimeout(() => {
+          setSaveStatus("idle")
+        }, 1000)
       }
     } catch (err: unknown) {
+      setSaveStatus("error")
       const e = err as { response?: { data?: { message?: string } } }
       const errMsg = e.response?.data?.message ?? "บันทึกไม่สำเร็จ"
-      setNotify({ type: "error", message: errMsg })
+      setErrorMessage(errMsg)
+      setTimeout(() => setSaveStatus("idle"), 1500)
     }
   }
 
   async function handleConfirmSave() {
+    setSaveStatus("saving")
     try {
       const success = await store.submitCalibration("PendingApproval")
       if (success) {
-        setNotify({ type: "success", message: "บันทึกข้อมูลและส่งอนุมัติสำเร็จ" })
+        setSaveStatus("success")
+        setShowSaveDialog(false)
         setTimeout(() => {
+          setSaveStatus("idle")
           navigate("/calibration")
         }, 1500)
       }
     } catch (err: unknown) {
+      setSaveStatus("error")
       const e = err as { response?: { data?: { message?: string } } }
       const errMsg = e.response?.data?.message ?? "บันทึกไม่สำเร็จ"
-      setNotify({ type: "error", message: errMsg })
+      setErrorMessage(errMsg)
+      setTimeout(() => setSaveStatus("idle"), 1500)
     }
   }
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      {/* Toast Notification */}
-      {notify && (
-        <div
-          className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-sm font-semibold transition-all ${
-            notify.type === "success"
-              ? "bg-emerald-500 text-white"
-              : notify.type === "warning"
-              ? "bg-amber-500 text-white"
-              : "bg-red-500 text-white"
-          }`}
-        >
-          {notify.message}
-        </div>
-      )}
 
       {/* Header Page Title */}
       <div>
@@ -217,7 +209,7 @@ export default function CalibrationRecordPage() {
           <button
             type="button"
             onClick={() => void handleSaveDraft()}
-            disabled={store.loading}
+            disabled={store.loading || saveStatus !== "idle"}
             className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-5 py-2.5 bg-white border border-primary text-primary hover:bg-primary/5 rounded-xl text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer"
           >
             <Save className="size-3.5" />
@@ -226,7 +218,7 @@ export default function CalibrationRecordPage() {
           <button
             type="button"
             onClick={handleNext}
-            disabled={activeTab === "test_results" && !store.canSubmit()}
+            disabled={(activeTab === "test_results" && !store.canSubmit()) || saveStatus !== "idle"}
             className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-5 py-2.5 bg-primary hover:bg-primary/95 text-white rounded-xl text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer"
           >
             {activeTab === "general" ? (
@@ -244,11 +236,25 @@ export default function CalibrationRecordPage() {
         </div>
       </div>
 
+      <SaveStatusOverlay
+        status={saveStatus}
+        savingText="กำลังบันทึกข้อมูล..."
+        savingSubtext="กรุณารอสักครู่ ระบบกำลังบันทึกและส่งข้อมูล"
+        successText="บันทึกข้อมูลสำเร็จ!"
+        successSubtext={
+          showSaveDialog
+            ? "ระบบบันทึกผลทดสอบเรียบร้อย กำลังนำทางกลับ..."
+            : "ระบบบันทึกแบบร่างเรียบร้อยแล้ว"
+        }
+        errorSubtext={errorMessage}
+      />
+
       {/* Confirmation modal */}
       <SaveConfirmDialog
         isOpen={showSaveDialog}
-        onClose={() => setShowSaveDialog(false)}
+        onClose={() => saveStatus === "idle" && setShowSaveDialog(false)}
         onConfirm={handleConfirmSave}
+        isSubmitting={saveStatus === "saving"}
       />
     </div>
   )
