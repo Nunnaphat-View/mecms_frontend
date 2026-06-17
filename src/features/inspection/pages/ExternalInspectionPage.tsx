@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Sparkles, CheckCircle2, AlertTriangle, AlertCircle } from "lucide-react"
+import { Sparkles} from "lucide-react"
 import { useInspectionStore } from "@/features/inspection/stores/inspectionStore"
 import type { InspectionValue } from "@/features/inspection/stores/inspectionStore"
 import EquipmentDetailsCard from "@/features/inspection/components/EquipmentDetailsCard"

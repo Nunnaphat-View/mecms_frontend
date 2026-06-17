@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 import { useParams, useNavigate, useSearchParams } from "react-router-dom"
-import { Sparkles, ArrowLeft, CheckCircle2, ChevronRight, Save, AlertCircle } from "lucide-react"
+import { Sparkles, ArrowLeft, CheckCircle2, ChevronRight, Save } from "lucide-react"
 import { useCalibrationRecordStore } from "@/features/calibration/stores/calibrationRecordStore"
 import TabGeneralInfo from "@/features/calibration/components/record/TabGeneralInfo"
 import TabTestResults, { type TabTestResultsHandle } from "@/features/calibration/components/record/TabTestResults"
