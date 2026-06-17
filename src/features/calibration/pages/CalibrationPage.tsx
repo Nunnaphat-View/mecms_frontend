@@ -56,14 +56,27 @@ export default function CalibrationPage() {
       return matchSearch && matchType
     })
 
-    // Sort: current user's tasks first, then by task ID or original order
+    // Sort: current user's tasks first, then by earliest due date (closest to due date)
     return filtered.slice().sort((a, b) => {
       const isAOwner = a.responsible === currentUserName
       const isBOwner = b.responsible === currentUserName
 
       if (isAOwner && !isBOwner) return -1
       if (!isAOwner && isBOwner) return 1
-      return 0
+
+      // If ownership is the same, sort by due date ascending (earlier date first)
+      const timeA = a.dueDate && a.dueDate !== "-" ? new Date(a.dueDate).getTime() : Infinity
+      const timeB = b.dueDate && b.dueDate !== "-" ? new Date(b.dueDate).getTime() : Infinity
+
+      const validA = isNaN(timeA) ? Infinity : timeA
+      const validB = isNaN(timeB) ? Infinity : timeB
+
+      if (validA !== validB) {
+        return validA - validB
+      }
+
+      // Fallback: sort by ID
+      return a.id.localeCompare(b.id)
     })
   }, [records, searchQuery, selectedType, user])
 

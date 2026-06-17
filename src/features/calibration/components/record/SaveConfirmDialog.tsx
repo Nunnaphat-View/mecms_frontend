@@ -11,7 +11,7 @@ export default function SaveConfirmDialog({ isOpen, onClose, onConfirm }: Props)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-sans animate-in fade-in duration-100">
-      <div className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-xl flex flex-col animate-in zoom-in-95 duration-100 border border-slate-200">
+      <div className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-xl flex flex-col animate-in zoom-in-95 duration-100">
         {/* Header */}
         <div className="bg-primary text-white flex justify-between items-center px-5 py-3.5 flex-shrink-0">
           <div className="flex items-center gap-3">

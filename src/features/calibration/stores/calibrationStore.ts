@@ -54,7 +54,10 @@ export const useCalibrationStore = create<CalibrationState>((set) => ({
         deviceCode: task.equipment?.asset_code ?? String(task.equipment_id),
         location: task.equipment?.section?.name || task.equipment?.location || "-",
         type: "Medical", // Matches original Quasar default
-        dueDate: task.scheduled_date || task.equipment?.calibration_due_date || "-",
+        dueDate: (() => {
+          const rawDate = task.scheduled_date || task.equipment?.calibration_due_date
+          return rawDate ? rawDate.split("T")[0] : "-"
+        })(),
         responsible: task.technician?.name ?? "-",
         status: task.status,
       }))
