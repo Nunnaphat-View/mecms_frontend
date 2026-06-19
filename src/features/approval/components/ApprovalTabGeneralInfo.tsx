@@ -52,7 +52,7 @@ export default function ApprovalTabGeneralInfo({ task }: Props) {
       <div>
         <div
           className="text-base font-bold text-slate-900 mb-3 pl-3"
-          style={{ borderLeft: "4px solid #088395" }}
+          style={{ borderLeft: "4px solid var(--primary)" }}
         >
           ข้อมูลผู้สอบเทียบ
         </div>

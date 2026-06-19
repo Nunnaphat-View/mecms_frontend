@@ -115,7 +115,7 @@ export default function ApprovalParameterTable({
       {/* Title outside the table */}
       <div
         className="text-sm font-bold text-slate-800 mb-2 pl-3"
-        style={{ borderLeft: "4px solid #f59e0b" }}
+        style={{ borderLeft: "4px solid var(--primary)" }}
       >
         {title}
       </div>

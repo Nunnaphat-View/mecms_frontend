@@ -29,7 +29,7 @@ export default function EquipmentDetailsCard({ details }: Props) {
       {/* Section Title */}
       <div
         className="text-base font-bold text-slate-900 mb-3 pl-3"
-        style={{ borderLeft: "4px solid #f59e0b" }}
+        style={{ borderLeft: "4px solid var(--primary)" }}
       >
         ข้อมูลเครื่องมือแพทย์
       </div>

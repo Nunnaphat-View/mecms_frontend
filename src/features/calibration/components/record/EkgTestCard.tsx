@@ -24,7 +24,7 @@ export default function EkgTestCard({
       {/* Title */}
       <div
         className="text-sm font-bold text-slate-800 mb-3 pl-3"
-        style={{ borderLeft: "4px solid #f59e0b" }}
+        style={{ borderLeft: "4px solid var(--primary)" }}
       >
         {title}
       </div>

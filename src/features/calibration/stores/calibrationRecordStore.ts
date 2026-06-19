@@ -258,10 +258,14 @@ export const useCalibrationRecordStore = create<CalibrationRecordState>((set, ge
       humidity: Math.round((45 + Math.random() * 10) * 10) / 10,
     }
 
-    // 2. Standard Tools — derive from standard_tool_ids stored in each setting
+    // 2. Standard Tools — derive from standardTools and standard_tool_ids stored in each setting
     const settingToolIds = settingStore.settings
-      .flatMap((s) => s.standard_tool_ids ?? [])
-      .filter((id) => id !== null && id !== undefined)
+      .flatMap((s) => {
+        const fromRelation = s.standardTools?.map((t) => t.id) ?? []
+        const fromIds = s.standard_tool_ids ?? []
+        return [...fromRelation, ...fromIds]
+      })
+      .filter((id) => id !== null && id !== undefined && String(id) !== "")
       .map((id) => Number(id))
     const uniqueToolIds = Array.from(new Set(settingToolIds))
 

@@ -528,7 +528,7 @@ const TestDynamic = forwardRef<TestDynamicHandle, Props>(function TestDynamic({ 
             <div>
               <div
                 className="text-sm font-bold text-slate-800 mb-3 pl-3"
-                style={{ borderLeft: "4px solid #f59e0b" }}
+                style={{ borderLeft: "4px solid var(--primary)" }}
               >
                 IV Set Configuration
               </div>
@@ -565,7 +565,7 @@ const TestDynamic = forwardRef<TestDynamicHandle, Props>(function TestDynamic({ 
             <div>
               <div
                 className="text-sm font-bold text-slate-800 mb-3 pl-3"
-                style={{ borderLeft: "4px solid #f59e0b" }}
+                style={{ borderLeft: "4px solid var(--primary)" }}
               >
                 Alarm
               </div>
@@ -611,7 +611,7 @@ const TestDynamic = forwardRef<TestDynamicHandle, Props>(function TestDynamic({ 
           <div className="flex items-center justify-between border-b border-slate-200 mb-4 pb-2">
             <div
               className="text-sm font-bold text-slate-800 pl-3"
-              style={{ borderLeft: "4px solid #f59e0b" }}
+              style={{ borderLeft: "4px solid var(--primary)" }}
             >
               ข้อมูลหัวตรวจอัลตราซาวด์
             </div>

@@ -10,7 +10,7 @@ export default function LocationDetailsCard({ details }: Props) {
       {/* Title outside the card */}
       <div
         className="text-base font-bold text-slate-900 mb-3 pl-3"
-        style={{ borderLeft: "4px solid #f59e0b" }}
+        style={{ borderLeft: "4px solid var(--primary)" }}
       >
         ข้อมูลสถานที่
       </div>
